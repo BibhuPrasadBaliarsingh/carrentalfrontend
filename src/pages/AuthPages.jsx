@@ -71,11 +71,8 @@ export function LoginPage() {
       addToast(`Welcome back, ${res.data.user.name}! 👋`, 'success')
       setRedirectTo(normalizeDestination(res.data.user.role))
     } catch (err) {
-      // Demo fallback
-      const mockUser = { _id: '1', name: form.email.split('@')[0], email: form.email, role: form.email.includes('admin') ? 'admin' : 'user' }
-      login(mockUser, 'demo_token_' + Date.now())
-      addToast(`Welcome back! 👋`, 'success')
-      setRedirectTo(normalizeDestination(mockUser.role))
+      const message = err.response?.data?.message || 'Login failed. Please check your credentials.'
+      addToast(message, 'error')
     } finally {
       setLoading(false)
     }
@@ -141,7 +138,7 @@ export function LoginPage() {
           </div>
 
           <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14, fontSize: 12, color: '#6b7280', lineHeight: 1.7 }}>
-            💡 <strong style={{ color: '#9ca3af' }}>Demo:</strong> Use any email to login. Include "admin" in the email (e.g. admin@test.com) for admin dashboard access.
+            💡 <strong style={{ color: '#9ca3af' }}>Demo:</strong> Use any email to login. Include "Admin@123" in the email (e.g. admin@speedtoyz.com ) for admin dashboard access.
           </div>
         </motion.div>
       </div>

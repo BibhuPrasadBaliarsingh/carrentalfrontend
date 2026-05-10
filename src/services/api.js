@@ -19,9 +19,13 @@ api.interceptors.response.use(
   res => res,
   err => {
     if (err.response?.status === 401) {
+      const url = err.config?.url || ''
+      const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/me')
       localStorage.removeItem('speedtoyz_token')
       localStorage.removeItem('speedtoyz_user')
-      window.location.href = '/login'
+      if (!isAuthEndpoint) {
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(err)
   }

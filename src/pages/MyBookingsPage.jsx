@@ -36,7 +36,8 @@ export default function MyBookingsPage() {
     const fetchBookings = async () => {
       try {
         const res = await bookingsAPI.myBookings()
-        setBookings(res.data)
+        const data = res.data?.bookings ?? res.data
+        setBookings(Array.isArray(data) ? data : [])
       } catch {
         setBookings(MOCK_MY_BOOKINGS)
       } finally {
