@@ -1,0 +1,85 @@
+import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { FiZap, FiUsers, FiSettings } from 'react-icons/fi'
+import { Badge, StarRating } from './UI'
+
+const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+
+export default function CarCard({ car, index = 0 }) {
+  const navigate = useNavigate()
+
+  const imgSrc = car.images?.[0]?.startsWith('http')
+    ? car.images[0]
+    : car.images?.[0]
+    ? `${API_URL}/uploads/${car.images[0]}`
+    : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80'
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.06, duration: 0.35 }}
+      className="car-card"
+      onClick={() => navigate(`/cars/${car._id}`)}
+      style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, overflow: 'hidden', cursor: 'pointer' }}
+    >
+      {/* Image */}
+      <div style={{ position: 'relative', height: 190, overflow: 'hidden' }}>
+        <img
+          src={imgSrc}
+          alt={car.name}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+          onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
+          onMouseLeave={e => e.target.style.transform = 'scale(1)'}
+          onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80' }}
+        />
+        <div style={{ position: 'absolute', top: 12, left: 12 }}>
+          <Badge>{car.category}</Badge>
+        </div>
+        {!car.available && (
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#ef4444', fontWeight: 700, fontSize: 16, letterSpacing: 2 }}>UNAVAILABLE</span>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div style={{ padding: '16px 18px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+          <div>
+            <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>{car.brand}</div>
+            <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{car.name}</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 20 }}>${car.pricePerDay}</div>
+            <div style={{ color: '#6b7280', fontSize: 11 }}>/day</div>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
+          <StarRating rating={car.rating || 4.5} />
+        </div>
+
+        <div style={{ display: 'flex', gap: 14, marginBottom: 14, flexWrap: 'wrap' }}>
+          {[
+            [FiZap, car.fuelType || car.fuel],
+            [FiUsers, `${car.seats} seats`],
+            [FiSettings, car.transmission],
+          ].map(([Icon, val]) => (
+            <span key={val} style={{ color: '#9ca3af', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Icon size={12} /> {val}
+            </span>
+          ))}
+        </div>
+
+        <button
+          onClick={e => { e.stopPropagation(); navigate(`/cars/${car._id}`) }}
+          className="btn-outline"
+          style={{ width: '100%', background: 'transparent', border: '1px solid #374151', color: '#d1d5db', padding: '9px 0', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+        >
+          View Details
+        </button>
+      </div>
+    </motion.div>
+  )
+}

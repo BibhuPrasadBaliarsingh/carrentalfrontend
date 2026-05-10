@@ -1,0 +1,87 @@
+export const MOCK_CARS = [
+  {
+    _id: '1', name: 'Ferrari F8 Tributo', brand: 'Ferrari', category: 'Sports',
+    pricePerDay: 899, fuelType: 'Petrol', seats: 2, transmission: 'Automatic',
+    rating: 4.9, available: true,
+    images: ['https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=800&q=80'],
+    description: 'The Ferrari F8 Tributo is a mid-rear-engined sports car produced by the Italian automobile manufacturer Ferrari. With a twin-turbocharged 3.9-litre V8 producing 720hp, it is the most powerful V8 in Ferrari history.',
+  },
+  {
+    _id: '2', name: 'Mercedes S-Class', brand: 'Mercedes', category: 'Luxury',
+    pricePerDay: 499, fuelType: 'Hybrid', seats: 5, transmission: 'Automatic',
+    rating: 4.8, available: true,
+    images: ['https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80'],
+    description: 'The Mercedes-Benz S-Class is the flagship saloon featuring Burmester audio, MBUX infotainment, and magic-body control suspension for the ultimate luxury experience.',
+  },
+  {
+    _id: '3', name: 'Range Rover Sport', brand: 'Land Rover', category: 'SUV',
+    pricePerDay: 399, fuelType: 'Hybrid', seats: 5, transmission: 'Automatic',
+    rating: 4.7, available: true,
+    images: ['https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80'],
+    description: 'The Range Rover Sport combines legendary off-road capability with boulevard refinement. Available with a plug-in hybrid powertrain for maximum efficiency.',
+  },
+  {
+    _id: '4', name: 'Porsche 911 Carrera S', brand: 'Porsche', category: 'Sports',
+    pricePerDay: 799, fuelType: 'Petrol', seats: 2, transmission: 'Automatic',
+    rating: 4.9, available: true,
+    images: ['https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'],
+    description: 'The Porsche 911 Carrera S is a thoroughbred sports car delivering an intoxicating driving experience with 450hp, rear-wheel steering, and iconic rear-engine layout.',
+  },
+  {
+    _id: '5', name: 'BMW M3 Competition', brand: 'BMW', category: 'Sports',
+    pricePerDay: 549, fuelType: 'Petrol', seats: 4, transmission: 'Automatic',
+    rating: 4.8, available: true,
+    images: ['https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80'],
+    description: 'The BMW M3 Competition is the most driver-focused 3 Series ever built, with a 503hp inline-six and M-specific chassis tuning for track-ready performance.',
+  },
+  {
+    _id: '6', name: 'Tesla Model S Plaid', brand: 'Tesla', category: 'Electric',
+    pricePerDay: 349, fuelType: 'Electric', seats: 5, transmission: 'Automatic',
+    rating: 4.7, available: true,
+    images: ['https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80'],
+    description: 'The Tesla Model S Plaid accelerates 0-60 mph in under 2 seconds — faster than any production car in history. 396-mile range, autopilot included.',
+  },
+  {
+    _id: '7', name: 'Lamborghini Huracán', brand: 'Lamborghini', category: 'Supercar',
+    pricePerDay: 1299, fuelType: 'Petrol', seats: 2, transmission: 'Automatic',
+    rating: 5.0, available: true,
+    images: ['https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80'],
+    description: 'The Lamborghini Huracán Performante features a naturally aspirated 5.2-litre V10 producing 640hp with active aerodynamics for maximum downforce.',
+  },
+  {
+    _id: '8', name: 'Audi RS6 Avant', brand: 'Audi', category: 'Luxury',
+    pricePerDay: 449, fuelType: 'Petrol', seats: 5, transmission: 'Automatic',
+    rating: 4.8, available: true,
+    images: ['https://images.unsplash.com/photo-1606152421802-db97b9c7a11b?w=800&q=80'],
+    description: 'The Audi RS6 Avant is the ultimate performance estate with a 600hp twin-turbo V8, quattro all-wheel drive, and aggressive wide-body styling.',
+  },
+  {
+    _id: '9', name: 'McLaren 720S', brand: 'McLaren', category: 'Supercar',
+    pricePerDay: 1199, fuelType: 'Petrol', seats: 2, transmission: 'Automatic',
+    rating: 4.9, available: true,
+    images: ['https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800&q=80'],
+    description: 'The McLaren 720S is a mid-engined supercar with a 4.0-litre twin-turbo V8 producing 720hp. Its carbon fibre monocoque chassis delivers extraordinary agility.',
+  },
+]
+
+export const MOCK_STATS = {
+  revenue: 284500,
+  totalBookings: 142,
+  activeCars: 86,
+  totalUsers: 1248,
+  revenueByMonth: [
+    { month: 'Jan', revenue: 18000 },
+    { month: 'Feb', revenue: 24000 },
+    { month: 'Mar', revenue: 19500 },
+    { month: 'Apr', revenue: 32000 },
+    { month: 'May', revenue: 28000 },
+    { month: 'Jun', revenue: 38500 },
+    { month: 'Jul', revenue: 42000 },
+  ],
+  fleetDistribution: [
+    { category: 'Sports', count: 35 },
+    { category: 'Luxury', count: 28 },
+    { category: 'SUV', count: 22 },
+    { category: 'Electric', count: 15 },
+  ],
+}

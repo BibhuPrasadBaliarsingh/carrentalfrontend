@@ -1,0 +1,444 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { FiGrid, FiTruck, FiCalendar, FiUsers, FiTrendingUp, FiSettings, FiLogOut, FiPlus, FiEdit2, FiTrash2, FiExternalLink } from 'react-icons/fi'
+import { StatCard, StatusBadge, Modal, Input, PageLoader } from '../components/UI'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
+import { dashboardAPI, carsAPI, bookingsAPI, usersAPI } from '../services/api'
+import { MOCK_CARS, MOCK_STATS } from '../data/mockData'
+
+const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
+const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+
+const MOCK_BOOKINGS_ADMIN = [
+  { _id: 'BK001', car: { name: 'Ferrari F8 Tributo' }, user: { name: 'John Doe' }, pickupDate: '2025-07-10', returnDate: '2025-07-13', totalPrice: 2697, bookingStatus: 'Confirmed' },
+  { _id: 'BK002', car: { name: 'Mercedes S-Class' }, user: { name: 'Jane Smith' }, pickupDate: '2025-06-20', returnDate: '2025-06-22', totalPrice: 998, bookingStatus: 'Completed' },
+  { _id: 'BK003', car: { name: 'Lamborghini Huracán' }, user: { name: 'Mike Johnson' }, pickupDate: '2025-08-01', returnDate: '2025-08-03', totalPrice: 2598, bookingStatus: 'Confirmed' },
+]
+const MOCK_USERS_ADMIN = [
+  { _id: '1', name: 'John Doe', email: 'john@example.com', role: 'user', bookingCount: 3, status: 'Active' },
+  { _id: '2', name: 'Admin User', email: 'admin@speedtoyz.com', role: 'admin', bookingCount: 0, status: 'Active' },
+  { _id: '3', name: 'Jane Smith', email: 'jane@example.com', role: 'user', bookingCount: 7, status: 'Active' },
+  { _id: '4', name: 'Mike Johnson', email: 'mike@example.com', role: 'user', bookingCount: 1, status: 'Banned' },
+]
+
+export default function AdminDashboard() {
+  const navigate = useNavigate()
+  const { user, logout } = useAuth()
+  const { addToast } = useToast()
+  const [activePage, setActivePage] = useState('overview')
+  const [stats, setStats] = useState(MOCK_STATS)
+  const [cars, setCars] = useState([])
+  const [bookings, setBookings] = useState(MOCK_BOOKINGS_ADMIN)
+  const [users, setUsers] = useState(MOCK_USERS_ADMIN)
+  const [loading, setLoading] = useState(true)
+  const [showAddCar, setShowAddCar] = useState(false)
+  const [newCar, setNewCar] = useState({ name: '', brand: '', category: 'Sports', pricePerDay: '', fuelType: 'Petrol', seats: '', transmission: 'Automatic', description: '' })
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsRes, carsRes] = await Promise.all([dashboardAPI.stats(), carsAPI.getAll()])
+        setStats(statsRes.data)
+        setCars(carsRes.data.cars || carsRes.data)
+      } catch {
+        setCars(MOCK_CARS)
+        setStats(MOCK_STATS)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div style={{ background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
+          <h2 style={{ color: '#fff', fontSize: 24, fontWeight: 800 }}>Access Denied</h2>
+          <p style={{ color: '#6b7280', margin: '10px 0 24px' }}>Admin privileges required.</p>
+          <button onClick={() => navigate('/')} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 28px', borderRadius: 8, cursor: 'pointer', fontWeight: 700 }}>Go Home</button>
+        </div>
+      </div>
+    )
+  }
+
+  const sideLinks = [
+    { key: 'overview', icon: <FiGrid />, label: 'Dashboard' },
+    { key: 'cars', icon: <FiTruck />, label: 'Car Management' },
+    { key: 'bookings', icon: <FiCalendar />, label: 'Bookings' },
+    { key: 'users', icon: <FiUsers />, label: 'Users' },
+    { key: 'analytics', icon: <FiTrendingUp />, label: 'Analytics' },
+    { key: 'settings', icon: <FiSettings />, label: 'Settings' },
+  ]
+
+  const barData = stats.revenueByMonth || MOCK_STATS.revenueByMonth
+  const maxBar = Math.max(...barData.map(d => d.revenue))
+
+  const handleDeleteCar = async (id) => {
+    if (!confirm('Delete this car?')) return
+    try { await carsAPI.delete(id) } catch {}
+    setCars(prev => prev.filter(c => c._id !== id))
+    addToast('Car deleted', 'info')
+  }
+
+  const handleAddCar = async () => {
+    if (!newCar.name || !newCar.brand || !newCar.pricePerDay) { addToast('Fill in required fields', 'error'); return }
+    try {
+      const res = await carsAPI.create(newCar)
+      setCars(prev => [res.data, ...prev])
+    } catch {
+      const mock = { ...newCar, _id: Date.now().toString(), rating: 4.5, available: true, images: [] }
+      setCars(prev => [mock, ...prev])
+    }
+    setShowAddCar(false)
+    addToast('Car added successfully!', 'success')
+    setNewCar({ name: '', brand: '', category: 'Sports', pricePerDay: '', fuelType: 'Petrol', seats: '', transmission: 'Automatic', description: '' })
+  }
+
+  const thStyle = { color: '#6b7280', fontSize: 11, fontWeight: 600, textAlign: 'left', padding: '10px 16px', textTransform: 'uppercase', letterSpacing: 1 }
+  const tdStyle = { padding: '13px 16px', borderBottom: '1px solid #1a2332' }
+
+  return (
+    <div style={{ display: 'flex', background: '#0a0a0a', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+      {/* ── Sidebar ──────────────────────────────────────────────────────────── */}
+      <div style={{ width: 224, background: '#050505', borderRight: '1px solid #1f2937', display: 'flex', flexDirection: 'column', position: 'sticky', top: 0, height: '100vh' }}>
+        <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1f2937' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+            <div style={{ background: '#ef4444', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 900, fontSize: 15 }}>S</div>
+            <span style={{ color: '#fff', fontWeight: 800, fontSize: 17 }}>SpeedToyz</span>
+          </div>
+          <div style={{ color: '#4b5563', fontSize: 11, marginTop: 2 }}>Admin Panel</div>
+        </div>
+
+        <div style={{ flex: 1, padding: '14px 10px', overflowY: 'auto' }}>
+          {sideLinks.map(({ key, icon, label }) => (
+            <button key={key} onClick={() => setActivePage(key)}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, border: 'none', background: activePage === key ? 'rgba(239,68,68,0.12)' : 'none', color: activePage === key ? '#ef4444' : '#9ca3af', cursor: 'pointer', fontSize: 14, fontWeight: activePage === key ? 600 : 400, textAlign: 'left', marginBottom: 2, transition: 'all 0.15s' }}
+              onMouseEnter={e => { if (activePage !== key) { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#d1d5db' } }}
+              onMouseLeave={e => { if (activePage !== key) { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#9ca3af' } }}>
+              <span style={{ fontSize: 16 }}>{icon}</span> {label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ padding: '16px 14px', borderTop: '1px solid #1f2937' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, flexShrink: 0 }}>{user.name?.[0]}</div>
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ color: '#fff', fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</div>
+              <div style={{ color: '#4b5563', fontSize: 11 }}>Administrator</div>
+            </div>
+          </div>
+          <button onClick={() => { logout(); navigate('/') }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)', color: '#ef4444', padding: '8px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+            <FiLogOut size={14} /> Logout
+          </button>
+        </div>
+      </div>
+
+      {/* ── Main Content ─────────────────────────────────────────────────────── */}
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        {/* Topbar */}
+        <div style={{ borderBottom: '1px solid #1f2937', padding: '16px 32px', background: '#050505', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
+          <div>
+            <h1 style={{ color: '#fff', fontSize: 20, fontWeight: 800, margin: 0 }}>
+              {{ overview: 'Dashboard Overview', cars: 'Car Management', bookings: 'All Bookings', users: 'User Management', analytics: 'Analytics', settings: 'Settings' }[activePage]}
+            </h1>
+            <p style={{ color: '#4b5563', fontSize: 12, margin: '2px 0 0' }}>Manage your platform efficiently</p>
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '7px 14px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+              <FiExternalLink size={13} /> Live Site
+            </button>
+            {activePage === 'cars' && (
+              <button onClick={() => setShowAddCar(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#ef4444', border: 'none', color: '#fff', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer', fontWeight: 700 }}>
+                <FiPlus size={14} /> Add Car
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div style={{ padding: 28 }}>
+
+          {/* ── Overview ─────────────────────────────────────────────────────── */}
+          {activePage === 'overview' && (
+            <div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
+                {[
+                  { label: 'Total Revenue', value: fmt(stats.revenue || MOCK_STATS.revenue), icon: '💰', change: '+12.5%', color: '#ef4444' },
+                  { label: 'Total Bookings', value: stats.totalBookings || MOCK_STATS.totalBookings, icon: '📅', change: '+8.2%', color: '#3b82f6' },
+                  { label: 'Active Cars', value: stats.activeCars || MOCK_STATS.activeCars, icon: '🚗', change: '+4.1%', color: '#10b981' },
+                  { label: 'Total Users', value: (stats.totalUsers || MOCK_STATS.totalUsers).toLocaleString(), icon: '👥', change: '+18.7%', color: '#f59e0b' },
+                ].map(s => <StatCard key={s.label} {...s} />)}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 20, marginBottom: 20 }}>
+                {/* Revenue chart */}
+                <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+                    <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, margin: 0 }}>Revenue Overview</h3>
+                    <select style={{ background: '#1f2937', border: '1px solid #374151', color: '#9ca3af', padding: '5px 10px', borderRadius: 6, fontSize: 12, outline: 'none' }}>
+                      <option>Last 7 months</option><option>Last year</option>
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, height: 160 }}>
+                    {barData.map((d, i) => (
+                      <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                        <div style={{ width: '100%', background: `linear-gradient(to top, #ef4444, rgba(239,68,68,0.4))`, borderRadius: '5px 5px 0 0', height: `${(d.revenue / maxBar) * 140}px`, minHeight: 4, transition: 'height 0.5s ease', cursor: 'pointer', position: 'relative' }}
+                          title={`${d.month}: ${fmt(d.revenue)}`} />
+                        <span style={{ color: '#6b7280', fontSize: 11 }}>{d.month}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Fleet distribution */}
+                <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28 }}>
+                  <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, margin: '0 0 24px' }}>Fleet Distribution</h3>
+                  {(stats.fleetDistribution || MOCK_STATS.fleetDistribution).map((d, i) => {
+                    const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b']
+                    const total = (stats.fleetDistribution || MOCK_STATS.fleetDistribution).reduce((s, x) => s + x.count, 0)
+                    const pct = Math.round((d.count / total) * 100)
+                    return (
+                      <div key={d.category} style={{ marginBottom: 16 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 7 }}>
+                          <span style={{ color: '#d1d5db', fontSize: 14 }}>{d.category}</span>
+                          <span style={{ color: colors[i], fontSize: 13, fontWeight: 700 }}>{pct}%</span>
+                        </div>
+                        <div style={{ background: '#1f2937', borderRadius: 4, height: 6 }}>
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: i * 0.1, duration: 0.7 }}
+                            style={{ background: colors[i], height: '100%', borderRadius: 4 }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Recent bookings table */}
+              <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14 }}>
+                <div style={{ padding: '20px 24px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, margin: 0 }}>Recent Bookings</h3>
+                  <button onClick={() => setActivePage('bookings')} style={{ background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '6px 14px', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>View All</button>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
+                    {['ID', 'Car', 'Customer', 'Pickup', 'Amount', 'Status'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+                  </tr></thead>
+                  <tbody>{bookings.slice(0, 5).map(b => (
+                    <tr key={b._id} style={{ transition: 'background 0.15s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <td style={{ ...tdStyle, color: '#6b7280', fontSize: 13 }}>{b._id}</td>
+                      <td style={{ ...tdStyle, color: '#fff', fontWeight: 600, fontSize: 14 }}>{b.car?.name}</td>
+                      <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{b.user?.name}</td>
+                      <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{b.pickupDate}</td>
+                      <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>{fmt(b.totalPrice)}</td>
+                      <td style={tdStyle}><StatusBadge status={b.bookingStatus} /></td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ── Car Management ───────────────────────────────────────────────── */}
+          {activePage === 'cars' && (
+            <div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
+                {[
+                  ['Total Cars', cars.length, '🚗'],
+                  ['Available', cars.filter(c => c.available !== false).length, '✅'],
+                  ['Sports', cars.filter(c => c.category === 'Sports').length, '🏎️'],
+                  ['Supercars', cars.filter(c => c.category === 'Supercar').length, '⚡'],
+                ].map(([l, v, i]) => (
+                  <div key={l} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: '16px 20px' }}>
+                    <div style={{ fontSize: 24, marginBottom: 8 }}>{i}</div>
+                    <div style={{ color: '#fff', fontSize: 24, fontWeight: 900 }}>{v}</div>
+                    <div style={{ color: '#6b7280', fontSize: 12, marginTop: 3 }}>{l}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
+                    {['Car', 'Brand', 'Category', 'Price/Day', 'Seats', 'Rating', 'Status', 'Actions'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+                  </tr></thead>
+                  <tbody>{cars.map(car => {
+                    const imgSrc = car.images?.[0]?.startsWith('http') ? car.images[0] : car.images?.[0] ? `${API_URL}/uploads/${car.images[0]}` : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=100'
+                    return (
+                      <tr key={car._id} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        <td style={tdStyle}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div style={{ width: 56, height: 38, borderRadius: 7, overflow: 'hidden', flexShrink: 0 }}>
+                              <img src={imgSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=100' }} />
+                            </div>
+                            <span style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>{car.name}</span>
+                          </div>
+                        </td>
+                        <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{car.brand}</td>
+                        <td style={tdStyle}><span style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', fontSize: 10, padding: '3px 8px', borderRadius: 4, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>{car.category}</span></td>
+                        <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>${car.pricePerDay}</td>
+                        <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{car.seats}</td>
+                        <td style={{ ...tdStyle, color: '#f59e0b', fontSize: 13 }}>★ {car.rating || 4.5}</td>
+                        <td style={tdStyle}><StatusBadge status={car.available !== false ? 'Active' : 'Banned'} /></td>
+                        <td style={tdStyle}>
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <button style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(59,130,246,0.1)', border: 'none', color: '#3b82f6', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                              <FiEdit2 size={12} /> Edit
+                            </button>
+                            <button onClick={() => handleDeleteCar(car._id)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                              <FiTrash2 size={12} /> Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}</tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ── Bookings ─────────────────────────────────────────────────────── */}
+          {activePage === 'bookings' && (
+            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
+                  {['Booking ID', 'Car', 'Customer', 'Pickup', 'Return', 'Total', 'Status', 'Actions'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+                </tr></thead>
+                <tbody>{bookings.map(b => (
+                  <tr key={b._id} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <td style={{ ...tdStyle, color: '#6b7280', fontSize: 12, fontFamily: 'monospace' }}>{b._id}</td>
+                    <td style={{ ...tdStyle, color: '#fff', fontWeight: 600, fontSize: 14 }}>{b.car?.name}</td>
+                    <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{b.user?.name}</td>
+                    <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{b.pickupDate}</td>
+                    <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{b.returnDate}</td>
+                    <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>{fmt(b.totalPrice)}</td>
+                    <td style={tdStyle}><StatusBadge status={b.bookingStatus} /></td>
+                    <td style={tdStyle}>
+                      <button onClick={() => { setBookings(prev => prev.map(bk => bk._id === b._id ? { ...bk, bookingStatus: 'Cancelled' } : bk)); addToast('Booking cancelled', 'info') }}
+                        style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                        Cancel
+                      </button>
+                    </td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── Users ────────────────────────────────────────────────────────── */}
+          {activePage === 'users' && (
+            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
+                  {['User', 'Email', 'Role', 'Bookings', 'Status', 'Actions'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+                </tr></thead>
+                <tbody>{users.map(u => (
+                  <tr key={u._id} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <td style={tdStyle}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: u.role === 'admin' ? '#7c3aed' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 14 }}>{u.name[0]}</div>
+                        <span style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>{u.name}</span>
+                      </div>
+                    </td>
+                    <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{u.email}</td>
+                    <td style={tdStyle}><StatusBadge status={u.role === 'admin' ? 'Active' : 'Active'} /></td>
+                    <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{u.bookingCount}</td>
+                    <td style={tdStyle}><StatusBadge status={u.status} /></td>
+                    <td style={tdStyle}>
+                      <button onClick={() => { setUsers(prev => prev.map(uu => uu._id === u._id ? { ...uu, status: uu.status === 'Banned' ? 'Active' : 'Banned' } : uu)); addToast(u.status === 'Banned' ? 'User unbanned' : 'User banned', 'info') }}
+                        style={{ background: u.status === 'Banned' ? 'rgba(22,163,74,0.1)' : 'rgba(239,68,68,0.1)', border: 'none', color: u.status === 'Banned' ? '#16a34a' : '#ef4444', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                        {u.status === 'Banned' ? 'Unban' : 'Ban'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── Analytics ───────────────────────────────────────────────────── */}
+          {activePage === 'analytics' && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              {[
+                { title: 'Top Performing Cars', data: [['Ferrari F8 Tributo', 42, '#ef4444'], ['Porsche 911', 38, '#3b82f6'], ['Lamborghini', 31, '#f59e0b'], ['Mercedes S-Class', 28, '#10b981']] },
+                { title: 'Booking Trends', data: [['Mon', 12, '#ef4444'], ['Tue', 18, '#ef4444'], ['Wed', 9, '#ef4444'], ['Thu', 24, '#ef4444'], ['Fri', 31, '#ef4444'], ['Sat', 42, '#ef4444'], ['Sun', 28, '#ef4444']] },
+              ].map(({ title, data }) => (
+                <div key={title} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28 }}>
+                  <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 24 }}>{title}</h3>
+                  {data.map(([label, val, color]) => (
+                    <div key={label} style={{ marginBottom: 14 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                        <span style={{ color: '#d1d5db', fontSize: 13 }}>{label}</span>
+                        <span style={{ color, fontSize: 13, fontWeight: 700 }}>{val}</span>
+                      </div>
+                      <div style={{ background: '#1f2937', borderRadius: 4, height: 6 }}>
+                        <motion.div initial={{ width: 0 }} animate={{ width: `${(val / 50) * 100}%` }} transition={{ duration: 0.6 }}
+                          style={{ background: color, height: '100%', borderRadius: 4 }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ── Settings ────────────────────────────────────────────────────── */}
+          {activePage === 'settings' && (
+            <div style={{ maxWidth: 600 }}>
+              <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28, marginBottom: 20 }}>
+                <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 20 }}>Platform Settings</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {[['Platform Name', 'SpeedToyz'], ['Support Email', 'support@speedtoyz.com'], ['Currency', 'USD ($)'], ['Tax Rate', '8%']].map(([l, v]) => (
+                    <div key={l}><Input label={l} defaultValue={v} /></div>
+                  ))}
+                  <button style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '11px 28px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, alignSelf: 'flex-start' }}>Save Settings</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Add Car Modal ─────────────────────────────────────────────────────── */}
+      <Modal isOpen={showAddCar} onClose={() => setShowAddCar(false)} title="Add New Car" maxWidth={580}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          {[
+            { label: 'Car Name *', key: 'name', placeholder: 'e.g. 911 Carrera S' },
+            { label: 'Brand *', key: 'brand', placeholder: 'e.g. Porsche' },
+            { label: 'Price Per Day *', key: 'pricePerDay', placeholder: '799', type: 'number' },
+            { label: 'Seats', key: 'seats', placeholder: '2', type: 'number' },
+          ].map(({ label, key, placeholder, type = 'text' }) => (
+            <div key={key}>
+              <Input label={label} type={type} placeholder={placeholder} value={newCar[key]} onChange={e => setNewCar(p => ({ ...p, [key]: e.target.value }))} />
+            </div>
+          ))}
+          {[
+            { label: 'Category', key: 'category', opts: ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar'] },
+            { label: 'Fuel Type', key: 'fuelType', opts: ['Petrol', 'Hybrid', 'Electric', 'Diesel'] },
+            { label: 'Transmission', key: 'transmission', opts: ['Automatic', 'Manual'] },
+          ].map(({ label, key, opts }) => (
+            <div key={key}>
+              <label style={{ display: 'block', color: '#9ca3af', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{label}</label>
+              <select value={newCar[key]} onChange={e => setNewCar(p => ({ ...p, [key]: e.target.value }))} style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#d1d5db', padding: '10px 12px', fontSize: 14, outline: 'none' }}>
+                {opts.map(o => <option key={o} value={o}>{o}</option>)}
+              </select>
+            </div>
+          ))}
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{ display: 'block', color: '#9ca3af', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Description</label>
+            <textarea value={newCar.description} onChange={e => setNewCar(p => ({ ...p, description: e.target.value }))} placeholder="Car description..." rows={3}
+              style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 14px', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box' }} />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
+          <button onClick={() => setShowAddCar(false)} style={{ background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '10px 24px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
+          <button onClick={handleAddCar} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 28px', borderRadius: 8, cursor: 'pointer', fontWeight: 700 }}>Add Car</button>
+        </div>
+      </Modal>
+    </div>
+  )
+}
