@@ -16,6 +16,17 @@ export default function CarDetailPage() {
   const [car, setCar] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeImg, setActiveImg] = useState(0)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+      setIsTablet(window.innerWidth < 1024)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -64,7 +75,7 @@ export default function CarDetailPage() {
   ]
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: '36px 80px 60px' }}>
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '20px 16px 60px' : '36px 80px 60px' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Breadcrumb */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 28, color: '#6b7280', fontSize: 14 }}>
@@ -77,7 +88,7 @@ export default function CarDetailPage() {
           <span style={{ color: '#fff' }}>{car.name}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 52 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.15fr 1fr', gap: isMobile ? 24 : 52 }}>
           {/* ── Left: Images + Description ─────────────────────────────────── */}
           <div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 14, height: 360, position: 'relative' }}>
@@ -119,18 +130,18 @@ export default function CarDetailPage() {
           </div>
 
           {/* ── Right: Details + Booking ────────────────────────────────────── */}
-          <div style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
+          <div style={{ position: isMobile ? 'relative' : 'sticky', top: isMobile ? 0 : 80, height: 'fit-content' }}>
             <div style={{ marginBottom: 10 }}><Badge>{car.category}</Badge></div>
-            <h1 style={{ color: '#fff', fontSize: 38, fontWeight: 900, letterSpacing: -1.5, margin: '10px 0 4px' }}>{car.name}</h1>
-            <p style={{ color: '#6b7280', fontSize: 17, marginBottom: 16 }}>{car.brand}</p>
+            <h1 style={{ color: '#fff', fontSize: isMobile ? 24 : 38, fontWeight: 900, letterSpacing: -1.5, margin: '10px 0 4px' }}>{car.name}</h1>
+            <p style={{ color: '#6b7280', fontSize: isMobile ? 15 : 17, marginBottom: 16 }}>{car.brand}</p>
             <div style={{ marginBottom: 24 }}><StarRating rating={car.rating || 4.8} /></div>
 
             {/* Specs grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
               {specs.map(({ icon, label, val }) => (
-                <div key={label} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: '14px 16px' }}>
-                  <div style={{ color: '#6b7280', fontSize: 12, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>{icon} {label}</div>
-                  <div style={{ color: val === 'Available Now' ? '#16a34a' : val === 'Unavailable' ? '#ef4444' : '#fff', fontWeight: 600, fontSize: 15 }}>{val}</div>
+                <div key={label} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: isMobile ? '10px 12px' : '14px 16px' }}>
+                  <div style={{ color: '#6b7280', fontSize: isMobile ? 11 : 12, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>{icon} {label}</div>
+                  <div style={{ color: val === 'Available Now' ? '#16a34a' : val === 'Unavailable' ? '#ef4444' : '#fff', fontWeight: 600, fontSize: isMobile ? 13 : 15 }}>{val}</div>
                 </div>
               ))}
             </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { FiGrid, FiTruck, FiCalendar, FiUsers, FiTrendingUp, FiSettings, FiLogOut, FiPlus, FiEdit2, FiTrash2, FiExternalLink } from 'react-icons/fi'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FiGrid, FiTruck, FiCalendar, FiUsers, FiTrendingUp, FiSettings, FiLogOut, FiPlus, FiEdit2, FiTrash2, FiExternalLink, FiMenu, FiX } from 'react-icons/fi'
 import { StatCard, StatusBadge, Modal, Input, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -34,7 +34,20 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState(MOCK_USERS_ADMIN)
   const [loading, setLoading] = useState(true)
   const [showAddCar, setShowAddCar] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
   const [newCar, setNewCar] = useState({ name: '', brand: '', category: 'Sports', pricePerDay: '', fuelType: 'Petrol', seats: '', transmission: 'Automatic', description: '' })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+      setIsTablet(window.innerWidth < 1024)
+      if (window.innerWidth < 1024) setSidebarOpen(false)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,68 +117,80 @@ export default function AdminDashboard() {
   return (
     <div style={{ display: 'flex', background: '#0a0a0a', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
       {/* ── Sidebar ──────────────────────────────────────────────────────────── */}
-      <div style={{ width: 224, background: '#050505', borderRight: '1px solid #1f2937', display: 'flex', flexDirection: 'column', position: 'sticky', top: 0, height: '100vh' }}>
-        <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1f2937' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-            <div style={{ background: '#ef4444', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 900, fontSize: 15 }}>S</div>
-            <span style={{ color: '#fff', fontWeight: 800, fontSize: 17 }}>SpeedToyz</span>
-          </div>
-          <div style={{ color: '#4b5563', fontSize: 11, marginTop: 2 }}>Admin Panel</div>
-        </div>
-
-        <div style={{ flex: 1, padding: '14px 10px', overflowY: 'auto' }}>
-          {sideLinks.map(({ key, icon, label }) => (
-            <button key={key} onClick={() => setActivePage(key)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, border: 'none', background: activePage === key ? 'rgba(239,68,68,0.12)' : 'none', color: activePage === key ? '#ef4444' : '#9ca3af', cursor: 'pointer', fontSize: 14, fontWeight: activePage === key ? 600 : 400, textAlign: 'left', marginBottom: 2, transition: 'all 0.15s' }}
-              onMouseEnter={e => { if (activePage !== key) { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#d1d5db' } }}
-              onMouseLeave={e => { if (activePage !== key) { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#9ca3af' } }}>
-              <span style={{ fontSize: 16 }}>{icon}</span> {label}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ padding: '16px 14px', borderTop: '1px solid #1f2937' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-            <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, flexShrink: 0 }}>{user.name?.[0]}</div>
-            <div style={{ overflow: 'hidden' }}>
-              <div style={{ color: '#fff', fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</div>
-              <div style={{ color: '#4b5563', fontSize: 11 }}>Administrator</div>
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div initial={{ x: -224 }} animate={{ x: 0 }} exit={{ x: -224 }} transition={{ type: 'tween', duration: 0.2 }}
+            style={{ width: 224, background: '#050505', borderRight: '1px solid #1f2937', display: 'flex', flexDirection: 'column', position: isTablet ? 'fixed' : 'sticky', top: 0, height: '100vh', zIndex: 50, left: 0 }}>
+            <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1f2937' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                <div style={{ background: '#ef4444', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 900, fontSize: 15 }}>S</div>
+                <span style={{ color: '#fff', fontWeight: 800, fontSize: 17 }}>SpeedToyz</span>
+              </div>
+              <div style={{ color: '#4b5563', fontSize: 11, marginTop: 2 }}>Admin Panel</div>
             </div>
-          </div>
-          <button onClick={() => { logout(); navigate('/') }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)', color: '#ef4444', padding: '8px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
-            <FiLogOut size={14} /> Logout
-          </button>
-        </div>
-      </div>
+
+            <div style={{ flex: 1, padding: '14px 10px', overflowY: 'auto' }}>
+              {sideLinks.map(({ key, icon, label }) => (
+                <button key={key} onClick={() => { setActivePage(key); if (isTablet) setSidebarOpen(false) }}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, border: 'none', background: activePage === key ? 'rgba(239,68,68,0.12)' : 'none', color: activePage === key ? '#ef4444' : '#9ca3af', cursor: 'pointer', fontSize: 14, fontWeight: activePage === key ? 600 : 400, textAlign: 'left', marginBottom: 2, transition: 'all 0.15s' }}
+                  onMouseEnter={e => { if (activePage !== key) { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#d1d5db' } }}
+                  onMouseLeave={e => { if (activePage !== key) { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#9ca3af' } }}>
+                  <span style={{ fontSize: 16 }}>{icon}</span> {label}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ padding: '16px 14px', borderTop: '1px solid #1f2937' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, flexShrink: 0 }}>{user.name?.[0]}</div>
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{ color: '#fff', fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</div>
+                  <div style={{ color: '#4b5563', fontSize: 11 }}>Administrator</div>
+                </div>
+              </div>
+              <button onClick={() => { logout(); navigate('/') }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)', color: '#ef4444', padding: '8px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+                <FiLogOut size={14} /> Logout
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Main Content ─────────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
+      <div style={{ flex: 1, overflow: 'auto', marginLeft: isTablet && sidebarOpen ? 224 : 0 }}>
         {/* Topbar */}
-        <div style={{ borderBottom: '1px solid #1f2937', padding: '16px 32px', background: '#050505', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
-          <div>
-            <h1 style={{ color: '#fff', fontSize: 20, fontWeight: 800, margin: 0 }}>
-              {{ overview: 'Dashboard Overview', cars: 'Car Management', bookings: 'All Bookings', users: 'User Management', analytics: 'Analytics', settings: 'Settings' }[activePage]}
-            </h1>
-            <p style={{ color: '#4b5563', fontSize: 12, margin: '2px 0 0' }}>Manage your platform efficiently</p>
+        <div style={{ borderBottom: '1px solid #1f2937', padding: isMobile ? '12px 16px' : '16px 32px', background: '#050505', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {isTablet && (
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: 0 }}>
+                {sidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+              </button>
+            )}
+            <div>
+              <h1 style={{ color: '#fff', fontSize: isMobile ? 16 : 20, fontWeight: 800, margin: 0 }}>
+                {{ overview: 'Dashboard Overview', cars: 'Car Management', bookings: 'All Bookings', users: 'User Management', analytics: 'Analytics', settings: 'Settings' }[activePage]}
+              </h1>
+              {!isMobile && <p style={{ color: '#4b5563', fontSize: 12, margin: '2px 0 0' }}>Manage your platform efficiently</p>}
+            </div>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '7px 14px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
-              <FiExternalLink size={13} /> Live Site
+            <button onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '7px 14px', borderRadius: 8, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              <FiExternalLink size={13} /> {isMobile ? 'Live' : 'Live Site'}
             </button>
             {activePage === 'cars' && (
-              <button onClick={() => setShowAddCar(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#ef4444', border: 'none', color: '#fff', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer', fontWeight: 700 }}>
-                <FiPlus size={14} /> Add Car
+              <button onClick={() => setShowAddCar(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#ef4444', border: 'none', color: '#fff', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                <FiPlus size={14} /> {isMobile ? '' : 'Add Car'}
               </button>
             )}
           </div>
         </div>
 
-        <div style={{ padding: 28 }}>
+        <div style={{ padding: isMobile ? '16px' : 28 }}>
 
           {/* ── Overview ─────────────────────────────────────────────────────── */}
           {activePage === 'overview' && (
             <div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
                 {[
                   { label: 'Total Revenue', value: fmt(stats.revenue || MOCK_STATS.revenue), icon: '💰', change: '+12.5%', color: '#ef4444' },
                   { label: 'Total Bookings', value: stats.totalBookings || MOCK_STATS.totalBookings, icon: '📅', change: '+8.2%', color: '#3b82f6' },
@@ -174,7 +199,7 @@ export default function AdminDashboard() {
                 ].map(s => <StatCard key={s.label} {...s} />)}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 20, marginBottom: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr' : '1.6fr 1fr', gap: 20, marginBottom: 20 }}>
                 {/* Revenue chart */}
                 <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>

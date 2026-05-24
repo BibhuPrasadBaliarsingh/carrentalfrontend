@@ -1,7 +1,16 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FiInstagram, FiTwitter, FiFacebook, FiYoutube } from 'react-icons/fi'
 
 export default function Footer() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const links = {
     'Quick Links': [
       { label: 'Home', to: '/' },
@@ -33,8 +42,8 @@ export default function Footer() {
 
   return (
     <footer style={{ background: '#050505', borderTop: '1px solid #1f2937' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 80px 28px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48, marginBottom: 48 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '40px 20px 20px' : '56px 80px 28px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: isMobile ? 32 : 48, marginBottom: 48 }}>
           {/* Brand */}
           <div>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 16 }}>
@@ -71,9 +80,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 12 }}>
           <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} SpeedToyz. All rights reserved.</span>
-          <div style={{ display: 'flex', gap: 24 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 24 }}>
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(t => (
               <Link key={t} to="#" style={{ color: '#4b5563', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}
                 onMouseEnter={e => e.target.style.color = '#9ca3af'}

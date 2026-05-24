@@ -18,6 +18,8 @@ export default function BrowsePage() {
   const [sort, setSort] = useState('price-asc')
   const [currentPage, setCurrentPage] = useState(1)
   const [filtersOpen, setFiltersOpen] = useState(true)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
   const [filters, setFilters] = useState({
     brand: '',
     category: searchParams.get('category') || '',
@@ -28,6 +30,16 @@ export default function BrowsePage() {
     available: true,
   })
   const PER_PAGE = 9
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+      setIsTablet(window.innerWidth < 1024)
+      if (window.innerWidth < 768) setFiltersOpen(false)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -69,15 +81,15 @@ export default function BrowsePage() {
   const selectStyle = { width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#d1d5db', padding: '9px 12px', fontSize: 13, outline: 'none', cursor: 'pointer' }
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: '40px 48px' }}>
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '20px 16px' : '40px 48px' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: 32 }}>
-          <h1 style={{ color: '#fff', fontSize: 34, fontWeight: 800, margin: '0 0 8px', letterSpacing: -1 }}>Browse Cars</h1>
+          <h1 style={{ color: '#fff', fontSize: isMobile ? 26 : 34, fontWeight: 800, margin: '0 0 8px', letterSpacing: -1 }}>Browse Cars</h1>
           <p style={{ color: '#6b7280', fontSize: 15 }}>Find the perfect luxury car for your next journey</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: filtersOpen ? '260px 1fr' : '0 1fr', gap: filtersOpen ? 32 : 0, transition: 'all 0.3s' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile || !filtersOpen ? '1fr' : '260px 1fr', gap: isMobile ? 16 : filtersOpen ? 32 : 0, transition: 'all 0.3s' }}>
 
           {/* ── Sidebar ──────────────────────────────────────────────────────── */}
           {filtersOpen && (
@@ -180,13 +192,13 @@ export default function BrowsePage() {
 
             {/* Grid */}
             {loading ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 20 }}>
                 {Array(6).fill(0).map((_, i) => <CarCardSkeleton key={i} />)}
               </div>
             ) : paginated.length === 0 ? (
               <EmptyState icon="🚗" title="No cars found" message="Try adjusting your filters or search terms." action="Reset Filters" onAction={resetFilters} />
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 20 }}>
                 {paginated.map((car, i) => <CarCard key={car._id} car={car} index={i} />)}
               </div>
             )}
