@@ -38,7 +38,7 @@ export default function Navbar() {
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 16px' : '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', minWidth: 0 }}>
-          <div style={{ background: '#ef4444', width: 30, height: 30, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 16, color: '#fff', flexShrink: 0 }}>S</div>
+          <img src="/logo.jpeg" alt="SpeedToyz logo" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }} />
           <span style={{ color: '#fff', fontWeight: 800, fontSize: isMobile ? 16 : 18, letterSpacing: -0.5, display: isMobile ? 'none' : 'block' }}>SpeedToyz</span>
         </Link>
 

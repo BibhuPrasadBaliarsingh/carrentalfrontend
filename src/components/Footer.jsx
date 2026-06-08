@@ -48,7 +48,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 16 }}>
-              <div style={{ background: '#ef4444', width: 32, height: 32, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#fff', fontSize: 16 }}>S</div>
+              <img src="/logo.jpeg" alt="SpeedToyz logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
               <span style={{ color: '#fff', fontWeight: 800, fontSize: 20 }}>SpeedToyz</span>
             </Link>
             <p style={{ color: '#6b7280', fontSize: 14, lineHeight: 1.8, maxWidth: 320, marginBottom: 18 }}>
