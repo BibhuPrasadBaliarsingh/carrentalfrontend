@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FiInstagram, FiTwitter, FiFacebook, FiYoutube } from 'react-icons/fi'
+import { FiInstagram, FiTwitter, FiFacebook, FiYoutube, FiMapPin, FiPhone, FiMail } from 'react-icons/fi'
 
 export default function Footer() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
@@ -41,8 +41,9 @@ export default function Footer() {
   ]
 
   return (
-    <footer style={{ background: '#050505', borderTop: '1px solid #1f2937' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '40px 20px 20px' : '56px 80px 28px' }}>
+    <footer style={{ background: '#050505', borderTop: '1px solid #1f2937', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08, filter: 'grayscale(1)' }} />
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: isMobile ? '40px 20px 20px' : '56px 80px 28px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: isMobile ? 32 : 48, marginBottom: 48 }}>
           {/* Brand */}
           <div>
@@ -50,9 +51,14 @@ export default function Footer() {
               <div style={{ background: '#ef4444', width: 32, height: 32, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#fff', fontSize: 16 }}>S</div>
               <span style={{ color: '#fff', fontWeight: 800, fontSize: 20 }}>SpeedToyz</span>
             </Link>
-            <p style={{ color: '#6b7280', fontSize: 14, lineHeight: 1.8, maxWidth: 280, marginBottom: 24 }}>
-              Experience the thrill of luxury driving. Your premier destination for premium car rentals worldwide.
+            <p style={{ color: '#6b7280', fontSize: 14, lineHeight: 1.8, maxWidth: 320, marginBottom: 18 }}>
+              Best self-drive and luxury car rental in Bhubaneswar with clean cars, affordable rates, 24/7 support, and smooth Odisha tours.
             </p>
+            <div style={{ display: 'grid', gap: 8, color: '#d1d5db', fontSize: 13, marginBottom: 18 }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={14} color="#ef4444" /> Bhubaneswar, Odisha</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> +91 98765 43210</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> support@speedtoyz.com</span>
+            </div>
             <div style={{ display: 'flex', gap: 12 }}>
               {socials.map(({ Icon, href }, i) => (
                 <a key={i} href={href} style={{ width: 36, height: 36, borderRadius: 8, background: '#111827', border: '1px solid #1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', textDecoration: 'none', transition: 'all 0.2s' }}
@@ -79,6 +85,19 @@ export default function Footer() {
           ))}
         </div>
 
+        <div style={{ marginTop: 8, marginBottom: 24, padding: '18px', borderRadius: 18, border: '1px solid #1f2937', background: 'linear-gradient(135deg, rgba(17,24,39,0.95), rgba(5,5,5,0.95))' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.1fr 0.9fr', gap: 18, alignItems: 'center' }}>
+            <div>
+              <h4 style={{ color: '#fff', marginBottom: 8, fontSize: 16, fontWeight: 700 }}>Visit us for premium self-drive cars</h4>
+              <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.7, margin: 0 }}>Explore premium cars in Bhubaneswar, airport transfers, and Odisha road trips with a team that helps you travel confidently.</p>
+            </div>
+            <div style={{ borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)', padding: 14 }}>
+              <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 6 }}>Map</div>
+              <div style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.6 }}>Bhubaneswar • Cuttack • Puri • Konark • Chilika • Odisha tourism routes</div>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom bar */}
         <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 12 }}>
           <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} SpeedToyz. All rights reserved.</span>
@@ -93,6 +112,15 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <a
+        href="https://wa.me/919876543210?text=Hi%20SpeedToyz%2C%20I%20would%20like%20to%20book%20a%20self-drive%20car%20in%20Bhubaneswar."
+        target="_blank"
+        rel="noreferrer"
+        style={{ position: 'fixed', right: 18, bottom: 18, zIndex: 50, width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #25d366, #128c7e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 12px 30px rgba(37, 211, 102, 0.35)', textDecoration: 'none' }}
+        aria-label="Chat on WhatsApp"
+      >
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.272-.099-.47-.149-.67.149-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.149-.174.198-.297.297-.495.099-.198.05-.372-.025-.521-.074-.149-.67-1.612-.92-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.372-.01-.571-.01-.198 0-.521.074-.793.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.073.149.198 2.096 3.2 5.077 4.487.709.306 1.262.49 1.694.625.712.227 1.36.195 1.872.118.572-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.174-1.413-.074-.123-.272-.198-.57-.347z"/></svg>
+      </a>
     </footer>
   )
 }

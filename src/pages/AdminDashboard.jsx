@@ -157,7 +157,7 @@ export default function AdminDashboard() {
       </AnimatePresence>
 
       {/* ── Main Content ─────────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, overflow: 'auto', marginLeft: isTablet && sidebarOpen ? 224 : 0 }}>
+      <div style={{ flex: 1, overflow: 'auto', marginLeft: !isTablet && sidebarOpen ? 224 : 0 }}>
         {/* Topbar */}
         <div style={{ borderBottom: '1px solid #1f2937', padding: isMobile ? '12px 16px' : '16px 32px', background: '#050505', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -248,7 +248,8 @@ export default function AdminDashboard() {
                   <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, margin: 0 }}>Recent Bookings</h3>
                   <button onClick={() => setActivePage('bookings')} style={{ background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '6px 14px', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>View All</button>
                 </div>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', minWidth: 700, borderCollapse: 'collapse' }}>
                   <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
                     {['ID', 'Car', 'Customer', 'Pickup', 'Amount', 'Status'].map(h => <th key={h} style={thStyle}>{h}</th>)}
                   </tr></thead>
@@ -265,12 +266,13 @@ export default function AdminDashboard() {
                 </table>
               </div>
             </div>
+          </div>
           )}
 
           {/* ── Car Management ───────────────────────────────────────────────── */}
           {activePage === 'cars' && (
             <div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
                 {[
                   ['Total Cars', cars.length, '🚗'],
                   ['Available', cars.filter(c => c.available !== false).length, '✅'],
@@ -286,7 +288,8 @@ export default function AdminDashboard() {
               </div>
 
               <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', minWidth: 700, borderCollapse: 'collapse' }}>
                   <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
                     {['Car', 'Brand', 'Category', 'Price/Day', 'Seats', 'Rating', 'Status', 'Actions'].map(h => <th key={h} style={thStyle}>{h}</th>)}
                   </tr></thead>
@@ -324,12 +327,14 @@ export default function AdminDashboard() {
                 </table>
               </div>
             </div>
+          </div>
           )}
 
           {/* ── Bookings ─────────────────────────────────────────────────────── */}
           {activePage === 'bookings' && (
             <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', minWidth: 700, borderCollapse: 'collapse' }}>
                 <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
                   {['Booking ID', 'Car', 'Customer', 'Pickup', 'Return', 'Total', 'Status', 'Actions'].map(h => <th key={h} style={thStyle}>{h}</th>)}
                 </tr></thead>
@@ -352,12 +357,14 @@ export default function AdminDashboard() {
                 ))}</tbody>
               </table>
             </div>
+          </div>
           )}
 
           {/* ── Users ────────────────────────────────────────────────────────── */}
           {activePage === 'users' && (
             <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', minWidth: 700, borderCollapse: 'collapse' }}>
                 <thead><tr style={{ background: '#0f1929', borderBottom: '1px solid #1f2937' }}>
                   {['User', 'Email', 'Role', 'Bookings', 'Status', 'Actions'].map(h => <th key={h} style={thStyle}>{h}</th>)}
                 </tr></thead>
@@ -383,11 +390,12 @@ export default function AdminDashboard() {
                 ))}</tbody>
               </table>
             </div>
+          </div>
           )}
 
           {/* ── Analytics ───────────────────────────────────────────────────── */}
           {activePage === 'analytics' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 20 }}>
               {[
                 { title: 'Top Performing Cars', data: [['Ferrari F8 Tributo', 42, '#ef4444'], ['Porsche 911', 38, '#3b82f6'], ['Lamborghini', 31, '#f59e0b'], ['Mercedes S-Class', 28, '#10b981']] },
                 { title: 'Booking Trends', data: [['Mon', 12, '#ef4444'], ['Tue', 18, '#ef4444'], ['Wed', 9, '#ef4444'], ['Thu', 24, '#ef4444'], ['Fri', 31, '#ef4444'], ['Sat', 42, '#ef4444'], ['Sun', 28, '#ef4444']] },
@@ -430,7 +438,7 @@ export default function AdminDashboard() {
 
       {/* ── Add Car Modal ─────────────────────────────────────────────────────── */}
       <Modal isOpen={showAddCar} onClose={() => setShowAddCar(false)} title="Add New Car" maxWidth={580}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
           {[
             { label: 'Car Name *', key: 'name', placeholder: 'e.g. 911 Carrera S' },
             { label: 'Brand *', key: 'brand', placeholder: 'e.g. Porsche' },
