@@ -40,6 +40,9 @@ export default function Footer() {
     { Icon: FiYoutube, href: '#' },
   ]
 
+  const googleMapEmbedUrl = 'https://maps.google.com/maps?q=Speed%20Toyz%20Cars%20Bhubaneswar&z=17&output=embed'
+  const googleMapLink = 'https://maps.app.goo.gl/VELkem4AeJ3PnYxp6?g_st=ipc'
+
   return (
     <footer style={{ background: '#050505', borderTop: '1px solid #1f2937', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08, filter: 'grayscale(1)' }} />
@@ -48,8 +51,8 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 16 }}>
-              <img src="/logo.jpeg" alt="SpeedToyz logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
-              <span style={{ color: '#fff', fontWeight: 800, fontSize: 20 }}>SpeedToyz</span>
+              <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
+              <span style={{ color: '#fff', fontWeight: 800, fontSize: 20 }}>Speed Toyz Cars</span>
             </Link>
             <p style={{ color: '#6b7280', fontSize: 14, lineHeight: 1.8, maxWidth: 320, marginBottom: 18 }}>
               Best self-drive and luxury car rental in Bhubaneswar with clean cars, affordable rates, 24/7 support, and smooth Odisha tours.
@@ -86,21 +89,43 @@ export default function Footer() {
         </div>
 
         <div style={{ marginTop: 8, marginBottom: 24, padding: '18px', borderRadius: 18, border: '1px solid #1f2937', background: 'linear-gradient(135deg, rgba(17,24,39,0.95), rgba(5,5,5,0.95))' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.1fr 0.9fr', gap: 18, alignItems: 'center' }}>
-            <div>
-              <h4 style={{ color: '#fff', marginBottom: 8, fontSize: 16, fontWeight: 700 }}>Visit us for premium self-drive cars</h4>
-              <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.7, margin: 0 }}>Explore premium cars in Bhubaneswar, airport transfers, and Odisha road trips with a team that helps you travel confidently.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1.1fr', gap: 18, alignItems: 'stretch' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 240, padding: 16, borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+              <div>
+                <h4 style={{ color: '#fff', marginBottom: 12, fontSize: 18, fontWeight: 700 }}>Visit us for premium self-drive cars</h4>
+                <p style={{ color: '#9ca3af', fontSize: 14, lineHeight: 1.8, margin: 0 }}>Explore premium cars in Bhubaneswar, airport transfers, and Odisha road trips with a team that helps you travel confidently.</p>
+              </div>
+              <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
+                <div style={{ padding: 14, borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)' }}>
+                  <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Our location</strong>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Bhubaneswar, Odisha</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: +91 98765 43210</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: support@speedtoyz.com</span>
+                </div>
+                <a href={googleMapLink} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '12px 16px', borderRadius: 14, background: '#ef4444', color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
+                  Open in Google Maps
+                </a>
+              </div>
             </div>
-            <div style={{ borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)', padding: 14 }}>
-              <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 6 }}>Map</div>
-              <div style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.6 }}>Bhubaneswar • Cuttack • Puri • Konark • Chilika • Odisha tourism routes</div>
+            <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)', minHeight: 240 }}>
+              <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 6, padding: '14px 16px 0' }}>Map</div>
+              <iframe
+                title="Speed Toyz Cars location map"
+                src={googleMapEmbedUrl}
+                style={{ width: '100%', height: '100%', minHeight: 220, border: '0', display: 'block' }}
+                allowFullScreen={false}
+                loading="lazy"
+              />
+              <div style={{ padding: '14px 16px 18px', color: '#d1d5db', fontSize: 13, lineHeight: 1.6 }}>
+                <div>Bhubaneswar • Cuttack • Puri • Konark • Chilika • Odisha tourism routes</div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
         <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 12 }}>
-          <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} SpeedToyz. All rights reserved.</span>
+          <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} Speed Toyz Cars. All rights reserved.</span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 24 }}>
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(t => (
               <Link key={t} to="#" style={{ color: '#4b5563', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}
@@ -113,7 +138,7 @@ export default function Footer() {
         </div>
       </div>
       <a
-        href="https://wa.me/919876543210?text=Hi%20SpeedToyz%2C%20I%20would%20like%20to%20book%20a%20self-drive%20car%20in%20Bhubaneswar."
+        href="https://wa.me/919876543210?text=Hi%20Speed%20Toyz%20Cars%2C%20I%20would%20like%20to%20book%20a%20self-drive%20car%20in%20Bhubaneswar."
         target="_blank"
         rel="noreferrer"
         style={{ position: 'fixed', right: 18, bottom: 18, zIndex: 50, width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #25d366, #128c7e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 12px 30px rgba(37, 211, 102, 0.35)', textDecoration: 'none' }}
