@@ -64,7 +64,7 @@ export function StatusBadge({ status }) {
 export function StarRating({ rating, showCount = true }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-      <span style={{ color: '#f59e0b', fontSize: 13 }}>{'★'.repeat(Math.floor(rating))}{'☆'.repeat(5 - Math.floor(rating))}</span>
+      <span style={{ color: '#FFD700', fontSize: 13 }}>{'★'.repeat(Math.floor(rating))}{'☆'.repeat(5 - Math.floor(rating))}</span>
       {showCount && <span style={{ color: '#6b7280', fontSize: 12 }}>{rating}</span>}
     </div>
   )

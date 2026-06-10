@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
 :root {
   --primary: #ef4444;
   --primary-dark: #dc2626;
@@ -190,4 +192,12 @@ input:focus, select:focus, textarea:focus {
 /* Stat bar */
 .stat-bar {
   transition: width 0.8s ease;
+}
+
+/* Brand font (futuristic) */
+.brand-font {
+  font-family: 'Orbitron', 'Inter', system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 900;
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FiInstagram, FiTwitter, FiFacebook, FiYoutube, FiMapPin, FiPhone, FiMail } from 'react-icons/fi'
+import { FiInstagram, FiFacebook, FiMapPin, FiPhone, FiMail } from 'react-icons/fi'
 
 export default function Footer() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
@@ -34,13 +34,11 @@ export default function Footer() {
   }
 
   const socials = [
-    { Icon: FiInstagram, href: '#' },
-    { Icon: FiTwitter, href: '#' },
-    { Icon: FiFacebook, href: '#' },
-    { Icon: FiYoutube, href: '#' },
+    { Icon: FiInstagram, href: 'https://www.instagram.com/speedtoyzcars?igsh=NzAyYnVmbXd4NjYz&utm_source=qr' },
+    { Icon: FiFacebook, href: 'https://www.facebook.com/SpeedtoyzCarsRental' },
   ]
 
-  const googleMapEmbedUrl = 'https://maps.google.com/maps?q=Speed%20Toyz%20Cars%20Bhubaneswar&z=17&output=embed'
+  const googleMapEmbedUrl = 'https://maps.google.com/maps?q=Lane-4,+Satya+Sai+Enclave+Road,+Near+Manipal+Hospital,+Kolathia,+Khandagiri,+Bhubaneswar,+Odisha+751030&z=17&output=embed'
   const googleMapLink = 'https://maps.app.goo.gl/VELkem4AeJ3PnYxp6?g_st=ipc'
 
   return (
@@ -52,15 +50,15 @@ export default function Footer() {
           <div>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 16 }}>
               <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
-              <span style={{ color: '#fff', fontWeight: 800, fontSize: 20 }}>Speed Toyz Cars</span>
+              <span className="brand-font" style={{ color: '#fff', fontSize: 20 }}>SPEED TOYZ CARS</span>
             </Link>
             <p style={{ color: '#6b7280', fontSize: 14, lineHeight: 1.8, maxWidth: 320, marginBottom: 18 }}>
               Best self-drive and luxury car rental in Bhubaneswar with clean cars, affordable rates, 24/7 support, and smooth Odisha tours.
             </p>
             <div style={{ display: 'grid', gap: 8, color: '#d1d5db', fontSize: 13, marginBottom: 18 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={14} color="#ef4444" /> Bhubaneswar, Odisha</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> +91 98765 43210</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> support@speedtoyz.com</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={14} color="#ef4444" /> Lane-4, Satya Sai Enclave Road, Near Manipal Hospital, Kolathia, Khandagiri, Bhubaneswar, Odisha 751030</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> +91 98613 32857, +91 76080 68450</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> speedtoyzcarsodisha@gmail.com</span>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
               {socials.map(({ Icon, href }, i) => (
@@ -97,12 +95,16 @@ export default function Footer() {
               </div>
               <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
                 <div style={{ padding: 14, borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)' }}>
-                  <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Our location</strong>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Bhubaneswar, Odisha</span>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: +91 98765 43210</span>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: support@speedtoyz.com</span>
+                  <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Contact US</strong>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Location: Lane-4, Satya Sai Enclave Road, Near Manipal Hospital, Kolathia, Khandagiri, Bhubaneswar, Odisha 751030</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: +91 98613 32857, +91 76080 68450</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: speedtoyzcarsodisha@gmail.com</span>
                 </div>
-                <a href={googleMapLink} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '12px 16px', borderRadius: 14, background: '#ef4444', color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
+                <a
+                  href={googleMapLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '12px 16px', borderRadius: 14, background: '#ef4444', color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
                   Open in Google Maps
                 </a>
               </div>
@@ -138,7 +140,7 @@ export default function Footer() {
         </div>
       </div>
       <a
-        href="https://wa.me/919876543210?text=Hi%20Speed%20Toyz%20Cars%2C%20I%20would%20like%20to%20book%20a%20self-drive%20car%20in%20Bhubaneswar."
+        href="https://wa.me/919861332857?text=Hi%20Speed%20Toyz%20Cars%2C%20I%20would%20like%20to%20book%20a%20self-drive%20car%20in%20Bhubaneswar."
         target="_blank"
         rel="noreferrer"
         style={{ position: 'fixed', right: 18, bottom: 18, zIndex: 50, width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #25d366, #128c7e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 12px 30px rgba(37, 211, 102, 0.35)', textDecoration: 'none' }}

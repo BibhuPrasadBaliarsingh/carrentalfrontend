@@ -88,12 +88,14 @@ export default function HomePage() {
   ]
 
   const testimonials = [
-    { name: 'Aman P.', quote: 'The booking was smooth, the car was spotless, and the pickup in Bhubaneswar was quick. Perfect for our family trip.' },
-    { name: 'Sneha R.', quote: 'Great experience with premium SUVs and friendly support. Highly recommended for Odisha travel.' },
-    { name: 'Raj K.', quote: 'Affordable rates, clean vehicles, and excellent 24/7 help. I booked again for a weekend ride.' },
-    { name: 'Mitali D.', quote: 'Very professional team and easy self-drive process. The car felt brand new and comfortable.' },
-    { name: 'Karan S.', quote: 'Amazing service for airport pickup and city travel. The support team made everything easy.' },
-    { name: 'Pooja M.', quote: 'Loved the transparent pricing and the large choice of cars. Great for business and leisure.' },
+    { name: 'Pritam Sahoo', quote: 'I would say best service in very less price compared to their competitors.' },
+    { name: 'Amlan Biswas', quote: 'Great experience and staff behaviour are so good.' },
+    { name: 'Arya Nandini', quote: 'Excellent staffs! condition of car is very good ! reasonable price' },
+    { name: 'Pratham Raj', quote: 'Loved the wide selection of cars they had available. The rental process was quick, and the car performed flawlessly throughout my journey.' },
+    { name: 'Chinmaya Mahanta', quote: 'One of the most trusted self driving car company. The rent of all cars price is absolutely mind blowing 😍. Car conditions are good as compare to other self rental car.' },
+    { name: 'Sanath', quote: 'Really nice folks. The cars are in good condition, and the terms and conditions are very clear. Loved the attitude of the people.on charge.' },
+    { name: 'Satya Swaroop Das', quote: 'I had awesome experience. Brand new car and in prime condition. The process was super smooth. Very reasonable price. Would recommend highly.' },
+    { name: 'Biswajeet Choudhury', quote: 'The cars i have taken from them are all in good shape and new cars. Everytime i come to bhubaneswar, i make sure to take the self drive cars from Sambit. Really satisfied and glad to be using the cars for my commute in and around bhubaneswar.' },
   ]
 
   const faqs = [
@@ -104,8 +106,8 @@ export default function HomePage() {
   ]
 
   const stats = [
-    { val: '500+', label: 'Luxury Cars' },
-    { val: '50K+', label: 'Happy Clients' },
+    { val: '80+', label: 'Cars' },
+    { val: '20K+', label: 'Happy Clients' },
     { val: '4.9★', label: 'Rating' },
     { val: '24/7', label: 'Support' },
   ]
@@ -299,7 +301,7 @@ export default function HomePage() {
             <div className="marquee-track-reverse" style={{ display: 'flex', gap: 18, width: 'max-content', animation: 'marqueeRight 28s linear infinite' }}>
               {testimonials.concat(testimonials).map((t, i) => (
                 <article key={`${t.name}-${i}`} style={{ minWidth: isMobile ? 280 : 340, background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: 18 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#ef4444', marginBottom: 10 }}><FiStar /> <FiStar /> <FiStar /> <FiStar /> <FiStar /></div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#FFD700', marginBottom: 10 }}><FiStar /> <FiStar /> <FiStar /> <FiStar /> <FiStar /></div>
                   <p style={{ color: '#e5e7eb', fontSize: 14, lineHeight: 1.7, marginBottom: 12 }}>{t.quote}</p>
                   <strong style={{ color: '#fff', fontSize: 14 }}>{t.name}</strong>
                 </article>

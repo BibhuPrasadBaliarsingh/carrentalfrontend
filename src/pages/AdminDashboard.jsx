@@ -122,11 +122,13 @@ export default function AdminDashboard() {
           <motion.div initial={{ x: -224 }} animate={{ x: 0 }} exit={{ x: -224 }} transition={{ type: 'tween', duration: 0.2 }}
             style={{ width: 224, background: '#050505', borderRight: '1px solid #1f2937', display: 'flex', flexDirection: 'column', position: isTablet ? 'fixed' : 'sticky', top: 0, height: '100vh', zIndex: 50, left: 0 }}>
             <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1f2937' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                <div style={{ background: '#ef4444', width: 30, height: 30, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 900, fontSize: 15 }}>S</div>
-                <span style={{ color: '#fff', fontWeight: 800, fontSize: 17 }}>SpeedToyz</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+                <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 52, height: 52, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+                <div>
+                  <div className="brand-font" style={{ color: '#fff', fontSize: 18 }}>SPEED TOYZ CARS</div>
+                  <div style={{ color: '#4b5563', fontSize: 12, marginTop: 2 }}>Admin Panel</div>
+                </div>
               </div>
-              <div style={{ color: '#4b5563', fontSize: 11, marginTop: 2 }}>Admin Panel</div>
             </div>
 
             <div style={{ flex: 1, padding: '14px 10px', overflowY: 'auto' }}>
@@ -157,7 +159,7 @@ export default function AdminDashboard() {
       </AnimatePresence>
 
       {/* ── Main Content ─────────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, overflow: 'auto', marginLeft: !isTablet && sidebarOpen ? 224 : 0 }}>
+      <div style={{ flex: 1, overflow: 'auto', marginLeft: isTablet && sidebarOpen ? 224 : 0 }}>
         {/* Topbar */}
         <div style={{ borderBottom: '1px solid #1f2937', padding: isMobile ? '12px 16px' : '16px 32px', background: '#050505', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -166,6 +168,7 @@ export default function AdminDashboard() {
                 {sidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
               </button>
             )}
+            <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 38, height: 38, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
             <div>
               <h1 style={{ color: '#fff', fontSize: isMobile ? 16 : 20, fontWeight: 800, margin: 0 }}>
                 {{ overview: 'Dashboard Overview', cars: 'Car Management', bookings: 'All Bookings', users: 'User Management', analytics: 'Analytics', settings: 'Settings' }[activePage]}
@@ -223,7 +226,7 @@ export default function AdminDashboard() {
                 <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28 }}>
                   <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, margin: '0 0 24px' }}>Fleet Distribution</h3>
                   {(stats.fleetDistribution || MOCK_STATS.fleetDistribution).map((d, i) => {
-                    const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b']
+                    const colors = ['#ef4444', '#3b82f6', '#10b981', '#FFD700']
                     const total = (stats.fleetDistribution || MOCK_STATS.fleetDistribution).reduce((s, x) => s + x.count, 0)
                     const pct = Math.round((d.count / total) * 100)
                     return (
@@ -309,7 +312,7 @@ export default function AdminDashboard() {
                         <td style={tdStyle}><span style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', fontSize: 10, padding: '3px 8px', borderRadius: 4, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>{car.category}</span></td>
                         <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>${car.pricePerDay}</td>
                         <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{car.seats}</td>
-                        <td style={{ ...tdStyle, color: '#f59e0b', fontSize: 13 }}>★ {car.rating || 4.5}</td>
+                        <td style={{ ...tdStyle, color: '#FFD700', fontSize: 13 }}>★ {car.rating || 4.5}</td>
                         <td style={tdStyle}><StatusBadge status={car.available !== false ? 'Active' : 'Banned'} /></td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', gap: 8 }}>
@@ -397,7 +400,7 @@ export default function AdminDashboard() {
           {activePage === 'analytics' && (
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 20 }}>
               {[
-                { title: 'Top Performing Cars', data: [['Ferrari F8 Tributo', 42, '#ef4444'], ['Porsche 911', 38, '#3b82f6'], ['Lamborghini', 31, '#f59e0b'], ['Mercedes S-Class', 28, '#10b981']] },
+                { title: 'Top Performing Cars', data: [['Ferrari F8 Tributo', 42, '#ef4444'], ['Porsche 911', 38, '#3b82f6'], ['Lamborghini', 31, '#FFD700'], ['Mercedes S-Class', 28, '#10b981']] },
                 { title: 'Booking Trends', data: [['Mon', 12, '#ef4444'], ['Tue', 18, '#ef4444'], ['Wed', 9, '#ef4444'], ['Thu', 24, '#ef4444'], ['Fri', 31, '#ef4444'], ['Sat', 42, '#ef4444'], ['Sun', 28, '#ef4444']] },
               ].map(({ title, data }) => (
                 <div key={title} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28 }}>

@@ -90,6 +90,13 @@ export default function MyBookingsPage() {
         {/* Header */}
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', marginBottom: 36, gap: 16 }}>
           <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+              <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 52, height: 52, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
+              <div>
+                <div className="brand-font" style={{ color: '#fff', fontSize: isMobile ? 20 : 22, margin: 0 }}>SPEED TOYZ CARS</div>
+                <div style={{ color: '#6b7280', fontSize: 13 }}>Your bookings dashboard</div>
+              </div>
+            </div>
             <h1 style={{ color: '#fff', fontSize: isMobile ? 26 : 34, fontWeight: 800, letterSpacing: -1, margin: '0 0 8px' }}>My Bookings</h1>
             <p style={{ color: '#6b7280', fontSize: 15 }}>Track and manage your rental history</p>
           </div>
