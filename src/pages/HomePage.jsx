@@ -298,7 +298,7 @@ export default function HomePage() {
             </div>
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div className="marquee-track-reverse" style={{ display: 'flex', gap: 18, width: 'max-content', animation: 'marqueeRight 28s linear infinite' }}>
+            <div className="marquee-track-reverse" style={{ display: 'flex', gap: 18, width: 'max-content', animation: 'marqueeRight 50s linear infinite' }}>
               {testimonials.concat(testimonials).map((t, i) => (
                 <article key={`${t.name}-${i}`} style={{ minWidth: isMobile ? 280 : 340, background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: 18 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#FFD700', marginBottom: 10 }}><FiStar /> <FiStar /> <FiStar /> <FiStar /> <FiStar /></div>

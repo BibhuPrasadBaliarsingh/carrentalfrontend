@@ -38,8 +38,9 @@ export default function Footer() {
     { Icon: FiFacebook, href: 'https://www.facebook.com/SpeedtoyzCarsRental' },
   ]
 
-  const googleMapEmbedUrl = 'https://maps.google.com/maps?q=Lane-4,+Satya+Sai+Enclave+Road,+Near+Manipal+Hospital,+Kolathia,+Khandagiri,+Bhubaneswar,+Odisha+751030&z=17&output=embed'
-  const googleMapLink = 'https://maps.app.goo.gl/VELkem4AeJ3PnYxp6?g_st=ipc'
+  const locationAddress = 'Lane-4, Satya Sai Enclave Road, Near Manipal Hospital, Kolathia, Khandagiri, Bhubaneswar, Odisha 751030'
+  const googleMapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1352.6576179591075!2d85.77613609969278!3d20.257452855684868!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19a70155609a7b%3A0x377c73120b48822b!2sSpeed%20Toyz%20Cars%20%7C%20Self%20Drive%20Car%20Rental%20%7C%20Bhubaneswar!5e0!3m2!1sen!2sin!4v1781157796951!5m2!1sen!2sin'
+  const googleMapLink = 'https://www.google.com/maps/search/?api=1&query=Speed+Toyz+Cars+Bhubaneswar'
 
   return (
     <footer style={{ background: '#050505', borderTop: '1px solid #1f2937', position: 'relative', overflow: 'hidden' }}>
@@ -50,13 +51,13 @@ export default function Footer() {
           <div>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 16 }}>
               <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
-              <span className="brand-font" style={{ color: '#fff', fontSize: 20 }}>SPEED TOYZ CARS</span>
+              <span className="brand-font" style={{ color: '#fff', fontSize: 20, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</span>
             </Link>
             <p style={{ color: '#6b7280', fontSize: 14, lineHeight: 1.8, maxWidth: 320, marginBottom: 18 }}>
               Best self-drive and luxury car rental in Bhubaneswar with clean cars, affordable rates, 24/7 support, and smooth Odisha tours.
             </p>
             <div style={{ display: 'grid', gap: 8, color: '#d1d5db', fontSize: 13, marginBottom: 18 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={14} color="#ef4444" /> Lane-4, Satya Sai Enclave Road, Near Manipal Hospital, Kolathia, Khandagiri, Bhubaneswar, Odisha 751030</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={38} color="#ef4444" /> {locationAddress}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> +91 98613 32857, +91 76080 68450</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> speedtoyzcarsodisha@gmail.com</span>
             </div>
@@ -96,7 +97,7 @@ export default function Footer() {
               <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
                 <div style={{ padding: 14, borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)' }}>
                   <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Contact US</strong>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Location: Lane-4, Satya Sai Enclave Road, Near Manipal Hospital, Kolathia, Khandagiri, Bhubaneswar, Odisha 751030</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Location: {locationAddress}</span>
                   <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: +91 98613 32857, +91 76080 68450</span>
                   <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: speedtoyzcarsodisha@gmail.com</span>
                 </div>

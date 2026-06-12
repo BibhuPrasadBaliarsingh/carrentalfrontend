@@ -39,7 +39,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', minWidth: 0 }}>
           <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-          <span className="brand-font" style={{ color: '#fff', fontSize: isMobile ? 17 : 20, letterSpacing: 0 }}>SPEED TOYZ CARS</span>
+          <span className="brand-font" style={{ color: '#fff', fontSize: isMobile ? 17 : 20, letterSpacing: 0, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</span>
         </Link>
 
         {/* Desktop Nav */}

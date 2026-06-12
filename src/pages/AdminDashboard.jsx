@@ -125,7 +125,7 @@ export default function AdminDashboard() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
                 <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 52, height: 52, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                 <div>
-                  <div className="brand-font" style={{ color: '#fff', fontSize: 18 }}>SPEED TOYZ CARS</div>
+                  <div className="brand-font" style={{ color: '#fff', fontSize: 18, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</div>
                   <div style={{ color: '#4b5563', fontSize: 12, marginTop: 2 }}>Admin Panel</div>
                 </div>
               </div>

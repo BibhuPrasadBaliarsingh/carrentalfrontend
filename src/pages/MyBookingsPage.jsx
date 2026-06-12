@@ -93,7 +93,7 @@ export default function MyBookingsPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
               <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 52, height: 52, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
               <div>
-                <div className="brand-font" style={{ color: '#fff', fontSize: isMobile ? 20 : 22, margin: 0 }}>SPEED TOYZ CARS</div>
+                <div className="brand-font" style={{ color: '#fff', fontSize: isMobile ? 20 : 22, margin: 0, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</div>
                 <div style={{ color: '#6b7280', fontSize: 13 }}>Your bookings dashboard</div>
               </div>
             </div>
