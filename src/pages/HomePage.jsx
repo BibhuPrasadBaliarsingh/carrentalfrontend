@@ -266,7 +266,7 @@ export default function HomePage() {
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>Why Us</div>
             <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 36, fontWeight: 800, margin: '0 0 12px', letterSpacing: -1 }}>
-              Why Choose <span style={{ color: '#ef4444' }}>SpeedToyz</span>?
+              Why Choose <span style={{ color: '#ef4444' }}>Speed Toyz Cars</span>?
             </h2>
             <p style={{ color: '#6b7280', fontSize: isMobile ? 13 : 16, maxWidth: 480, margin: '0 auto' }}>
               We deliver the finest automotive experiences with unmatched service and care.
@@ -294,7 +294,7 @@ export default function HomePage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 16, marginBottom: 24 }}>
             <div>
               <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Testimonials</div>
-              <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: 0, letterSpacing: -1 }}>What travellers say about SpeedToyz</h2>
+              <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: 0, letterSpacing: -1 }}>What travellers say about Speed Toyz Cars</h2>
             </div>
           </div>
           <div style={{ overflow: 'hidden' }}>

@@ -44,8 +44,42 @@ export default function Footer() {
 
   return (
     <footer style={{ background: '#050505', borderTop: '1px solid #1f2937', position: 'relative', overflow: 'hidden' }}>
+      
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08, filter: 'grayscale(1)' }} />
+      
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: isMobile ? '40px 20px 20px' : '56px 80px 28px' }}>
+        <div style={{ marginTop: 8, marginBottom: 24, padding: '18px', borderRadius: 18, border: '1px solid #1f2937', background: 'linear-gradient(135deg, rgba(17,24,39,0.95), rgba(5,5,5,0.95))' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1.1fr', gap: 18, alignItems: 'stretch' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 240, padding: 16, borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+              <div>
+                <h4 style={{ color: '#fff', marginBottom: 12, fontSize: 18, fontWeight: 700 }}>Visit us for premium self-drive cars</h4>
+                <p style={{ color: '#9ca3af', fontSize: 14, lineHeight: 1.8, margin: 0 }}>Explore premium cars in Bhubaneswar, airport transfers, and Odisha road trips with a team that helps you travel confidently.</p>
+              </div>
+              <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
+                <div style={{ padding: 14, borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)' }}>
+                  <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Contact US</strong>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Location: {locationAddress}</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: +91 98613 32857, +91 76080 68450</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: speedtoyzcarsodisha@gmail.com</span>
+                </div>
+                
+              </div>
+            </div>
+            <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)', minHeight: 240 }}>
+              <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 6, padding: '14px 16px 0' }}>Map</div>
+              <iframe
+                title="Speed Toyz Cars location map"
+                src={googleMapEmbedUrl}
+                style={{ width: '100%', height: '100%', minHeight: 220, border: '0', display: 'block' }}
+                allowFullScreen={false}
+                loading="lazy"
+              />
+              <div style={{ padding: '14px 16px 18px', color: '#d1d5db', fontSize: 13, lineHeight: 1.6 }}>
+                <div>Bhubaneswar • Cuttack • Puri • Konark • Chilika • Odisha tourism routes</div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: isMobile ? 32 : 48, marginBottom: 48 }}>
           {/* Brand */}
           <div>
@@ -63,7 +97,7 @@ export default function Footer() {
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
               {socials.map(({ Icon, href }, i) => (
-                <a key={i} href={href} style={{ width: 36, height: 36, borderRadius: 8, background: '#111827', border: '1px solid #1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', textDecoration: 'none', transition: 'all 0.2s' }}
+                <a key={i} target='_blank' href={href} style={{ width: 36, height: 36, borderRadius: 8, background: '#111827', border: '1px solid #1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', textDecoration: 'none', transition: 'all 0.2s' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.borderColor = '#ef4444'; e.currentTarget.style.color = '#fff' }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#111827'; e.currentTarget.style.borderColor = '#1f2937'; e.currentTarget.style.color = '#9ca3af' }}>
                   <Icon size={15} />
@@ -87,44 +121,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div style={{ marginTop: 8, marginBottom: 24, padding: '18px', borderRadius: 18, border: '1px solid #1f2937', background: 'linear-gradient(135deg, rgba(17,24,39,0.95), rgba(5,5,5,0.95))' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1.1fr', gap: 18, alignItems: 'stretch' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 240, padding: 16, borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
-              <div>
-                <h4 style={{ color: '#fff', marginBottom: 12, fontSize: 18, fontWeight: 700 }}>Visit us for premium self-drive cars</h4>
-                <p style={{ color: '#9ca3af', fontSize: 14, lineHeight: 1.8, margin: 0 }}>Explore premium cars in Bhubaneswar, airport transfers, and Odisha road trips with a team that helps you travel confidently.</p>
-              </div>
-              <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
-                <div style={{ padding: 14, borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)' }}>
-                  <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Contact US</strong>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Location: {locationAddress}</span>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: +91 98613 32857, +91 76080 68450</span>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: speedtoyzcarsodisha@gmail.com</span>
-                </div>
-                <a
-                  href={googleMapLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '12px 16px', borderRadius: 14, background: '#ef4444', color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
-                  Open in Google Maps
-                </a>
-              </div>
-            </div>
-            <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)', minHeight: 240 }}>
-              <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 6, padding: '14px 16px 0' }}>Map</div>
-              <iframe
-                title="Speed Toyz Cars location map"
-                src={googleMapEmbedUrl}
-                style={{ width: '100%', height: '100%', minHeight: 220, border: '0', display: 'block' }}
-                allowFullScreen={false}
-                loading="lazy"
-              />
-              <div style={{ padding: '14px 16px 18px', color: '#d1d5db', fontSize: 13, lineHeight: 1.6 }}>
-                <div>Bhubaneswar • Cuttack • Puri • Konark • Chilika • Odisha tourism routes</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Bottom bar */}
         <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 12 }}>
