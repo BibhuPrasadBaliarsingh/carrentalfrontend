@@ -5,6 +5,7 @@ import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { authAPI } from '../services/api'
+import Logo from '../components/common/Logo'
 
 function AuthInput({ icon, type = 'text', placeholder, value, onChange, error, rightIcon, onRightClick }) {
   return (
@@ -87,8 +88,7 @@ export function LoginPage() {
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.6), rgba(5,5,5,0.95))' }} />
         <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 60px' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 48 }}>
-            <img src="/logo.jpeg" alt="SpeedToyz Logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: 'cover' }} />
-            <span style={{ color: '#fff', fontWeight: 800, fontSize: 22, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</span>
+            <Logo size="md" />
           </Link>
           <h2 style={{ color: '#fff', fontSize: 40, fontWeight: 900, letterSpacing: -1.5, lineHeight: 1.1, marginBottom: 16 }}>
             Drive the cars<br />of your dreams.
@@ -111,7 +111,7 @@ export function LoginPage() {
       <div style={{ width: 440, background: '#050505', borderLeft: '1px solid #1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48 }}>
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ width: '100%' }}>
           <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 6px' }}>Welcome Back</h2>
-          <p style={{ color: '#6b7280', fontSize: 15, marginBottom: 32, fontFamily: 'Ethnocentric' }}>Sign in to your SPEED TOYZ CARS account</p>
+          <p style={{ color: '#6b7280', fontSize: 15, marginBottom: 32 }}>Sign in to your SPEED TOYZ CARS account</p>
 
           <form onSubmit={handleSubmit}>
             <AuthInput icon={<FiMail size={16} />} type="email" placeholder="Email address" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} error={errors.email} />
@@ -191,12 +191,11 @@ export function RegisterPage() {
     <div style={{ background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 48, width: '100%', maxWidth: 480 }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 28 }}>
-          <img src="/logo.jpeg" alt="SpeedToyz Logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
-          <span style={{ color: '#fff', fontWeight: 800, fontSize: 18, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</span>
+          <Logo size="sm" />
         </Link>
 
         <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 6px' }}>Create Account</h2>
-        <p style={{ color: '#6b7280', fontSize: 15, marginBottom: 28, fontFamily: 'Ethnocentric' }}>Join SPEED TOYZ CARS and start driving in style</p>
+        <p style={{ color: '#6b7280', fontSize: 15, marginBottom: 28 }}>Join SPEED TOYZ CARS and start driving in style</p>
 
         <form onSubmit={handleSubmit}>
           <AuthInput icon={<FiUser size={16} />} placeholder="Full Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} error={errors.name} />

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
+import Logo from './common/Logo'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -37,10 +38,9 @@ export default function Navbar() {
     <nav style={{ background: '#0a0a0a', borderBottom: '1px solid #1f2937', position: 'sticky', top: 0, zIndex: 100 }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 16px' : '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
         {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', minWidth: 0 }}>
-          <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 48, height: 48, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
-          <span className="brand-font" style={{ color: '#fff', fontSize: isMobile ? 17 : 20, letterSpacing: 0, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</span>
-        </Link>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', minWidth: 0 }} aria-label="Speed Toyz Cars home">
+          <Logo size="lg" />
+           </Link>
 
         {/* Desktop Nav */}
         <div style={{ display: isMobile ? 'none' : 'flex', gap: 32, alignItems: 'center' }}>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FiInstagram, FiFacebook, FiMapPin, FiPhone, FiMail } from 'react-icons/fi'
+import Logo from './common/Logo'
 
 export default function Footer() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
@@ -84,8 +85,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 16 }}>
-              <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
-              <span className="brand-font" style={{ color: '#fff', fontSize: 20, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</span>
+              <Logo size="sm" />
             </Link>
             <p style={{ color: '#6b7280', fontSize: 14, lineHeight: 1.8, maxWidth: 320, marginBottom: 18 }}>
               Best self-drive and luxury car rental in Bhubaneswar with clean cars, affordable rates, 24/7 support, and smooth Odisha tours.

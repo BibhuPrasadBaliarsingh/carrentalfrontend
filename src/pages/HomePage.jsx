@@ -159,7 +159,7 @@ export default function HomePage() {
       {/* ── Search Bar ─────────────────────────────────────────────────────── */}
       <div style={{ maxWidth: 1100, margin: isMobile ? '-18px auto 0' : '-36px auto 0', padding: isMobile ? '0 12px' : '0 40px', position: 'relative', zIndex: 10 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr auto' : '1fr 1fr 1fr 1fr auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
           {[
             { label: 'Pickup Location', icon: <FiMapPin />, key: 'pickup', type: 'text', placeholder: 'City or Airport' },
             { label: 'Dropoff Location', icon: <FiMapPin />, key: 'dropoff', type: 'text', placeholder: 'Same as pickup' },

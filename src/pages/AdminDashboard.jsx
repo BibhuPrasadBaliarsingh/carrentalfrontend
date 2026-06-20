@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { dashboardAPI, carsAPI, bookingsAPI, usersAPI } from '../services/api'
 import { MOCK_CARS, MOCK_STATS } from '../data/mockData'
+import Logo from '../components/common/Logo'
 
 const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
@@ -123,9 +124,8 @@ export default function AdminDashboard() {
             style={{ width: 224, background: '#050505', borderRight: '1px solid #1f2937', display: 'flex', flexDirection: 'column', position: isTablet ? 'fixed' : 'sticky', top: 0, height: '100vh', zIndex: 50, left: 0 }}>
             <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1f2937' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-                <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 52, height: 52, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
                 <div>
-                  <div className="brand-font" style={{ color: '#fff', fontSize: 18, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</div>
+                  <Logo size="sm" />
                   <div style={{ color: '#4b5563', fontSize: 12, marginTop: 2 }}>Admin Panel</div>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import { StatusBadge, EmptyState, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { bookingsAPI } from '../services/api'
+import Logo from '../components/common/Logo'
 
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
 const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
@@ -91,9 +92,8 @@ export default function MyBookingsPage() {
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', marginBottom: 36, gap: 16 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-              <img src="/logo.jpeg" alt="Speed Toyz Cars logo" style={{ width: 52, height: 52, borderRadius: 12, objectFit: 'cover', flexShrink: 0 }} />
               <div>
-                <div className="brand-font" style={{ color: '#fff', fontSize: isMobile ? 20 : 22, margin: 0, fontFamily: 'Ethnocentric' }}>SPEED TOYZ CARS</div>
+                <Logo size="lg" />
                 <div style={{ color: '#6b7280', fontSize: 13 }}>Your bookings dashboard</div>
               </div>
             </div>
