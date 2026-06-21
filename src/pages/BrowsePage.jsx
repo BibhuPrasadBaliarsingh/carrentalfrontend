@@ -17,7 +17,7 @@ export default function BrowsePage() {
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('price-asc')
   const [currentPage, setCurrentPage] = useState(1)
-  const [filtersOpen, setFiltersOpen] = useState(true)
+  const [filtersOpen, setFiltersOpen] = useState(() => window.innerWidth >= 768)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
   const [filters, setFilters] = useState({
@@ -93,7 +93,7 @@ export default function BrowsePage() {
 
           {/* ── Sidebar ──────────────────────────────────────────────────────── */}
           {filtersOpen && (
-            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: 24, height: 'fit-content', position: 'sticky', top: 80 }}>
+            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? 18 : 24, height: 'fit-content', position: isMobile ? 'relative' : 'sticky', top: isMobile ? 'auto' : 80, width: '100%', minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <FiFilter size={16} color="#ef4444" />
@@ -155,7 +155,7 @@ export default function BrowsePage() {
           )}
 
           {/* ── Main Grid ──────────────────────────────────────────────────── */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             {/* Controls */}
             <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => setFiltersOpen(!filtersOpen)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#111827', border: '1px solid #374151', color: '#9ca3af', padding: '9px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>

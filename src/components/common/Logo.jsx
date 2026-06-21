@@ -1,15 +1,15 @@
 const sizeClasses = {
   sm: {
     image: 'h-9 w-9 rounded-lg',
-    text: 'text-[0.6rem] sm:text-xs',
+    text: 'text-[0.6rem] sm:text-xl',
   },
   md: {
     image: 'h-10 w-10 rounded-lg',
     text: 'text-[0.66rem] sm:text-sm lg:text-base',
   },
   lg: {
-    image: 'h-12 w-12 rounded-xl',
-    text: 'text-[0.7rem] sm:text-base lg:text-lg',
+    image: 'h-14 w-14 rounded-xl',
+    text: 'text-[0.9rem] sm:text-base lg:text-lg',
   },
 }
 

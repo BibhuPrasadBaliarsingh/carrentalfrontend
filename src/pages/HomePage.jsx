@@ -116,20 +116,20 @@ export default function HomePage() {
     <div style={{ background: '#0a0a0a' }}>
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', minHeight: isMobile ? 460 : 600, height: isMobile ? 'auto' : 600, overflow: 'hidden', paddingTop: isMobile ? 18 : 0 }}>
+      <section style={{ position: 'relative', minHeight: isTablet ? 'auto' : 600, height: isTablet ? 'auto' : 600, overflow: 'hidden' }}>
         <img
           src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80"
           alt="hero"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }}
         />
         <div className="hero-overlay" style={{ position: 'absolute', inset: 0 }} />
 
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: isMobile ? 'flex-start' : 'center', padding: isMobile ? '18px 16px 24px' : '0 80px', maxWidth: 1280, margin: '0 auto', left: 0, right: 0 }}>
+        <div style={{ position: isTablet ? 'relative' : 'absolute', inset: isTablet ? 'auto' : 0, zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: isTablet ? 'flex-start' : 'center', padding: isMobile ? '36px 16px 48px' : isTablet ? '56px 48px 64px' : '0 80px', maxWidth: 1280, margin: '0 auto', left: 0, right: 0 }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '5px 14px', marginBottom: 20 }}>
               <span style={{ color: '#ef4444', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>Premium Car Rental</span>
             </div>
-            <h1 style={{ color: '#fff', fontSize: isMobile ? 32 : 60, fontWeight: 900, lineHeight: isMobile ? 1.2 : 1.08, margin: '0 0 16px', letterSpacing: -1 }}>
+            <h1 style={{ color: '#fff', fontSize: isMobile ? 32 : isTablet ? 44 : 60, fontWeight: 900, lineHeight: isMobile ? 1.2 : 1.08, margin: '0 0 16px', letterSpacing: -1 }}>
               Best Self Drive & Luxury Car Rental in Bhubaneswar
             </h1>
             <p style={{ color: '#9ca3af', fontSize: isMobile ? 13 : 18, maxWidth: isMobile ? 340 : 580, marginBottom: isMobile ? 24 : 28, lineHeight: 1.6 }}>
@@ -144,7 +144,7 @@ export default function HomePage() {
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 16 : 40, marginTop: isMobile ? 24 : 52 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 16 : isTablet ? 24 : 40, marginTop: isMobile ? 24 : isTablet ? 36 : 52 }}>
               {stats.map(({ val, label }) => (
                 <div key={label}>
                   <div style={{ color: '#ef4444', fontSize: isMobile ? 20 : 28, fontWeight: 900 }}>{val}</div>
@@ -157,9 +157,9 @@ export default function HomePage() {
       </section>
 
       {/* ── Search Bar ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1100, margin: isMobile ? '-18px auto 0' : '-36px auto 0', padding: isMobile ? '0 12px' : '0 40px', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '-36px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
           {[
             { label: 'Pickup Location', icon: <FiMapPin />, key: 'pickup', type: 'text', placeholder: 'City or Airport' },
             { label: 'Dropoff Location', icon: <FiMapPin />, key: 'dropoff', type: 'text', placeholder: 'Same as pickup' },
@@ -175,7 +175,7 @@ export default function HomePage() {
               </div>
             </div>
           ))}
-          <button onClick={handleSearch} className="btn-primary" style={{ border: 'none', color: '#fff', padding: isMobile ? '8px 16px' : '11px 28px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', width: isMobile ? '100%' : 'auto' }}>
+          <button onClick={handleSearch} className="btn-primary" style={{ border: 'none', color: '#fff', padding: isMobile ? '8px 16px' : '11px 28px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', width: isTablet ? '100%' : 'auto', gridColumn: isTablet ? '1 / -1' : 'auto' }}>
             {isMobile ? 'Search' : 'Search Now'}
           </button>
         </motion.div>
