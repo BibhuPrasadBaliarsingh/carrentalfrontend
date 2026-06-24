@@ -159,7 +159,7 @@ export default function HomePage() {
       {/* ── Search Bar ─────────────────────────────────────────────────────── */}
       <div style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '-36px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : isTablet ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr)) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
           {[
             { label: 'Pickup Location', icon: <FiMapPin />, key: 'pickup', type: 'text', placeholder: 'City or Airport' },
             { label: 'Dropoff Location', icon: <FiMapPin />, key: 'dropoff', type: 'text', placeholder: 'Same as pickup' },
@@ -171,7 +171,7 @@ export default function HomePage() {
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}>{icon}</span>
                 <input type={type} value={search[key]} onChange={e => setSearch(s => ({ ...s, [key]: e.target.value }))} placeholder={placeholder}
-                  style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
               </div>
             </div>
           ))}
@@ -298,7 +298,7 @@ export default function HomePage() {
             </div>
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div className="marquee-track-reverse" style={{ display: 'flex', gap: 18, width: 'max-content', animation: 'marqueeRight 50s linear infinite' }}>
+            <div className="marquee-track-reverse" style={{ display: 'flex', gap: 18, width: 'max-content', animation: 'marqueeLeft 110s linear infinite' }}>
               {testimonials.concat(testimonials).map((t, i) => (
                 <article key={`${t.name}-${i}`} style={{ minWidth: isMobile ? 280 : 340, background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: 18 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#FFD700', marginBottom: 10 }}><FiStar /> <FiStar /> <FiStar /> <FiStar /> <FiStar /></div>
