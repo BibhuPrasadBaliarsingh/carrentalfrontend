@@ -10,7 +10,11 @@ import CarDetailPage from './pages/CarDetailPage'
 import BookingPage from './pages/BookingPage'
 import MyBookingsPage from './pages/MyBookingsPage'
 import AdminDashboard from './pages/AdminDashboard'
-import { LoginPage, RegisterPage } from './pages/AuthPages'
+import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from './pages/AuthPages'
+import AccountPage from './pages/AccountPage'
+import ContactPage from './pages/ContactPage'
+import { TermsPage, PrivacyPage } from './pages/InfoPages'
+import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
   return (
@@ -24,8 +28,16 @@ export default function App() {
             <Route path="/cars/:id" element={<CarDetailPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
 
             {/* Protected user routes */}
+            <Route path="/account" element={
+              <ProtectedRoute><AccountPage /></ProtectedRoute>
+            } />
             <Route path="/booking/:id" element={
               <ProtectedRoute><BookingPage /></ProtectedRoute>
             } />
@@ -40,6 +52,8 @@ export default function App() {
               <AdminRoute><AdminDashboard /></AdminRoute>
             } />
           </Route>
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </ToastProvider>
     </AuthProvider>

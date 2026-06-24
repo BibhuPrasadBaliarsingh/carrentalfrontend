@@ -7,9 +7,9 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { bookingsAPI } from '../services/api'
 import Logo from '../components/common/Logo'
+import { formatPrice } from '../utils/format'
 
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
 
 const MOCK_MY_BOOKINGS = [
   {
@@ -66,9 +66,9 @@ export default function MyBookingsPage() {
       await bookingsAPI.cancel(id)
       setBookings(prev => prev.map(b => b._id === id ? { ...b, bookingStatus: 'Cancelled' } : b))
       addToast('Booking cancelled successfully', 'info')
-    } catch {
-      setBookings(prev => prev.map(b => b._id === id ? { ...b, bookingStatus: 'Cancelled' } : b))
-      addToast('Booking cancelled', 'info')
+    } catch (err) {
+      const message = err.response?.data?.message || 'Could not cancel this booking. Please try again.'
+      addToast(message, 'error')
     } finally {
       setCancellingId(null)
     }
@@ -171,7 +171,7 @@ export default function MyBookingsPage() {
 
                 {/* Actions */}
                 <div style={{ textAlign: isMobile ? 'left' : 'right', gridColumn: isMobile ? '1 / -1' : 'auto' }}>
-                  <div style={{ color: '#ef4444', fontWeight: 900, fontSize: isMobile ? 18 : 24, marginBottom: isMobile ? 8 : 12 }}>{fmt(booking.totalPrice)}</div>
+                  <div style={{ color: '#ef4444', fontWeight: 900, fontSize: isMobile ? 18 : 24, marginBottom: isMobile ? 8 : 12 }}>{formatPrice(booking.totalPrice)}</div>
                   <div style={{ display: 'flex', gap: 8, justifyContent: isMobile ? 'flex-start' : 'flex-end', flexWrap: 'wrap' }}>
                     <button onClick={() => navigate(`/cars/${booking.car?._id}`)}
                       style={{ background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '7px 14px', borderRadius: 7, fontSize: 12, cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>

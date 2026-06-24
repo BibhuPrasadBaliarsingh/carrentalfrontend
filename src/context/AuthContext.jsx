@@ -13,16 +13,30 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Rehydrate from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('speedtoyz_user')
-    const token = localStorage.getItem('speedtoyz_token')
-    if (stored && token) {
+    const rehydrate = async () => {
+      const stored = localStorage.getItem('speedtoyz_user')
+      const token = localStorage.getItem('speedtoyz_token')
+      if (!stored || !token) {
+        setLoading(false)
+        return
+      }
       try {
-        setUser(JSON.parse(stored))
-      } catch { /* ignore */ }
+        const parsed = JSON.parse(stored)
+        setUser(parsed)
+        const res = await authAPI.me()
+        if (res?.data?.user) setUser(res.data.user)
+      } catch (err) {
+        if (err?.response?.status === 401) {
+          localStorage.removeItem('speedtoyz_token')
+          localStorage.removeItem('speedtoyz_user')
+          setUser(null)
+        }
+      } finally {
+        setLoading(false)
+      }
     }
-    setLoading(false)
+    rehydrate()
   }, [])
 
   const login = useCallback((userData, token) => {

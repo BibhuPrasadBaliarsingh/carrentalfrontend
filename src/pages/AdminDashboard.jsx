@@ -1,28 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiGrid, FiTruck, FiCalendar, FiUsers, FiTrendingUp, FiSettings, FiLogOut, FiPlus, FiEdit2, FiTrash2, FiExternalLink, FiMenu, FiX } from 'react-icons/fi'
+import { FiGrid, FiTruck, FiCalendar, FiUsers, FiTrendingUp, FiSettings, FiLogOut, FiPlus, FiEdit2, FiTrash2, FiExternalLink, FiMenu, FiX, FiToggleLeft, FiToggleRight, FiUpload } from 'react-icons/fi'
 import { StatCard, StatusBadge, Modal, Input, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
-import { dashboardAPI, carsAPI, bookingsAPI, usersAPI } from '../services/api'
+import { dashboardAPI, carsAPI, bookingsAPI, usersAPI, settingsAPI } from '../services/api'
 import { MOCK_CARS, MOCK_STATS } from '../data/mockData'
 import Logo from '../components/common/Logo'
+import { formatPrice } from '../utils/format'
 
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
+const fmt = formatPrice
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
-
-const MOCK_BOOKINGS_ADMIN = [
-  { _id: 'BK001', car: { name: 'Ferrari F8 Tributo' }, user: { name: 'John Doe' }, pickupDate: '2025-07-10', returnDate: '2025-07-13', totalPrice: 2697, bookingStatus: 'Confirmed' },
-  { _id: 'BK002', car: { name: 'Mercedes S-Class' }, user: { name: 'Jane Smith' }, pickupDate: '2025-06-20', returnDate: '2025-06-22', totalPrice: 998, bookingStatus: 'Completed' },
-  { _id: 'BK003', car: { name: 'Lamborghini Huracán' }, user: { name: 'Mike Johnson' }, pickupDate: '2025-08-01', returnDate: '2025-08-03', totalPrice: 2598, bookingStatus: 'Confirmed' },
-]
-const MOCK_USERS_ADMIN = [
-  { _id: '1', name: 'John Doe', email: 'john@example.com', role: 'user', bookingCount: 3, status: 'Active' },
-  { _id: '2', name: 'Admin User', email: 'admin@speedtoyz.com', role: 'admin', bookingCount: 0, status: 'Active' },
-  { _id: '3', name: 'Jane Smith', email: 'jane@example.com', role: 'user', bookingCount: 7, status: 'Active' },
-  { _id: '4', name: 'Mike Johnson', email: 'mike@example.com', role: 'user', bookingCount: 1, status: 'Banned' },
-]
+const EMPTY_CAR = { name: '', brand: '', category: 'Sports', pricePerDay: '', fuelType: 'Petrol', seats: '', transmission: 'Automatic', description: '' }
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -31,14 +21,19 @@ export default function AdminDashboard() {
   const [activePage, setActivePage] = useState('overview')
   const [stats, setStats] = useState(MOCK_STATS)
   const [cars, setCars] = useState([])
-  const [bookings, setBookings] = useState(MOCK_BOOKINGS_ADMIN)
-  const [users, setUsers] = useState(MOCK_USERS_ADMIN)
+  const [bookings, setBookings] = useState([])
+  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [showAddCar, setShowAddCar] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
-  const [newCar, setNewCar] = useState({ name: '', brand: '', category: 'Sports', pricePerDay: '', fuelType: 'Petrol', seats: '', transmission: 'Automatic', description: '' })
+  const [editingCarId, setEditingCarId] = useState(null)
+  const [savingCar, setSavingCar] = useState(false)
+  const [carImageFiles, setCarImageFiles] = useState([])
+  const [newCar, setNewCar] = useState(EMPTY_CAR)
+  const [settings, setSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 8 })
+  const [savingSettings, setSavingSettings] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,9 +48,16 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, carsRes] = await Promise.all([dashboardAPI.stats(), carsAPI.getAll()])
-        setStats(statsRes.data)
+        const [statsRes, carsRes, bookingsRes, usersRes] = await Promise.all([
+          dashboardAPI.stats(),
+          carsAPI.getAll({ limit: 100 }),
+          bookingsAPI.getAll({ limit: 100 }),
+          usersAPI.getAll({ limit: 100 }),
+        ])
+        setStats(statsRes.data.stats || statsRes.data)
         setCars(carsRes.data.cars || carsRes.data)
+        setBookings(bookingsRes.data.bookings || [])
+        setUsers(usersRes.data.users || [])
       } catch {
         setCars(MOCK_CARS)
         setStats(MOCK_STATS)
@@ -64,7 +66,10 @@ export default function AdminDashboard() {
       }
     }
     fetchData()
+    settingsAPI.get().then(res => setSettings(res.data.settings || settings)).catch(() => {})
   }, [])
+
+  if (loading) return <PageLoader />
 
   if (!user || user.role !== 'admin') {
     return (
@@ -93,23 +98,113 @@ export default function AdminDashboard() {
 
   const handleDeleteCar = async (id) => {
     if (!confirm('Delete this car?')) return
-    try { await carsAPI.delete(id) } catch {}
-    setCars(prev => prev.filter(c => c._id !== id))
-    addToast('Car deleted', 'info')
+    try {
+      await carsAPI.delete(id)
+      setCars(prev => prev.filter(c => c._id !== id))
+      addToast('Car deleted', 'info')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not delete this car.', 'error')
+    }
   }
 
-  const handleAddCar = async () => {
-    if (!newCar.name || !newCar.brand || !newCar.pricePerDay) { addToast('Fill in required fields', 'error'); return }
+  const handleToggleAvailability = async (car) => {
     try {
-      const res = await carsAPI.create(newCar)
-      setCars(prev => [res.data, ...prev])
-    } catch {
-      const mock = { ...newCar, _id: Date.now().toString(), rating: 4.5, available: true, images: [] }
-      setCars(prev => [mock, ...prev])
+      const res = await carsAPI.toggleAvailability(car._id)
+      const updated = res.data.car || res.data
+      setCars(prev => prev.map(c => c._id === car._id ? updated : c))
+      addToast(updated.available ? 'Car marked as available' : 'Car marked as unavailable', 'info')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not update availability.', 'error')
     }
-    setShowAddCar(false)
-    addToast('Car added successfully!', 'success')
-    setNewCar({ name: '', brand: '', category: 'Sports', pricePerDay: '', fuelType: 'Petrol', seats: '', transmission: 'Automatic', description: '' })
+  }
+
+  const openAddCar = () => { setEditingCarId(null); setNewCar(EMPTY_CAR); setCarImageFiles([]); setShowAddCar(true) }
+
+  const openEditCar = (car) => {
+    setEditingCarId(car._id)
+    setNewCar({ name: car.name || '', brand: car.brand || '', category: car.category || 'Sports', pricePerDay: car.pricePerDay ?? '', fuelType: car.fuelType || 'Petrol', seats: car.seats ?? '', transmission: car.transmission || 'Automatic', description: car.description || '' })
+    setCarImageFiles([])
+    setShowAddCar(true)
+  }
+
+  const handleSaveCar = async () => {
+    if (!newCar.name || !newCar.brand || !newCar.pricePerDay || !newCar.seats || !newCar.description) { addToast('Please fill in all required fields', 'error'); return }
+    setSavingCar(true)
+    try {
+      const formData = new FormData()
+      Object.entries(newCar).forEach(([k, v]) => formData.append(k, v))
+      carImageFiles.forEach(file => formData.append('images', file))
+      if (editingCarId) {
+        const res = await carsAPI.update(editingCarId, formData)
+        setCars(prev => prev.map(c => c._id === editingCarId ? (res.data.car || res.data) : c))
+        addToast('Car updated!', 'success')
+      } else {
+        const res = await carsAPI.create(formData)
+        setCars(prev => [res.data.car || res.data, ...prev])
+        addToast('Car added!', 'success')
+      }
+      setShowAddCar(false); setEditingCarId(null); setCarImageFiles([]); setNewCar(EMPTY_CAR)
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not save car.', 'error')
+    } finally {
+      setSavingCar(false)
+    }
+  }
+
+  const handleCancelBooking = async (id) => {
+    if (!confirm('Cancel this booking?')) return
+    try {
+      const res = await bookingsAPI.cancel(id)
+      setBookings(prev => prev.map(bk => bk._id === id ? { ...bk, ...(res.data.booking || res.data) } : bk))
+      addToast('Booking cancelled', 'info')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not cancel booking.', 'error')
+    }
+  }
+
+  const handleBookingStatusChange = async (id, status) => {
+    try {
+      const res = await bookingsAPI.updateStatus(id, status)
+      setBookings(prev => prev.map(bk => bk._id === id ? { ...bk, ...(res.data.booking || res.data) } : bk))
+      addToast(`Booking marked as ${status}`, 'success')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not update status.', 'error')
+    }
+  }
+
+  const handleToggleBan = async (u) => {
+    try {
+      const res = await usersAPI.ban(u._id)
+      const updated = res.data.user || res.data
+      setUsers(prev => prev.map(uu => uu._id === u._id ? { ...uu, ...updated } : uu))
+      addToast(updated.isBanned ? 'User banned' : 'User unbanned', 'info')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not update user.', 'error')
+    }
+  }
+
+  const handleDeleteUser = async (u) => {
+    if (!confirm(`Delete user ${u.name}?`)) return
+    try {
+      await usersAPI.delete(u._id)
+      setUsers(prev => prev.filter(uu => uu._id !== u._id))
+      addToast('User deleted', 'info')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not delete user.', 'error')
+    }
+  }
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true)
+    try {
+      const res = await settingsAPI.update(settings)
+      setSettings(res.data.settings || settings)
+      addToast('Settings saved!', 'success')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not save settings.', 'error')
+    } finally {
+      setSavingSettings(false)
+    }
   }
 
   const thStyle = { color: '#6b7280', fontSize: 11, fontWeight: 600, textAlign: 'left', padding: '10px 16px', textTransform: 'uppercase', letterSpacing: 1 }
@@ -181,7 +276,7 @@ export default function AdminDashboard() {
               <FiExternalLink size={13} /> {isMobile ? 'Live' : 'Live Site'}
             </button>
             {activePage === 'cars' && (
-              <button onClick={() => setShowAddCar(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#ef4444', border: 'none', color: '#fff', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer', fontWeight: 700, whiteSpace: 'nowrap' }}>
+              <button onClick={openAddCar} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#ef4444', border: 'none', color: '#fff', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer', fontWeight: 700, whiteSpace: 'nowrap' }}>
                 <FiPlus size={14} /> {isMobile ? '' : 'Add Car'}
               </button>
             )}
@@ -310,13 +405,16 @@ export default function AdminDashboard() {
                         </td>
                         <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{car.brand}</td>
                         <td style={tdStyle}><span style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', fontSize: 10, padding: '3px 8px', borderRadius: 4, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>{car.category}</span></td>
-                        <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>${car.pricePerDay}</td>
+                        <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>{fmt(car.pricePerDay)}</td>
                         <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{car.seats}</td>
                         <td style={{ ...tdStyle, color: '#FFD700', fontSize: 13 }}>★ {car.rating || 4.5}</td>
                         <td style={tdStyle}><StatusBadge status={car.available !== false ? 'Active' : 'Banned'} /></td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', gap: 8 }}>
-                            <button style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(59,130,246,0.1)', border: 'none', color: '#3b82f6', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                            <button onClick={() => handleToggleAvailability(car)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(16,185,129,0.1)', border: 'none', color: '#10b981', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                              {car.available === false ? <FiToggleLeft size={12} /> : <FiToggleRight size={12} />} {car.available === false ? 'Offline' : 'Live'}
+                            </button>
+                            <button onClick={() => openEditCar(car)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(59,130,246,0.1)', border: 'none', color: '#3b82f6', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
                               <FiEdit2 size={12} /> Edit
                             </button>
                             <button onClick={() => handleDeleteCar(car._id)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
@@ -351,10 +449,16 @@ export default function AdminDashboard() {
                     <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>{fmt(b.totalPrice)}</td>
                     <td style={tdStyle}><StatusBadge status={b.bookingStatus} /></td>
                     <td style={tdStyle}>
-                      <button onClick={() => { setBookings(prev => prev.map(bk => bk._id === b._id ? { ...bk, bookingStatus: 'Cancelled' } : bk)); addToast('Booking cancelled', 'info') }}
-                        style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
-                        Cancel
-                      </button>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        <select value={b.bookingStatus} onChange={(e) => handleBookingStatusChange(b._id, e.target.value)} style={{ background: '#1f2937', border: '1px solid #374151', color: '#d1d5db', borderRadius: 6, padding: '5px 8px', fontSize: 12 }}>
+                          {['Pending','Confirmed','Active','Completed','Cancelled'].map(option => <option key={option} value={option}>{option}</option>)}
+                        </select>
+                        {b.bookingStatus !== 'Cancelled' && (
+                          <button onClick={() => handleCancelBooking(b._id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                            Cancel
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}</tbody>
@@ -381,13 +485,21 @@ export default function AdminDashboard() {
                     </td>
                     <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{u.email}</td>
                     <td style={tdStyle}><StatusBadge status={u.role === 'admin' ? 'Active' : 'Active'} /></td>
-                    <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{u.bookingCount}</td>
-                    <td style={tdStyle}><StatusBadge status={u.status} /></td>
+                    <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{u.bookingCount ?? '—'}</td>
+                    <td style={tdStyle}><StatusBadge status={u.isBanned ? 'Banned' : 'Active'} /></td>
                     <td style={tdStyle}>
-                      <button onClick={() => { setUsers(prev => prev.map(uu => uu._id === u._id ? { ...uu, status: uu.status === 'Banned' ? 'Active' : 'Banned' } : uu)); addToast(u.status === 'Banned' ? 'User unbanned' : 'User banned', 'info') }}
-                        style={{ background: u.status === 'Banned' ? 'rgba(22,163,74,0.1)' : 'rgba(239,68,68,0.1)', border: 'none', color: u.status === 'Banned' ? '#16a34a' : '#ef4444', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
-                        {u.status === 'Banned' ? 'Unban' : 'Ban'}
-                      </button>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        {u.role !== 'admin' && (
+                          <button onClick={() => handleToggleBan(u)} style={{ background: u.isBanned ? 'rgba(22,163,74,0.1)' : 'rgba(239,68,68,0.1)', border: 'none', color: u.isBanned ? '#16a34a' : '#ef4444', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                            {u.isBanned ? 'Unban' : 'Ban'}
+                          </button>
+                        )}
+                        {u.role !== 'admin' && (
+                          <button onClick={() => handleDeleteUser(u)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                            Delete
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}</tbody>
@@ -428,10 +540,11 @@ export default function AdminDashboard() {
               <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28, marginBottom: 20 }}>
                 <h3 style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 20 }}>Platform Settings</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  {[['Platform Name', 'SpeedToyz'], ['Support Email', 'support@speedtoyz.com'], ['Currency', 'USD ($)'], ['Tax Rate', '8%']].map(([l, v]) => (
-                    <div key={l}><Input label={l} defaultValue={v} /></div>
-                  ))}
-                  <button style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '11px 28px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, alignSelf: 'flex-start' }}>Save Settings</button>
+                  <div><Input label="Platform Name" value={settings.platformName} onChange={e => setSettings(s => ({ ...s, platformName: e.target.value }))} /></div>
+                  <div><Input label="Support Email" value={settings.supportEmail} onChange={e => setSettings(s => ({ ...s, supportEmail: e.target.value }))} /></div>
+                  <div><Input label="Currency" value={settings.currency} onChange={e => setSettings(s => ({ ...s, currency: e.target.value }))} /></div>
+                  <div><Input label="Tax Rate" type="number" value={settings.taxRate} onChange={e => setSettings(s => ({ ...s, taxRate: Number(e.target.value) }))} /></div>
+                  <button disabled={savingSettings} onClick={handleSaveSettings} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '11px 28px', borderRadius: 8, cursor: savingSettings ? 'not-allowed' : 'pointer', fontWeight: 700, alignSelf: 'flex-start', opacity: savingSettings ? 0.8 : 1 }}>Save Settings</button>
                 </div>
               </div>
             </div>
@@ -440,7 +553,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── Add Car Modal ─────────────────────────────────────────────────────── */}
-      <Modal isOpen={showAddCar} onClose={() => setShowAddCar(false)} title="Add New Car" maxWidth={580}>
+      <Modal isOpen={showAddCar} onClose={() => setShowAddCar(false)} title={editingCarId ? 'Edit Car' : 'Add New Car'} maxWidth={580}>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
           {[
             { label: 'Car Name *', key: 'name', placeholder: 'e.g. 911 Carrera S' },
@@ -469,10 +582,18 @@ export default function AdminDashboard() {
             <textarea value={newCar.description} onChange={e => setNewCar(p => ({ ...p, description: e.target.value }))} placeholder="Car description..." rows={3}
               style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 14px', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box' }} />
           </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{ display: 'block', color: '#9ca3af', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Images</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#1f2937', border: '1px dashed #374151', borderRadius: 8, padding: '10px 14px', color: '#d1d5db', cursor: 'pointer' }}>
+              <FiUpload size={14} />
+              <span>{carImageFiles.length ? `${carImageFiles.length} image(s) selected` : 'Choose images'}</span>
+              <input type="file" accept="image/*" multiple onChange={e => setCarImageFiles(Array.from(e.target.files || []))} style={{ display: 'none' }} />
+            </label>
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
           <button onClick={() => setShowAddCar(false)} style={{ background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '10px 24px', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
-          <button onClick={handleAddCar} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 28px', borderRadius: 8, cursor: 'pointer', fontWeight: 700 }}>Add Car</button>
+          <button onClick={handleSaveCar} disabled={savingCar} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 28px', borderRadius: 8, cursor: savingCar ? 'not-allowed' : 'pointer', fontWeight: 700, opacity: savingCar ? 0.8 : 1 }}>{editingCarId ? 'Save Changes' : 'Add Car'}</button>
         </div>
       </Modal>
     </div>

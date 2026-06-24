@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FiInstagram, FiFacebook, FiMapPin, FiPhone, FiMail } from 'react-icons/fi'
+import { FiInstagram, FiFacebook, FiMapPin, FiPhone, FiMail, FiSend } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import Logo from './common/Logo'
+import { useToast } from '../context/ToastContext'
+import { newsletterAPI } from '../services/api'
 
 export default function Footer() {
+  const { addToast } = useToast()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [subscribing, setSubscribing] = useState(false)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -42,7 +47,24 @@ export default function Footer() {
 
   const locationAddress = 'Lane-4, Satya Sai Enclave Road, Near Manipal Hospital, Kolathia, Khandagiri, Bhubaneswar, Odisha 751030'
   const googleMapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1352.6576179591075!2d85.77613609969278!3d20.257452855684868!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19a70155609a7b%3A0x377c73120b48822b!2sSpeed%20Toyz%20Cars%20%7C%20Self%20Drive%20Car%20Rental%20%7C%20Bhubaneswar!5e0!3m2!1sen!2sin!4v1781157796951!5m2!1sen!2sin'
-  const googleMapLink = 'https://www.google.com/maps/search/?api=1&query=Speed+Toyz+Cars+Bhubaneswar'
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault()
+    if (!/\S+@\S+\.\S+/.test(newsletterEmail)) {
+      addToast('Please enter a valid email', 'error')
+      return
+    }
+    setSubscribing(true)
+    try {
+      const res = await newsletterAPI.subscribe(newsletterEmail)
+      addToast(res.data?.message || 'Subscribed! 🎉', 'success')
+      setNewsletterEmail('')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not subscribe.', 'error')
+    } finally {
+      setSubscribing(false)
+    }
+  }
 
   return (
     <footer style={{ background: '#050505', borderTop: '1px solid #1f2937', position: 'relative', overflow: 'hidden' }}>
@@ -92,10 +114,16 @@ export default function Footer() {
               Best self-drive and luxury car rental in Bhubaneswar with clean cars, affordable rates, 24/7 support, and smooth Odisha tours.
             </p>
             <div style={{ display: 'grid', gap: 8, color: '#d1d5db', fontSize: 13, marginBottom: 18 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={38} color="#ef4444" /> {locationAddress}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={14} color="#ef4444" /> {locationAddress}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> +91 98613 32857, +91 76080 68450</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> speedtoyzcarsodisha@gmail.com</span>
             </div>
+            <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 12 }}>
+              <input value={newsletterEmail} onChange={e => setNewsletterEmail(e.target.value)} type="email" placeholder="Email for updates" style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }} />
+              <button type="submit" disabled={subscribing} style={{ background: '#ef4444', border: 'none', color: '#fff', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <FiSend size={14} />
+              </button>
+            </form>
             <div style={{ display: 'flex', gap: 12 }}>
               {socials.map(({ Icon, href }, i) => (
                 <a key={i} target='_blank' href={href} style={{ width: 36, height: 36, borderRadius: 8, background: '#111827', border: '1px solid #1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', textDecoration: 'none', transition: 'all 0.2s' }}
@@ -128,8 +156,12 @@ export default function Footer() {
         <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 12 }}>
           <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} Speed Toyz Cars. All rights reserved.</span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 24 }}>
-            {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(t => (
-              <Link key={t} to="#" style={{ color: '#4b5563', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}
+            {[
+              ['Privacy Policy', '/privacy'],
+              ['Terms of Service', '/terms'],
+              ['Cookie Policy', '/privacy'],
+            ].map(([t, to]) => (
+              <Link key={t} to={to} style={{ color: '#4b5563', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}
                 onMouseEnter={e => e.target.style.color = '#9ca3af'}
                 onMouseLeave={e => e.target.style.color = '#4b5563'}>
                 {t}

@@ -1,5 +1,3 @@
-import { FiStar } from 'react-icons/fi'
-
 // ── Spinner ───────────────────────────────────────────────────────────────────
 export function Spinner({ size = 40 }) {
   return (
@@ -117,7 +115,7 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 560 }) {
   if (!isOpen) return null
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div onClick={e => e.stopPropagation()} className="animate-scaleIn" style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 16, padding: 36, width: '100%', maxWidth }}>
+      <div onClick={e => e.stopPropagation()} className="animate-scaleIn" style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 16, padding: 36, width: '100%', maxWidth, maxHeight: '90vh', overflowY: 'auto', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <h3 style={{ color: '#fff', fontSize: 20, fontWeight: 800, margin: 0 }}>{title}</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: 24, cursor: 'pointer', lineHeight: 1 }}>×</button>

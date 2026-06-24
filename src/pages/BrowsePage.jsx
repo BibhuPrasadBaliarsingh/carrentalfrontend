@@ -5,6 +5,7 @@ import CarCard from '../components/CarCard'
 import { CarCardSkeleton, EmptyState } from '../components/UI'
 import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
+import { formatPrice } from '../utils/format'
 
 const BRANDS = ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren']
 const CATEGORIES = ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar']
@@ -118,8 +119,8 @@ export default function BrowsePage() {
               <div style={{ marginBottom: 24 }}>
                 <label style={labelStyle}>Price Range</label>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <span style={{ color: '#6b7280', fontSize: 12 }}>${filters.minPrice}</span>
-                  <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 700 }}>${filters.maxPrice}/day</span>
+                  <span style={{ color: '#6b7280', fontSize: 12 }}>{formatPrice(filters.minPrice)}</span>
+                  <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 700 }}>{formatPrice(filters.maxPrice)}/day</span>
                 </div>
                 <input type="range" min={0} max={2000} step={50} value={filters.maxPrice} onChange={e => setFilters(f => ({ ...f, maxPrice: +e.target.value }))} style={{ width: '100%' }} />
               </div>

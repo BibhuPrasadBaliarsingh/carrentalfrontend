@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
@@ -7,7 +7,7 @@ import { useToast } from '../context/ToastContext'
 import { authAPI } from '../services/api'
 import Logo from '../components/common/Logo'
 
-function AuthInput({ icon, type = 'text', placeholder, value, onChange, error, rightIcon, onRightClick }) {
+export function AuthInput({ icon, type = 'text', placeholder, value, onChange, error, rightIcon, onRightClick }) {
   return (
     <div style={{ marginBottom: 16 }}>
       <div style={{ position: 'relative' }}>
@@ -123,7 +123,7 @@ export function LoginPage() {
                 <input type="checkbox" style={{ accentColor: '#ef4444' }} />
                 <span style={{ color: '#9ca3af', fontSize: 13 }}>Remember me</span>
               </label>
-              <Link to="#" style={{ color: '#ef4444', fontSize: 13, textDecoration: 'none', fontWeight: 600 }}>Forgot password?</Link>
+              <Link to="/forgot-password" style={{ color: '#ef4444', fontSize: 13, textDecoration: 'none', fontWeight: 600 }}>Forgot password?</Link>
             </div>
 
             <button type="submit" disabled={loading}
@@ -138,10 +138,95 @@ export function LoginPage() {
           </div>
 
           <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14, fontSize: 12, color: '#6b7280', lineHeight: 1.7 }}>
-            💡 <strong style={{ color: '#9ca3af' }}>Demo:</strong> Use any email to login. Include "Admin@123" in the email (e.g. admin@speedtoyz.com ) for admin dashboard access.
+            💡 <strong style={{ color: '#9ca3af' }}>Demo:</strong> Admin — admin@speedtoyz.com / Admin@123  |  User — john@example.com / User@123
           </div>
         </motion.div>
       </div>
+    </div>
+  )
+}
+
+export function ForgotPasswordPage() {
+  const { addToast } = useToast()
+  const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      await authAPI.forgotPassword({ email })
+      addToast('If an account exists, a reset link has been sent.', 'success')
+      setEmail('')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not send reset email.', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 48, width: '100%', maxWidth: 480 }}>
+        <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 6px' }}>Reset password</h2>
+        <p style={{ color: '#6b7280', fontSize: 15, marginBottom: 24 }}>Enter your email to receive a password reset link.</p>
+        <form onSubmit={handleSubmit}>
+          <AuthInput icon={<FiMail size={16} />} type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <button type="submit" disabled={loading} style={{ width: '100%', background: '#ef4444', border: 'none', color: '#fff', padding: '14px 0', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1, marginTop: 6 }}>
+            {loading ? 'Sending...' : 'Send reset link'}
+          </button>
+        </form>
+        <div style={{ textAlign: 'center', marginTop: 16 }}>
+          <Link to="/login" style={{ color: '#ef4444', textDecoration: 'none', fontWeight: 700 }}>Back to login</Link>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
+export function ResetPasswordPage() {
+  const navigate = useNavigate()
+  const { token } = useParams()
+  const { addToast } = useToast()
+  const [form, setForm] = useState({ password: '', confirmPassword: '' })
+  const [loading, setLoading] = useState(false)
+  const [showPw, setShowPw] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!form.password || form.password.length < 6) {
+      addToast('Password must be at least 6 characters.', 'error')
+      return
+    }
+    if (form.password !== form.confirmPassword) {
+      addToast('Passwords do not match.', 'error')
+      return
+    }
+    setLoading(true)
+    try {
+      await authAPI.resetPassword(token, { password: form.password })
+      addToast('Password updated successfully.', 'success')
+      navigate('/login')
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not reset password.', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 48, width: '100%', maxWidth: 480 }}>
+        <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 6px' }}>Set new password</h2>
+        <p style={{ color: '#6b7280', fontSize: 15, marginBottom: 24 }}>Choose a strong password for your account.</p>
+        <form onSubmit={handleSubmit}>
+          <AuthInput icon={<FiLock size={16} />} type={showPw ? 'text' : 'password'} placeholder="New password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} rightIcon={showPw ? <FiEyeOff size={16} /> : <FiEye size={16} />} onRightClick={() => setShowPw(!showPw)} />
+          <AuthInput icon={<FiLock size={16} />} type="password" placeholder="Confirm new password" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} />
+          <button type="submit" disabled={loading} style={{ width: '100%', background: '#ef4444', border: 'none', color: '#fff', padding: '14px 0', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1, marginTop: 6 }}>
+            {loading ? 'Updating...' : 'Update password'}
+          </button>
+        </form>
+      </motion.div>
     </div>
   )
 }
@@ -178,10 +263,8 @@ export function RegisterPage() {
       addToast('Account created! Welcome to SPEED TOYZ CARS 🎉', 'success')
       navigate('/')
     } catch (err) {
-      const mockUser = { _id: Date.now().toString(), name: form.name, email: form.email, role: 'user' }
-      login(mockUser, 'demo_token_' + Date.now())
-      addToast('Account created! Welcome to SPEED TOYZ CARS 🎉', 'success')
-      navigate('/')
+      const message = err.response?.data?.message || 'Could not create your account. Please try again.'
+      addToast(message, 'error')
     } finally {
       setLoading(false)
     }

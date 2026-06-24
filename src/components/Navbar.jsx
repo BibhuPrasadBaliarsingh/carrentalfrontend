@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi'
+import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiCalendar } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import Logo from './common/Logo'
 
@@ -75,10 +75,15 @@ export default function Navbar() {
                         <FiSettings size={15} /> Dashboard
                       </button>
                     )}
+                    <button onClick={() => { navigate('/account'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#1f2937'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                      <FiUser size={15} /> My Account
+                    </button>
                     <button onClick={() => { navigate('/my-bookings'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
                       onMouseEnter={e => e.currentTarget.style.background = '#1f2937'}
                       onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                      <FiUser size={15} /> My Bookings
+                      <FiCalendar size={15} /> My Bookings
                     </button>
                     <div style={{ height: 1, background: '#1f2937', margin: '4px 0' }} />
                     <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
@@ -93,8 +98,8 @@ export default function Navbar() {
           ) : (
             <>
               {!isMobile && <Link to="/login" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>Login</Link>}
-              <Link to={user ? '#' : '/register'} style={{ background: '#ef4444', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
-                {user ? user.name : 'Sign Up'}
+              <Link to="/register" style={{ background: '#ef4444', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                Sign Up
               </Link>
             </>
           )}

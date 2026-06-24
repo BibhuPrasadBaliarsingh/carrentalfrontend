@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiShield, FiZap, FiStar, FiArrowRight, FiMapPin, FiCalendar, FiCheckCircle, FiClock, FiPhone, FiCompass } from 'react-icons/fi'
+import { FiShield, FiZap, FiStar, FiArrowRight, FiMapPin, FiCalendar, FiClock, FiCompass } from 'react-icons/fi'
 import CarCard from '../components/CarCard'
 import { CarCardSkeleton } from '../components/UI'
 import { carsAPI } from '../services/api'

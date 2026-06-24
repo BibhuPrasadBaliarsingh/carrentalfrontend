@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiShield, FiCreditCard, FiCalendar, FiMapPin, FiCheck } from 'react-icons/fi'
+import { motion } from 'framer-motion'
+import { FiShield, FiCreditCard, FiCalendar, FiCheck } from 'react-icons/fi'
 import { Badge, Input, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { carsAPI, bookingsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
+import { formatPrice } from '../utils/format'
 
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
+const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank Transfer' }
 const calcDays = (a, b) => {
   const diff = (new Date(b) - new Date(a)) / 86400000
   return diff > 0 ? Math.ceil(diff) : 1
@@ -38,7 +39,8 @@ export default function BookingPage() {
     insurance: false,
     paymentMethod: 'card',
     cardNumber: '',
-    cardExpiry: '',
+    cardExpiryMonth: '',
+    cardExpiryYear: '',
     cardCVV: '',
   })
   const [errors, setErrors] = useState({})
@@ -47,7 +49,7 @@ export default function BookingPage() {
     const fetchCar = async () => {
       try {
         const res = await carsAPI.getById(id)
-        setCar(res.data)
+        setCar(res.data.car || res.data)
       } catch {
         const found = MOCK_CARS.find(c => c._id === id)
         setCar(found || MOCK_CARS[0])
@@ -83,7 +85,8 @@ export default function BookingPage() {
     if (!form.pickupLocation) e.pickupLocation = 'Required'
     if (form.paymentMethod === 'card') {
       if (!form.cardNumber) e.cardNumber = 'Required'
-      if (!form.cardExpiry) e.cardExpiry = 'Required'
+      if (!form.cardExpiryMonth) e.cardExpiryMonth = 'Required'
+      if (!form.cardExpiryYear) e.cardExpiryYear = 'Required'
       if (!form.cardCVV) e.cardCVV = 'Required'
     }
     setErrors(e)
@@ -95,22 +98,20 @@ export default function BookingPage() {
     setSubmitting(true)
     try {
       const payload = {
-        car: car._id,
+        carId: car._id,
         pickupDate: form.pickupDate,
         returnDate: form.returnDate,
         pickupLocation: form.pickupLocation,
-        insurance: form.insurance,
-        totalPrice: total,
+        includesInsurance: form.insurance,
+        paymentMethod: PAYMENT_METHOD_MAP[form.paymentMethod] || 'Credit Card',
       }
       const res = await bookingsAPI.create(payload)
-      setBookingRef(res.data?._id || 'BK' + Date.now().toString().slice(-6))
+      setBookingRef(res.data?.booking?.bookingRef || res.data?.booking?._id || res.data?._id || '')
       setSuccess(true)
       addToast('Booking confirmed! 🎉', 'success')
-    } catch {
-      // mock success
-      setBookingRef('BK' + Date.now().toString().slice(-6))
-      setSuccess(true)
-      addToast('Booking confirmed! 🎉', 'success')
+    } catch (err) {
+      const message = err.response?.data?.message || 'Could not create your booking. Please try again.'
+      addToast(message, 'error')
     } finally {
       setSubmitting(false)
     }
@@ -136,7 +137,7 @@ export default function BookingPage() {
                 ['Pickup', form.pickupDate],
                 ['Return', form.returnDate],
                 ['Duration', `${days} day${days > 1 ? 's' : ''}`],
-                ['Total', fmt(total)],
+                ['Total', formatPrice(total)],
               ].map(([k, v]) => (
                 <div key={k} style={{ textAlign: 'left' }}>
                   <div style={{ color: '#6b7280', fontSize: 11, marginBottom: 4 }}>{k}</div>
@@ -225,8 +226,8 @@ export default function BookingPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                     <F label="Card Number" name="cardNumber" placeholder="1234 5678 9012 3456" maxLength={19} />
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
-                      <F label="Month" name="cardExpiry" placeholder="MM / YY" />
-                      <F label="Year" name="cardExpiry" placeholder="YY" />
+                      <F label="Month" name="cardExpiryMonth" placeholder="MM" />
+                      <F label="Year" name="cardExpiryYear" placeholder="YY" />
                       <F label="CVV" name="cardCVV" placeholder="123" maxLength={4} />
                     </div>
                   </div>
@@ -264,10 +265,10 @@ export default function BookingPage() {
               <div style={{ borderTop: '1px solid #1f2937', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
                   ['Duration', `${days} day${days > 1 ? 's' : ''}`],
-                  ['Daily Rate', `$${car.pricePerDay}/day`],
-                  ['Subtotal', fmt(subtotal)],
-                  form.insurance && ['Insurance', fmt(insuranceFee)],
-                  ['Tax (8%)', fmt(tax)],
+                  ['Daily Rate', `${formatPrice(car.pricePerDay)}/day`],
+                  ['Subtotal', formatPrice(subtotal)],
+                  form.insurance && ['Insurance', formatPrice(insuranceFee)],
+                  ['Tax (8%)', formatPrice(tax)],
                 ].filter(Boolean).map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
                     <span style={{ color: '#6b7280' }}>{k}</span>
@@ -277,7 +278,7 @@ export default function BookingPage() {
 
                 <div style={{ borderTop: '1px solid #1f2937', paddingTop: 14, display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
                   <span style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>Total</span>
-                  <span style={{ color: '#ef4444', fontWeight: 900, fontSize: 22 }}>{fmt(total)}</span>
+                  <span style={{ color: '#ef4444', fontWeight: 900, fontSize: 22 }}>{formatPrice(total)}</span>
                 </div>
               </div>
 

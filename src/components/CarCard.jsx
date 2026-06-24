@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FiZap, FiUsers, FiSettings } from 'react-icons/fi'
 import { Badge, StarRating } from './UI'
+import { formatPrice } from '../utils/format'
 
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
 
@@ -51,7 +52,7 @@ export default function CarCard({ car, index = 0 }) {
             <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{car.name}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 20 }}>${car.pricePerDay}</div>
+            <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 20 }}>{formatPrice(car.pricePerDay)}</div>
             <div style={{ color: '#6b7280', fontSize: 11 }}>/day</div>
           </div>
         </div>

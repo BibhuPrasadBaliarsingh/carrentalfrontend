@@ -6,6 +6,7 @@ import { Badge, StarRating, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
+import { formatPrice } from '../utils/format'
 
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
 
@@ -32,7 +33,7 @@ export default function CarDetailPage() {
     const fetchCar = async () => {
       try {
         const res = await carsAPI.getById(id)
-        setCar(res.data)
+        setCar(res.data.car || res.data)
       } catch {
         const found = MOCK_CARS.find(c => c._id === id)
         setCar(found || MOCK_CARS[0])
@@ -152,13 +153,13 @@ export default function CarDetailPage() {
                 <div>
                   <div style={{ color: '#6b7280', fontSize: 13, marginBottom: 4 }}>Daily Rate</div>
                   <div>
-                    <span style={{ color: '#ef4444', fontSize: 42, fontWeight: 900, letterSpacing: -1 }}>${car.pricePerDay}</span>
+                    <span style={{ color: '#ef4444', fontSize: 42, fontWeight: 900, letterSpacing: -1 }}>{formatPrice(car.pricePerDay)}</span>
                     <span style={{ color: '#6b7280', fontSize: 16 }}>/day</span>
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ color: '#6b7280', fontSize: 12 }}>Weekly rate</div>
-                  <div style={{ color: '#fff', fontSize: 22, fontWeight: 800 }}>${Math.round(car.pricePerDay * 7 * 0.9).toLocaleString()}</div>
+                  <div style={{ color: '#fff', fontSize: 22, fontWeight: 800 }}>{formatPrice(Math.round(car.pricePerDay * 7 * 0.9))}</div>
                   <div style={{ color: '#16a34a', fontSize: 11, marginTop: 2 }}>Save 10% weekly</div>
                 </div>
               </div>
