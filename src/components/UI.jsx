@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+
 // ── Spinner ───────────────────────────────────────────────────────────────────
 export function Spinner({ size = 40 }) {
   return (
@@ -85,13 +87,19 @@ export function EmptyState({ icon = '📭', title, message, action, onAction }) 
 }
 
 // ── Input ─────────────────────────────────────────────────────────────────────
-export function Input({ label, error, ...props }) {
+export function Input({ label, error, id, name, value, onChange, ...props }) {
+  const inputIdRef = useRef(id || `input-${Math.random().toString(36).slice(2, 9)}`)
+  const inputId = id || inputIdRef.current
   return (
     <div>
-      {label && <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{label}</label>}
+      {label && <label htmlFor={inputId} style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8, cursor: 'text' }}>{label}</label>}
       <input
+        id={inputId}
+        name={name}
         style={{ width: '100%', background: '#1f2937', border: `1px solid ${error ? '#ef4444' : '#374151'}`, borderRadius: 8, color: '#fff', padding: '10px 14px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
         {...props}
+        value={value ?? ''}
+        onChange={onChange}
       />
       {error && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{error}</p>}
     </div>

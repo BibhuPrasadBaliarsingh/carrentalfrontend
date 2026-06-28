@@ -82,4 +82,8 @@ export const settingsAPI = {
   update: (data) => api.put('/settings', data),
 }
 
+export const siteAPI = {
+  filters: () => api.get('/filters'),
+}
+
 export default api

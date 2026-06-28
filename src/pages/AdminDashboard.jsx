@@ -32,8 +32,17 @@ export default function AdminDashboard() {
   const [savingCar, setSavingCar] = useState(false)
   const [carImageFiles, setCarImageFiles] = useState([])
   const [newCar, setNewCar] = useState(EMPTY_CAR)
-  const [settings, setSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 8 })
+  const [settings, setSettings] = useState({
+    platformName: 'SpeedToyz',
+    supportEmail: 'support@speedtoyz.com',
+    currency: 'INR (₹)',
+    taxRate: 8,
+    brands: ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren'],
+    categories: ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar', 'Convertible', 'Sedan'],
+  })
   const [savingSettings, setSavingSettings] = useState(false)
+  const [newBrand, setNewBrand] = useState('')
+  const [newCategory, setNewCategory] = useState('')
 
   useEffect(() => {
     const handleResize = () => {
@@ -207,6 +216,38 @@ export default function AdminDashboard() {
     }
   }
 
+  const addBrand = () => {
+    const value = newBrand.trim()
+    if (!value) { addToast('Enter a brand name', 'error'); return }
+    if (settings.brands.includes(value)) { addToast('Brand already exists', 'error'); return }
+    setSettings(s => ({ ...s, brands: [...s.brands, value] }))
+    setNewBrand('')
+  }
+
+  const updateBrand = (index, value) => {
+    setSettings(s => ({ ...s, brands: s.brands.map((item, idx) => idx === index ? value : item) }))
+  }
+
+  const removeBrand = (index) => {
+    setSettings(s => ({ ...s, brands: s.brands.filter((_, idx) => idx !== index) }))
+  }
+
+  const addCategory = () => {
+    const value = newCategory.trim()
+    if (!value) { addToast('Enter a car type', 'error'); return }
+    if (settings.categories.includes(value)) { addToast('Car type already exists', 'error'); return }
+    setSettings(s => ({ ...s, categories: [...s.categories, value] }))
+    setNewCategory('')
+  }
+
+  const updateCategory = (index, value) => {
+    setSettings(s => ({ ...s, categories: s.categories.map((item, idx) => idx === index ? value : item) }))
+  }
+
+  const removeCategory = (index) => {
+    setSettings(s => ({ ...s, categories: s.categories.filter((_, idx) => idx !== index) }))
+  }
+
   const thStyle = { color: '#6b7280', fontSize: 11, fontWeight: 600, textAlign: 'left', padding: '10px 16px', textTransform: 'uppercase', letterSpacing: 1 }
   const tdStyle = { padding: '13px 16px', borderBottom: '1px solid #1a2332' }
 
@@ -256,7 +297,19 @@ export default function AdminDashboard() {
       {/* ── Main Content ─────────────────────────────────────────────────────── */}
       <div style={{ flex: 1, overflow: 'auto', marginLeft: isTablet && sidebarOpen ? 224 : 0 }}>
         {/* Topbar */}
-        <div style={{ borderBottom: '1px solid #1f2937', padding: isMobile ? '12px 16px' : '16px 32px', background: '#050505', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
+        <div style={{
+          borderBottom: '1px solid #1f2937',
+          padding: isMobile ? '12px 16px' : '16px 32px',
+          background: '#050505',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          position: 'fixed',
+          top: 0,
+          left: sidebarOpen && !isMobile ? 224 : 0,
+          width: sidebarOpen && !isMobile ? 'calc(100% - 224px)' : '100%',
+          zIndex: 100,
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {isTablet && (
               <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', padding: 0 }}>
@@ -283,7 +336,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div style={{ padding: isMobile ? '16px' : 28 }}>
+        <div style={{ padding: isMobile ? '80px 16px 16px' : '80px 28px 28px' }}>
 
           {/* ── Overview ─────────────────────────────────────────────────────── */}
           {activePage === 'overview' && (
@@ -544,6 +597,81 @@ export default function AdminDashboard() {
                   <div><Input label="Support Email" value={settings.supportEmail} onChange={e => setSettings(s => ({ ...s, supportEmail: e.target.value }))} /></div>
                   <div><Input label="Currency" value={settings.currency} onChange={e => setSettings(s => ({ ...s, currency: e.target.value }))} /></div>
                   <div><Input label="Tax Rate" type="number" value={settings.taxRate} onChange={e => setSettings(s => ({ ...s, taxRate: Number(e.target.value) }))} /></div>
+
+                  <div style={{ background: '#0f1727', border: '1px solid #1f2937', borderRadius: 12, padding: 18 }}>
+                    <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 700, marginBottom: 14 }}>Brand Management</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {settings.brands.map((brand, index) => (
+                        <div key={`${brand}-${index}`} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <input
+                            value={brand}
+                            onChange={e => updateBrand(index, e.target.value)}
+                            style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeBrand(index)}
+                            style={{ minWidth: 82, background: 'rgba(239,68,68,0.12)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <input
+                          placeholder="Add new brand"
+                          value={newBrand}
+                          onChange={e => setNewBrand(e.target.value)}
+                          style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={addBrand}
+                          style={{ minWidth: 82, background: '#ef4444', border: 'none', color: '#fff', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                        >
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#0f1727', border: '1px solid #1f2937', borderRadius: 12, padding: 18 }}>
+                    <h4 style={{ color: '#fff', fontSize: 14, fontWeight: 700, marginBottom: 14 }}>Car Type Management</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {settings.categories.map((category, index) => (
+                        <div key={`${category}-${index}`} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <input
+                            value={category}
+                            onChange={e => updateCategory(index, e.target.value)}
+                            style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeCategory(index)}
+                            style={{ minWidth: 82, background: 'rgba(239,68,68,0.12)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <input
+                          placeholder="Add new car type"
+                          value={newCategory}
+                          onChange={e => setNewCategory(e.target.value)}
+                          style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={addCategory}
+                          style={{ minWidth: 82, background: '#ef4444', border: 'none', color: '#fff', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                        >
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   <button disabled={savingSettings} onClick={handleSaveSettings} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '11px 28px', borderRadius: 8, cursor: savingSettings ? 'not-allowed' : 'pointer', fontWeight: 700, alignSelf: 'flex-start', opacity: savingSettings ? 0.8 : 1 }}>Save Settings</button>
                 </div>
               </div>
@@ -566,7 +694,7 @@ export default function AdminDashboard() {
             </div>
           ))}
           {[
-            { label: 'Category', key: 'category', opts: ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar'] },
+            { label: 'Category', key: 'category', opts: settings.categories },
             { label: 'Fuel Type', key: 'fuelType', opts: ['Petrol', 'Hybrid', 'Electric', 'Diesel'] },
             { label: 'Transmission', key: 'transmission', opts: ['Automatic', 'Manual'] },
           ].map(({ label, key, opts }) => (

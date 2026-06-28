@@ -3,12 +3,12 @@ import { useSearchParams } from 'react-router-dom'
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi'
 import CarCard from '../components/CarCard'
 import { CarCardSkeleton, EmptyState } from '../components/UI'
-import { carsAPI } from '../services/api'
+import { carsAPI, siteAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
 
-const BRANDS = ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren']
-const CATEGORIES = ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar']
+const DEFAULT_BRANDS = ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren']
+const DEFAULT_CATEGORIES = ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar']
 const FUELS = ['Petrol', 'Hybrid', 'Electric', 'Diesel']
 
 export default function BrowsePage() {
@@ -21,6 +21,8 @@ export default function BrowsePage() {
   const [filtersOpen, setFiltersOpen] = useState(() => window.innerWidth >= 768)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
+  const [brands, setBrands] = useState(DEFAULT_BRANDS)
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES)
   const [filters, setFilters] = useState({
     brand: '',
     category: searchParams.get('category') || '',
@@ -46,8 +48,13 @@ export default function BrowsePage() {
     const fetchCars = async () => {
       setLoading(true)
       try {
-        const res = await carsAPI.getAll()
-        setCars(res.data.cars || res.data)
+        const [carsRes, filtersRes] = await Promise.all([
+          carsAPI.getAll(),
+          siteAPI.filters(),
+        ])
+        setCars(carsRes.data.cars || carsRes.data)
+        setBrands(filtersRes.data.brands || DEFAULT_BRANDS)
+        setCategories(filtersRes.data.categories || DEFAULT_CATEGORIES)
       } catch {
         setCars(MOCK_CARS)
       } finally {
@@ -106,7 +113,7 @@ export default function BrowsePage() {
               {/* Car Type */}
               <div style={{ marginBottom: 24 }}>
                 <label style={labelStyle}>Car Type</label>
-                {CATEGORIES.map(cat => (
+                {categories.map(cat => (
                   <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, cursor: 'pointer' }}>
                     <input type="checkbox" checked={filters.category === cat} onChange={() => setFilters(f => ({ ...f, category: f.category === cat ? '' : cat }))} />
                     <span style={{ color: filters.category === cat ? '#ef4444' : '#d1d5db', fontSize: 14, transition: 'color 0.2s' }}>{cat}</span>
@@ -130,7 +137,7 @@ export default function BrowsePage() {
                 <label style={labelStyle}>Brand</label>
                 <select value={filters.brand} onChange={e => setFilters(f => ({ ...f, brand: e.target.value }))} style={selectStyle}>
                   <option value="">All Brands</option>
-                  {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
+                  {brands.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
               </div>
 

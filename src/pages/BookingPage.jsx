@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FiShield, FiCreditCard, FiCalendar, FiCheck } from 'react-icons/fi'
-import { Badge, Input, PageLoader } from '../components/UI'
+import { Badge, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { carsAPI, bookingsAPI } from '../services/api'
@@ -14,6 +14,23 @@ const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank 
 const calcDays = (a, b) => {
   const diff = (new Date(b) - new Date(a)) / 86400000
   return diff > 0 ? Math.ceil(diff) : 1
+}
+
+function BookingField({ label, name, value, error, onChange, ...props }) {
+  return (
+    <div>
+      <label htmlFor={name} style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8, cursor: 'text' }}>{label}</label>
+      <input
+        id={name}
+        name={name}
+        value={value ?? ''}
+        onChange={onChange}
+        style={{ width: '100%', background: '#1f2937', border: `1px solid ${error ? '#ef4444' : '#374151'}`, borderRadius: 8, color: '#fff', padding: '10px 14px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+        {...props}
+      />
+      {error && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{error}</p>}
+    </div>
+  )
 }
 
 export default function BookingPage() {
@@ -156,10 +173,6 @@ export default function BookingPage() {
     )
   }
 
-  const F = ({ label, name, ...props }) => (
-    <Input label={label} error={errors[name]} value={form[name]} onChange={e => { setForm(f => ({ ...f, [name]: e.target.value })); setErrors(e2 => ({ ...e2, [name]: '' })) }} {...props} />
-  )
-
   const section = (title, icon, children) => (
     <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28 }}>
       <h3 style={{ color: '#fff', fontSize: 17, fontWeight: 700, marginBottom: 22, display: 'flex', alignItems: 'center', gap: 10 }}>{icon} {title}</h3>
@@ -177,19 +190,19 @@ export default function BookingPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {section('Personal Information', '👤', (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <F label="First Name" name="firstName" placeholder="John" />
-                <F label="Last Name" name="lastName" placeholder="Doe" />
-                <F label="Email Address" name="email" type="email" placeholder="john@example.com" />
-                <F label="Phone Number" name="phone" placeholder="+1 (555) 000-0000" />
+                  <BookingField label="First Name" name="firstName" value={form.firstName} error={errors.firstName} onChange={e => { setForm(f => ({ ...f, firstName: e.target.value })); setErrors(e2 => ({ ...e2, firstName: '' })) }} placeholder="John" />
+                  <BookingField label="Last Name" name="lastName" value={form.lastName} error={errors.lastName} onChange={e => { setForm(f => ({ ...f, lastName: e.target.value })); setErrors(e2 => ({ ...e2, lastName: '' })) }} placeholder="Doe" />
+                  <BookingField label="Email Address" name="email" type="email" value={form.email} error={errors.email} onChange={e => { setForm(f => ({ ...f, email: e.target.value })); setErrors(e2 => ({ ...e2, email: '' })) }} placeholder="john@example.com" />
+                  <BookingField label="Phone Number" name="phone" value={form.phone} error={errors.phone} onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setErrors(e2 => ({ ...e2, phone: '' })) }} placeholder="+1 (555) 000-0000" />
               </div>
             ))}
 
             {section('Pickup & Return Details', <FiCalendar />, (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <F label="Pickup Date" name="pickupDate" type="date" />
-                <F label="Return Date" name="returnDate" type="date" />
+                <BookingField label="Pickup Date" name="pickupDate" type="date" value={form.pickupDate} error={errors.pickupDate} onChange={e => { setForm(f => ({ ...f, pickupDate: e.target.value })); setErrors(e2 => ({ ...e2, pickupDate: '' })) }} />
+                <BookingField label="Return Date" name="returnDate" type="date" value={form.returnDate} error={errors.returnDate} onChange={e => { setForm(f => ({ ...f, returnDate: e.target.value })); setErrors(e2 => ({ ...e2, returnDate: '' })) }} />
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <F label="Pickup Location" name="pickupLocation" placeholder="Airport, Hotel, or City Center" />
+                  <BookingField label="Pickup Location" name="pickupLocation" placeholder="Airport, Hotel, or City Center" value={form.pickupLocation} error={errors.pickupLocation} onChange={e => { setForm(f => ({ ...f, pickupLocation: e.target.value })); setErrors(e2 => ({ ...e2, pickupLocation: '' })) }} />
                 </div>
               </div>
             ))}
@@ -198,7 +211,7 @@ export default function BookingPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
                   { key: false, title: 'Basic Coverage', desc: 'Third-party liability included', price: 'Free' },
-                  { key: true, title: 'Full Coverage Insurance', desc: 'Comprehensive protection — collision, theft, damage', price: '+$50/day' },
+                  { key: true, title: 'Full Coverage Insurance', desc: 'Comprehensive protection — collision, theft, damage', price: '+₹4718/day' },
                 ].map(opt => (
                   <label key={String(opt.key)} style={{ display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer', background: form.insurance === opt.key ? 'rgba(239,68,68,0.06)' : '#1f2937', border: `1px solid ${form.insurance === opt.key ? '#ef4444' : '#374151'}`, borderRadius: 10, padding: 16, transition: 'all 0.2s' }}>
                     <input type="radio" name="insurance" checked={form.insurance === opt.key} onChange={() => setForm(f => ({ ...f, insurance: opt.key }))} style={{ accentColor: '#ef4444' }} />
@@ -224,11 +237,11 @@ export default function BookingPage() {
                 </div>
                 {form.paymentMethod === 'card' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    <F label="Card Number" name="cardNumber" placeholder="1234 5678 9012 3456" maxLength={19} />
+                    <BookingField label="Card Number" name="cardNumber" placeholder="1234 5678 9012 3456" value={form.cardNumber} error={errors.cardNumber} onChange={e => { setForm(f => ({ ...f, cardNumber: e.target.value })); setErrors(e2 => ({ ...e2, cardNumber: '' })) }} maxLength={19} />
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
-                      <F label="Month" name="cardExpiryMonth" placeholder="MM" />
-                      <F label="Year" name="cardExpiryYear" placeholder="YY" />
-                      <F label="CVV" name="cardCVV" placeholder="123" maxLength={4} />
+                      <BookingField label="Month" name="cardExpiryMonth" placeholder="MM" value={form.cardExpiryMonth} error={errors.cardExpiryMonth} onChange={e => { setForm(f => ({ ...f, cardExpiryMonth: e.target.value })); setErrors(e2 => ({ ...e2, cardExpiryMonth: '' })) }} />
+                      <BookingField label="Year" name="cardExpiryYear" placeholder="YY" value={form.cardExpiryYear} error={errors.cardExpiryYear} onChange={e => { setForm(f => ({ ...f, cardExpiryYear: e.target.value })); setErrors(e2 => ({ ...e2, cardExpiryYear: '' })) }} />
+                      <BookingField label="CVV" name="cardCVV" placeholder="123" value={form.cardCVV} error={errors.cardCVV} onChange={e => { setForm(f => ({ ...f, cardCVV: e.target.value })); setErrors(e2 => ({ ...e2, cardCVV: '' })) }} maxLength={4} />
                     </div>
                   </div>
                 )}
