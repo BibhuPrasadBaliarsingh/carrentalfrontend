@@ -98,7 +98,10 @@ export default function Navbar() {
           ) : (
             <>
               {!isMobile && <Link to="/login" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: 14, fontWeight: 500 }}>Login</Link>}
-              <Link to="/register" style={{ background: '#ef4444', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
+              {/* <Link to="/login" onClick={() => setMenuOpen(false)} style={{ display: isMobile ? 'block' : 'none', color: '#d1d5db', textDecoration: 'none', padding: '12px 0', fontSize: 15, fontWeight: 500, borderBottom: '1px solid #1f2937' }}>
+                Login
+              </Link> */}
+              <Link to="/register" onClick={() => setMenuOpen(false)} style={{ display: isMobile ? 'block' : 'none', background: '#ef4444', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap' }}>
                 Sign Up
               </Link>
             </>
