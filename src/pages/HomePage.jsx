@@ -130,7 +130,7 @@ export default function HomePage() {
               <span style={{ color: '#ef4444', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>Premium Car Rental</span>
             </div>
             <h1 style={{ color: '#fff', fontSize: isMobile ? 32 : isTablet ? 44 : 60, fontWeight: 900, lineHeight: isMobile ? 1.2 : 1.08, margin: '0 0 16px', letterSpacing: -1 }}>
-              Best Self Drive & Luxury Car Rental in Bhubaneswar
+              Best Self Drive & Luxury <span className='text-red-500'>Car Rental</span> in Bhubaneswar
             </h1>
             <p style={{ color: '#9ca3af', fontSize: isMobile ? 13 : 18, maxWidth: isMobile ? 340 : 580, marginBottom: isMobile ? 24 : 28, lineHeight: 1.6 }}>
               Book premium SUVs, hatchbacks, and self-drive cars instantly with clean vehicles, easy booking, and 24/7 support across Odisha.
