@@ -83,8 +83,8 @@ export default function Footer() {
                 <div style={{ padding: 14, borderRadius: 16, border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)' }}>
                   <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Contact US</strong>
                   <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Location: {locationAddress}</span>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: +91 98613 32857, +91 76080 68450</span>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: speedtoyzcarsodisha@gmail.com</span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>+91 98613 32857</a>, <a href="tel:+917608068450" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>+91 76080 68450</a></span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>speedtoyzcarsodisha@gmail.com</a></span>
                 </div>
                 
               </div>
@@ -114,9 +114,9 @@ export default function Footer() {
               Best self-drive and luxury car rental in Bhubaneswar with clean cars, affordable rates, 24/7 support, and smooth Odisha tours.
             </p>
             <div style={{ display: 'grid', gap: 8, color: '#d1d5db', fontSize: 13, marginBottom: 18 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={14} color="#ef4444" /> {locationAddress}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> +91 98613 32857, +91 76080 68450</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> speedtoyzcarsodisha@gmail.com</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={34} color="#ef4444" /> {locationAddress}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> <a href="tel:+919861332857" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>98613 32857</a>, <a href="tel:+917608068450" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>76080 68450</a></span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>speedtoyzcarsodisha@gmail.com</a></span>
             </div>
             <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 12 }}>
               <input value={newsletterEmail} onChange={e => setNewsletterEmail(e.target.value)} type="email" placeholder="Email for updates" style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }} />
