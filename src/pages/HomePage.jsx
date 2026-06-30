@@ -163,7 +163,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Search Bar ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '-36px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '24px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : isTablet ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr)) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
           {[
