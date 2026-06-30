@@ -84,6 +84,7 @@ export function LoginPage() {
       {/* Left panel */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1000&q=80" alt="luxury car"
+          loading="lazy"
           style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.4 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.6), rgba(5,5,5,0.95))' }} />
         <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 60px' }}>

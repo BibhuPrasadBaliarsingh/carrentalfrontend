@@ -19,7 +19,9 @@ export default function CarCard({ car, index = 0 }) {
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06, duration: 0.35 }}
+      whileHover={{ y: -6, scale: 1.01 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ delay: index * 0.06, duration: 0.35, ease: 'easeOut' }}
       className="car-card"
       onClick={() => navigate(`/cars/${car._id}`)}
       style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, overflow: 'hidden', cursor: 'pointer' }}
@@ -29,6 +31,8 @@ export default function CarCard({ car, index = 0 }) {
         <img
           src={imgSrc}
           alt={car.name}
+          loading="lazy"
+          className="car-card-image"
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
           onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
           onMouseLeave={e => e.target.style.transform = 'scale(1)'}

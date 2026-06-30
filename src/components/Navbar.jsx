@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiCalendar } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import Logo from './common/Logo'
+import { useNavbarAnimation } from '../hooks/useNavbarAnimation'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -12,6 +13,10 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const navRef = useRef(null)
+  const logoRef = useRef(null)
+
+  useNavbarAnimation(navRef, logoRef)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -35,17 +40,19 @@ export default function Navbar() {
   const isActive = (to) => location.pathname === to
 
   return (
-    <nav style={{ background: '#0a0a0a', borderBottom: '1px solid #1f2937', position: 'sticky', top: 0, zIndex: 100 }}>
+    <nav ref={navRef} style={{ background: '#0a0a0a', borderBottom: '1px solid #1f2937', position: 'sticky', top: 0, zIndex: 100, transition: 'background-color 0.35s ease, backdrop-filter 0.35s ease' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 16px' : '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', minWidth: 0 }} aria-label="Speed Toyz Cars home">
-          <Logo size="lg" />
-           </Link>
+          <div ref={logoRef} style={{ display: 'flex', alignItems: 'center' }}>
+            <Logo size="lg" />
+          </div>
+        </Link>
 
         {/* Desktop Nav */}
         <div style={{ display: isMobile ? 'none' : 'flex', gap: 32, alignItems: 'center' }}>
           {navLinks.map(l => (
-            <Link key={`${l.to}-${l.label}`} to={l.to} style={{ color: isActive(l.to) ? '#ef4444' : '#9ca3af', textDecoration: 'none', fontSize: 14, fontWeight: 500, transition: 'color 0.2s' }}
+            <Link key={`${l.to}-${l.label}`} to={l.to} className="nav-link" style={{ color: isActive(l.to) ? '#ef4444' : '#9ca3af', textDecoration: 'none', fontSize: 14, fontWeight: 500, transition: 'color 0.2s' }}
               onMouseEnter={e => { if (!isActive(l.to)) e.target.style.color = '#d1d5db' }}
               onMouseLeave={e => { if (!isActive(l.to)) e.target.style.color = '#9ca3af' }}>
               {l.label}

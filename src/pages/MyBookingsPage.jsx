@@ -142,6 +142,7 @@ export default function MyBookingsPage() {
                 {/* Image */}
                 <div style={{ borderRadius: 10, overflow: 'hidden', height: isMobile ? 80 : 88, width: '100%' }}>
                   <img src={imgSrc(booking.car)} alt={booking.car?.name}
+                    loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200' }} />
                 </div>

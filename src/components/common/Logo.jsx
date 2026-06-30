@@ -25,6 +25,7 @@ export default function Logo({ className = '', size = 'md' }) {
         src="/logo.jpeg"
         alt=""
         aria-hidden="true"
+        loading="lazy"
         className={`${sizeClass.image} shrink-0 object-cover transition-shadow duration-300 group-hover/logo:shadow-[0_0_14px_rgba(239,68,68,0.35)]`}
       />
       <span
