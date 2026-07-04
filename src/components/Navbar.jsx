@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import Logo from './common/Logo'
 import { useNavbarAnimation } from '../hooks/useNavbarAnimation'
 
-export default function Navbar() {
+export default function Navbar({ hidden }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -40,7 +40,7 @@ export default function Navbar() {
   const isActive = (to) => location.pathname === to
 
   return (
-    <nav ref={navRef} style={{ background: '#0a0a0a', borderBottom: '1px solid #1f2937', position: 'sticky', top: 0, zIndex: 100, transition: 'background-color 0.35s ease, backdrop-filter 0.35s ease' }}>
+    <nav ref={navRef} style={{ display: hidden ? 'none' : 'block', background: '#0a0a0a', borderBottom: '1px solid #1f2937', position: 'sticky', top: 0, zIndex: 100, transition: 'background-color 0.35s ease, backdrop-filter 0.35s ease' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 16px' : '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', minWidth: 0 }} aria-label="Speed Toyz Cars home">

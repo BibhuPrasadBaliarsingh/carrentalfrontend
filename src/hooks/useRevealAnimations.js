@@ -17,7 +17,7 @@ export function useRevealAnimations(rootRef) {
     if (!rootRef?.current) return
 
     const ctx = gsap.context(() => {
-      const elements = gsap.utils.toArray('.reveal-on-scroll')
+      const elements = gsap.utils.toArray('.reveal-on-scroll', rootRef.current)
       elements.forEach((element, index) => {
         const animation = element.dataset.reveal || 'fade-up'
         const config = revealConfigs[animation] || revealConfigs['fade-up']
@@ -36,6 +36,8 @@ export function useRevealAnimations(rootRef) {
           },
         })
       })
+
+      ScrollTrigger.refresh()
     }, rootRef)
 
     return () => ctx.revert()

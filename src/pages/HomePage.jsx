@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { FiShield, FiZap, FiStar, FiArrowRight, FiMapPin, FiCalendar, FiClock, FiCompass } from 'react-icons/fi'
 import CarCard from '../components/CarCard'
 import { CarCardSkeleton } from '../components/UI'
 import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
-import { useHeroAnimation } from '../hooks/useHeroAnimation'
+import { useLoader } from '../context/LoaderContext.jsx'
+import { useHeroAnimation } from '../hooks/useHeroAnimation.js'
 
 export default function HomePage() {
   const navigate = useNavigate()
@@ -15,9 +17,24 @@ export default function HomePage() {
   const [search, setSearch] = useState({ pickup: '', dropoff: '', pickupDate: '', returnDate: '' })
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
+  const { isPageLoading, setIsPageLoading, hasInitialLoaderRun, setHasInitialLoaderRun } = useLoader()
+  const contentRef = useRef(null)
   const heroRef = useRef(null)
+  const loaderRef = useRef(null)
+  const carRef = useRef(null)
+  const headlightsRef = useRef(null)
+  const redGlowRef = useRef(null)
+  const streaksRef = useRef(null)
+  const logoContainerRef = useRef(null)
+  const taglineRef = useRef(null)
+  const progressTextRef = useRef(null)
+  const barFillRef = useRef(null)
+  const barHighlightRef = useRef(null)
 
-  useHeroAnimation(heroRef)
+  useHeroAnimation(heroRef, !isPageLoading)
+  const assetsReadyRef = useRef(false)
+  const exitTriggeredRef = useRef(false)
+  const loaderTimelineRef = useRef(null)
 
   useEffect(() => {
     const handleResize = () => {
@@ -26,6 +43,126 @@ export default function HomePage() {
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    const assets = [
+      'https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=1600&q=80',
+      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=80',
+      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80',
+    ]
+
+    const loadImage = src => new Promise(resolve => {
+      const image = new Image()
+      image.src = src
+      image.onload = image.onerror = resolve
+    })
+
+    Promise.all(assets.map(loadImage)).then(() => {
+      assetsReadyRef.current = true
+      if (exitTriggeredRef.current && loaderTimelineRef.current?.paused()) {
+        loaderTimelineRef.current?.play()
+      }
+    })
+
+    const progressState = { value: 0 }
+    const updateProgress = () => {
+      const value = Math.round(progressState.value)
+      if (progressTextRef.current) progressTextRef.current.textContent = `${value}%`
+      if (barFillRef.current) barFillRef.current.style.width = `${Math.min(100, progressState.value)}%`
+    }
+
+    const logoChars = gsap.utils.toArray('.loader-logo-char')
+
+    if (hasInitialLoaderRun) {
+      if (loaderRef.current) gsap.set(loaderRef.current, { autoAlpha: 0, display: 'none' })
+      if (contentRef.current) gsap.set(contentRef.current, { autoAlpha: 1 })
+      setIsPageLoading(false)
+      return
+    }
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    loaderTimelineRef.current = tl
+
+    tl.set(contentRef.current, { autoAlpha: 0 })
+    tl.set(loaderRef.current, { autoAlpha: 1, display: 'flex' })
+    tl.set(carRef.current, { autoAlpha: 0, scale: 0.85, y: 0, rotationZ: -0.5 })
+    tl.set(headlightsRef.current, { autoAlpha: 0.2 })
+    tl.set(redGlowRef.current, { autoAlpha: 0.3, scale: 0.92 })
+    tl.set(taglineRef.current, { autoAlpha: 0, y: 12 })
+    tl.set(logoChars, { autoAlpha: 0, y: 20 })
+    tl.set(barFillRef.current, { width: '0%' })
+    tl.set(progressTextRef.current, { autoAlpha: 1 })
+    tl.set(barHighlightRef.current, { x: '-30%' })
+
+    tl.to(carRef.current, { autoAlpha: 1, scale: 1, duration: 1.05 }, 0)
+    tl.to(headlightsRef.current, { autoAlpha: 0.95, duration: 0.9 }, 0.16)
+    tl.to(redGlowRef.current, { autoAlpha: 0.55, scale: 1, duration: 1.05 }, 0.08)
+    tl.to(streaksRef.current, { x: '100%', duration: 5.5, repeat: -1, ease: 'none' }, 0)
+    tl.to(carRef.current, { y: -6, repeat: -1, yoyo: true, duration: 4.2, ease: 'sine.inOut' }, 0)
+    tl.to(carRef.current, { rotationZ: 0.5, repeat: -1, yoyo: true, duration: 5.8, ease: 'sine.inOut' }, 0)
+    tl.to(barHighlightRef.current, { x: '120%', duration: 2.4, repeat: -1, ease: 'linear' }, 0.6)
+
+    tl.addLabel('brand', 0.85)
+    tl.to(logoChars, { autoAlpha: 1, y: 0, duration: 0.75, stagger: 0.05, ease: 'power4.out' }, 'brand')
+    tl.to(taglineRef.current, { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 'brand+=0.45')
+
+    tl.addLabel('progress', 1.2)
+    tl.to(progressState, { value: 10, duration: 0.48, ease: 'power1.out', onUpdate: updateProgress }, 'progress')
+    tl.to(progressState, { value: 25, duration: 0.52, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=0.48')
+    tl.to(progressState, { value: 48, duration: 0.62, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=1.0')
+    tl.to(progressState, { value: 71, duration: 0.62, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=1.62')
+    tl.to(progressState, { value: 92, duration: 0.5, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=2.24')
+
+    tl.addLabel('engine', 'progress+=2.45')
+    tl.to(carRef.current, { scale: 1.01, duration: 0.14, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 'engine')
+    tl.to(redGlowRef.current, { autoAlpha: 0.78, duration: 0.28, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 'engine')
+    tl.to(headlightsRef.current, { autoAlpha: 1, duration: 0.3, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 'engine')
+
+    tl.to(progressState, { value: 100, duration: 0.38, ease: 'power1.out', onUpdate: updateProgress }, 'engine+=0.38')
+    tl.add(() => {
+      if (!assetsReadyRef.current) {
+        exitTriggeredRef.current = true
+        tl.pause()
+      }
+    }, 'engine+=0.88')
+
+    tl.addLabel('exit', 'engine+=1.1')
+    tl.to([logoChars, taglineRef.current, progressTextRef.current], { autoAlpha: 0, y: -24, duration: 0.9, ease: 'power3.in' }, 'exit')
+    tl.to(barFillRef.current, { opacity: 0.18, duration: 0.6, ease: 'power3.in' }, 'exit')
+    tl.to(carRef.current, { scale: 1.25, y: -120, autoAlpha: 0, duration: 1.05, ease: 'power2.in' }, 'exit')
+    tl.to(loaderRef.current, {
+      autoAlpha: 0,
+      duration: 1.05,
+      ease: 'power2.in',
+      onComplete: () => {
+        setHasInitialLoaderRun(true)
+        setIsPageLoading(false)
+
+        if (contentRef.current) {
+          gsap.to(contentRef.current, {
+            autoAlpha: 1,
+            duration: 0.9,
+            ease: 'power3.out',
+            onComplete: () => {
+              requestAnimationFrame(() => {
+                ScrollTrigger.refresh()
+              })
+            },
+          })
+        } else {
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh()
+          })
+        }
+      }
+    }, 'exit')
+
+    tl.play()
+
+    return () => {
+      tl.kill()
+    }
   }, [])
 
   useEffect(() => {
@@ -110,14 +247,57 @@ export default function HomePage() {
   ]
 
   const stats = [
-    { val: '80+', label: 'Cars' },
-    { val: '20K+', label: 'Happy Clients' },
-    { val: '4.9★', label: 'Rating' },
-    { val: '24/7', label: 'Support' },
+    { value: 80, suffix: '+', label: 'Cars' },
+    { value: 20000, suffix: '+', label: 'Happy Clients' },
+    { value: 4.9, suffix: '★', label: 'Rating', fixed: 1 },
+    { value: 24, suffix: '/7', label: 'Support' },
   ]
 
   return (
-    <div style={{ background: '#0a0a0a' }}>
+    <>
+      <div ref={loaderRef} className="speedtoyz-loader" style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#050505', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 35%, rgba(255,255,255,0.05), transparent 30%), radial-gradient(circle at 45% 20%, rgba(239,68,68,0.10), transparent 16%), radial-gradient(circle at 55% 22%, rgba(255,255,255,0.04), transparent 18%), linear-gradient(180deg, rgba(5,5,5,0.96), rgba(5,5,5,0.96) 20%, rgba(5,5,5,0.92) 80%, rgba(5,5,5,1))', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 24%), radial-gradient(circle at 20% 20%, rgba(255,255,255,0.02), transparent 14%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 180px rgba(0,0,0,0.55), inset 0 24px 90px rgba(0,0,0,0.24)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div ref={streaksRef} style={{ position: 'absolute', inset: 0, display: 'flex', gap: 48, opacity: 0.22, filter: 'blur(12px)', transform: 'translateX(-35%)' }}>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} style={{ flex: '0 0 20%', height: '100%', background: 'linear-gradient(90deg, transparent 0%, rgba(239,68,68,0.18) 20%, rgba(239,68,68,0.08) 55%, transparent 100%)', transform: `translateX(${index * 35}%)`, opacity: 0.85 }} />
+            ))}
+          </div>
+        </div>
+        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: isMobile ? '85%' : isTablet ? 640 : 720, minHeight: 380, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: isMobile ? 20 : 28 }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: 660, height: isMobile ? 260 : 340, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img ref={carRef} src="./car.png" alt="Speed Toys Car" style={{ width: '100%', height: '100%', objectFit: 'contain', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 120px rgba(0,0,0,0.35))', borderRadius: 22 }} />
+            <div ref={headlightsRef} style={{ position: 'absolute', top: '40%', left: '10%', width: '18%', height: '10%', background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.12) 50%, transparent 100%)', filter: 'blur(14px)', opacity: 0.2, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '40%', right: '10%', width: '18%', height: '10%', background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)', filter: 'blur(14px)', opacity: 0.16, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', bottom: '8%', left: '8%', right: '8%', height: '10%', background: 'linear-gradient(180deg, rgba(255,255,255,0.24), transparent 100%)', filter: 'blur(16px)', opacity: 0.28, borderRadius: 999, pointerEvents: 'none' }} />
+          </div>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+            <div ref={logoContainerRef} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, fontSize: isMobile ? 30 : isTablet ? 38 : 46, fontWeight: 900, letterSpacing: 2, color: '#fff', textTransform: 'uppercase' }}>
+              {'SPEED TOYZ CARS'.split(' ').map((word, wordIndex) => (
+                <span key={word} style={{ display: 'flex', gap: 10 }}>
+                  {word.split('').map((char, charIndex) => (
+                    <span key={`${wordIndex}-${charIndex}`} className="loader-logo-char" style={{ display: 'inline-block', opacity: 0 }}>{char}</span>
+                  ))}
+                </span>
+              ))}
+            </div>
+            <div ref={taglineRef} style={{ color: '#9ca3af', letterSpacing: 8, fontSize: isMobile ? 11 : 13, textTransform: 'uppercase' }}>Drive Your Dreams</div>
+            <div style={{ width: '100%', maxWidth: isMobile ? 360 : 520, marginTop: 6 }}>
+              <div style={{ width: '100%', height: 12, borderRadius: 999, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', overflow: 'hidden', boxShadow: 'inset 0 0 30px rgba(239,68,68,0.08)' }}>
+                <div ref={barFillRef} style={{ width: '0%', height: '100%', background: 'linear-gradient(90deg, rgba(239,68,68,1) 0%, rgba(255,255,255,0.26) 50%, rgba(239,68,68,0.75) 100%)', borderRadius: 999, transition: 'width 0.15s ease' }} />
+                <div ref={barHighlightRef} style={{ position: 'absolute', top: 0, left: 0, width: isMobile ? '18%' : '16%', height: '100%', background: 'rgba(255,255,255,0.55)', filter: 'blur(10px)', opacity: 0.45, borderRadius: 999 }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, width: '100%', color: '#d1d5db', fontSize: isMobile ? 11 : 13, letterSpacing: 0.8 }}>
+                <span style={{ opacity: 0.88 }}>SPEED TOYZ CARS</span>
+                <span ref={progressTextRef} style={{ fontVariantNumeric: 'tabular-nums', opacity: 0.95 }}>0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ref={contentRef} style={{ background: '#0a0a0a' }}>
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section ref={heroRef} style={{ position: 'relative', minHeight: isTablet ? 'auto' : 600, height: isTablet ? 'auto' : 600, overflow: 'hidden' }}>
@@ -126,13 +306,13 @@ export default function HomePage() {
           src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80"
           alt="hero"
           loading="lazy"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center' }}
         />
-        <div className="hero-overlay" style={{ position: 'absolute', inset: 0 }} />
+        <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(15,23,42,0.12) 0%, rgba(15,23,42,0.55) 40%, rgba(0,0,0,0.88) 100%)' }} />
 
         <div style={{ position: isTablet ? 'relative' : 'absolute', inset: isTablet ? 'auto' : 0, zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: isTablet ? 'flex-start' : 'center', padding: isMobile ? '36px 16px 48px' : isTablet ? '56px 48px 64px' : '0 80px', maxWidth: 1280, margin: '0 auto', left: 0, right: 0 }}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '5px 14px', marginBottom: 20 }}>
+          <div>
+            <div className="hero-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '5px 14px', marginBottom: 20 }}>
               <span style={{ color: '#ef4444', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>Premium Car Rental</span>
             </div>
             <h1 className="hero-headline" style={{ color: '#fff', fontSize: isMobile ? 32 : isTablet ? 44 : 60, fontWeight: 900, lineHeight: isMobile ? 1.2 : 1.08, margin: '0 0 16px', letterSpacing: -1 }}>
@@ -141,7 +321,7 @@ export default function HomePage() {
             <p className="hero-subtitle" style={{ color: '#9ca3af', fontSize: isMobile ? 13 : 18, maxWidth: isMobile ? 340 : 580, marginBottom: isMobile ? 24 : 28, lineHeight: 1.6 }}>
               Book premium SUVs, hatchbacks, and self-drive cars instantly with clean vehicles, easy booking, and 24/7 support across Odisha.
             </p>
-            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 10 : 14, width: isMobile ? '100%' : 'auto' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 24 : 14, width: isMobile ? '100%' : 'auto' }}>
               <button onClick={() => navigate('/cars')} className="btn-primary hero-button" style={{ border: 'none', color: '#fff', padding: isMobile ? '12px 28px' : '14px 34px', borderRadius: 10, fontSize: isMobile ? 15 : 16, fontWeight: 700, cursor: 'pointer', flex: isMobile ? 1 : 'none' }}>
                 Explore Now
               </button>
@@ -151,20 +331,27 @@ export default function HomePage() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 16 : isTablet ? 24 : 40, marginTop: isMobile ? 24 : isTablet ? 36 : 52 }}>
-              {stats.map(({ val, label }) => (
-                <div key={label}>
-                  <div style={{ color: '#ef4444', fontSize: isMobile ? 20 : 28, fontWeight: 900 }}>{val}</div>
+              {stats.map(({ value, suffix, label, fixed = 0 }) => (
+                <div key={label} className="hero-stat">
+                  <div
+                    className="hero-stat-value"
+                    data-value={value}
+                    data-suffix={suffix}
+                    data-fixed={fixed}
+                    style={{ color: '#ef4444', fontSize: isMobile ? 20 : 28, fontWeight: 900 }}>
+                    {fixed ? `0.${'0'.repeat(fixed)}${suffix}` : `0${suffix}`}
+                  </div>
                   <div style={{ color: '#9ca3af', fontSize: isMobile ? 12 : 13, marginTop: 4, fontWeight: 500 }}>{label}</div>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ── Search Bar ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '24px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+      <div className="reveal-on-scroll" style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '24px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
+        <div
           style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : isTablet ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr)) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
           {[
             { label: 'Pickup Location', icon: <FiMapPin />, key: 'pickup', type: 'text', placeholder: 'City or Airport' },
@@ -184,11 +371,11 @@ export default function HomePage() {
           <button onClick={handleSearch} className="btn-primary" style={{ border: 'none', color: '#fff', padding: isMobile ? '8px 16px' : '11px 28px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', width: isTablet ? '100%' : 'auto', gridColumn: isTablet ? '1 / -1' : 'auto' }}>
             {isMobile ? 'Search' : 'Search Now'}
           </button>
-        </motion.div>
+        </div>
       </div>
 
       {/* ── Booking Highlight ─────────────────────────────────────────────── */}
-      <section style={{ padding: isMobile ? '32px 16px 0' : '56px 80px 0', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="reveal-on-scroll" style={{ padding: isMobile ? '32px 16px 0' : '56px 80px 0', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 24, minHeight: isMobile ? 320 : 420, border: '1px solid #1f2937', boxShadow: '0 18px 40px rgba(0,0,0,0.35)' }}>
           <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1400&q=80" alt="Luxury car background" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.35 }} />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.75) 45%, rgba(5,5,5,0.4) 100%)' }} />
@@ -210,7 +397,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Popular Cars ───────────────────────────────────────────────────── */}
-      <section style={{ padding: isMobile ? '40px 16px' : '80px 80px 48px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="reveal-on-scroll" style={{ padding: isMobile ? '40px 16px' : '80px 80px 48px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', marginBottom: 36, gap: 16 }}>
           <div>
             <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Our Fleet</div>
@@ -229,13 +416,13 @@ export default function HomePage() {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 24 }}>
           {loading
             ? Array(6).fill(0).map((_, i) => <CarCardSkeleton key={i} />)
-            : cars.slice(0, 6).map((car, i) => <CarCard key={car._id} car={car} index={i} />)
+            : cars.slice(0, 6).map((car, i) => <div key={car._id} style={{ width: '100%' }}><CarCard car={car} index={i} /></div>)
           }
         </div>
       </section>
 
       {/* ── SEO Content Blocks ────────────────────────────────────────────── */}
-      <section style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="reveal-on-scroll" style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 18 }}>
           {seoHighlights.map(item => (
             <article key={item.heading} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: isMobile ? 18 : 22 }}>
@@ -247,7 +434,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Fleet Scroll ───────────────────────────────────────────────────── */}
-      <section style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="reveal-on-scroll" style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 16, marginBottom: 18 }}>
           <div>
             <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Fleet</div>
@@ -255,7 +442,7 @@ export default function HomePage() {
           </div>
           <button onClick={() => navigate('/cars')} style={{ border: '1px solid #374151', background: 'transparent', color: '#d1d5db', padding: '10px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>Book Now</button>
         </div>
-        <div style={{ overflow: 'hidden' }}>
+        <div style={{ overflow: 'hidden', width: '100%' }}>
           <div className="marquee-track" style={{ display: 'flex', gap: 18, width: 'max-content', animation: 'marqueeLeft 28s linear infinite' }}>
             {(cars.length ? cars : MOCK_CARS).concat(cars.length ? cars : MOCK_CARS).slice(0, 16).map((car, i) => (
               <div key={`${car._id || car.name}-${i}`} style={{ minWidth: isMobile ? 260 : 320, maxWidth: isMobile ? 260 : 320 }}>
@@ -267,7 +454,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Why Choose ─────────────────────────────────────────────────────── */}
-      <section style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
+      <section className="reveal-on-scroll" style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>Why Us</div>
@@ -281,21 +468,23 @@ export default function HomePage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 24 }}>
             {features.map((f, i) => (
-              <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }}
-                style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: isMobile ? 20 : 36, textAlign: 'center' }}>
-                <div style={{ width: 56, height: 56, borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                  {f.icon}
+              <div key={f.title}>
+                <div
+                  style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: isMobile ? 20 : 36, textAlign: 'center' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    {f.icon}
+                  </div>
+                  <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: '0 0 10px' }}>{f.title}</h3>
+                  <p style={{ color: '#6b7280', fontSize: isMobile ? 13 : 14, lineHeight: 1.8, margin: 0 }}>{f.desc}</p>
                 </div>
-                <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, margin: '0 0 10px' }}>{f.title}</h3>
-                <p style={{ color: '#6b7280', fontSize: isMobile ? 13 : 14, lineHeight: 1.8, margin: 0 }}>{f.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ── Testimonials ──────────────────────────────────────────────────── */}
-      <section style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
+      <section className="reveal-on-scroll" style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 16, marginBottom: 24 }}>
             <div>
@@ -318,7 +507,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Highlights of Us ──────────────────────────────────────────────── */}
-      <section style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="reveal-on-scroll" style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
           <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Highlights</div>
           <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: '0 0 10px', letterSpacing: -1 }}>Odisha tourism, self-drive freedom, and 24/7 support</h2>
@@ -335,7 +524,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FAQs ──────────────────────────────────────────────────────────── */}
-      <section style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1080, margin: '0 auto' }}>
+      <section className="reveal-on-scroll" style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1080, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>FAQ</div>
           <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: 0, letterSpacing: -1 }}>Frequently asked questions</h2>
@@ -351,7 +540,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA Banner ─────────────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', overflow: 'hidden' }}>
+      <section className="reveal-on-scroll" style={{ position: 'relative', overflow: 'hidden' }}>
         <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=80" alt="cta" loading="lazy" style={{ width: '100%', height: isMobile ? 180 : 300, objectFit: 'cover', opacity: 0.25 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.95), rgba(0,0,0,0.7))', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '20px 16px' : '0 120px', gap: 20 }}>
           <div>
@@ -365,5 +554,6 @@ export default function HomePage() {
       </section>
 
     </div>
+    </>
   )
 }

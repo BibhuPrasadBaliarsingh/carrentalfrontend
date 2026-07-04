@@ -35,6 +35,7 @@ body {
   background-color: var(--bg-800);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* Scrollbar */
@@ -193,6 +194,29 @@ input:focus, select:focus, textarea:focus {
     rgba(0,0,0,0.75) 50%,
     rgba(0,0,0,0.2) 100%
   );
+}
+
+.speedtoyz-loader .loader-logo-char {
+  display: inline-block;
+  opacity: 0;
+}
+
+.speedtoyz-loader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03), transparent 24%),
+              radial-gradient(circle at 20% 18%, rgba(239,68,68,0.1), transparent 12%),
+              radial-gradient(circle at 80% 22%, rgba(255,255,255,0.02), transparent 14%);
+}
+
+.speedtoyz-loader::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 150px rgba(0,0,0,0.45), inset 0 0 220px rgba(0,0,0,0.22);
 }
 
 /* Stat bar */
