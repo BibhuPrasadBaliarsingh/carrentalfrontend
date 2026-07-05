@@ -17,7 +17,6 @@ export function useHeroAnimation(heroRef, enabled = true) {
       const buttons = heroRef.current.querySelectorAll('.hero-button')
       const stats = heroRef.current.querySelectorAll('.hero-stat')
       const image = heroRef.current.querySelector('.hero-image')
-      const overlay = heroRef.current.querySelector('.hero-overlay')
 
       const heroIntro = gsap.timeline({ defaults: { ease: 'power4.out' } })
 
@@ -89,27 +88,6 @@ export function useHeroAnimation(heroRef, enabled = true) {
           ease: 'none',
           repeat: -1,
           yoyo: true,
-        })
-
-        ScrollTrigger.create({
-          trigger: heroRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1,
-          onUpdate(self) {
-            gsap.to(image, {
-              x: (self.progress - 0.5) * 16,
-              y: (self.progress - 0.5) * 10,
-              duration: 0.4,
-              ease: 'power1.out',
-            })
-
-            gsap.to(overlay, {
-              background: `linear-gradient(180deg, rgba(15,23,42,${0.10 + self.progress * 0.28}) 0%, rgba(15,23,42,${0.42 + self.progress * 0.32}) 40%, rgba(0,0,0,${0.84 + self.progress * 0.16}) 100%)`,
-              duration: 0.4,
-              ease: 'power1.out',
-            })
-          },
         })
       }
     }, heroRef)

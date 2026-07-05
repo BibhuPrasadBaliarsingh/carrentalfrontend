@@ -308,7 +308,7 @@ export default function HomePage() {
           loading="lazy"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center' }}
         />
-        <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(15,23,42,0.12) 0%, rgba(15,23,42,0.55) 40%, rgba(0,0,0,0.88) 100%)' }} />
+        <div className="hero-overlay" style={{ position: 'absolute', inset: '0 0 auto 0', height: '42%', background: 'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.0) 100%)', pointerEvents: 'none', zIndex: 0 }} />
 
         <div style={{ position: isTablet ? 'relative' : 'absolute', inset: isTablet ? 'auto' : 0, zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: isTablet ? 'flex-start' : 'center', padding: isMobile ? '36px 16px 48px' : isTablet ? '56px 48px 64px' : '0 80px', maxWidth: 1280, margin: '0 auto', left: 0, right: 0 }}>
           <div>
