@@ -33,6 +33,7 @@ export default function BrowsePage() {
     transmission: '',
     available: true,
   })
+  const [maxPriceLimit, setMaxPriceLimit] = useState(2000)
   const PER_PAGE = 9
 
   useEffect(() => {
@@ -53,12 +54,17 @@ export default function BrowsePage() {
           carsAPI.getAll(),
           siteAPI.filters(),
         ])
-        setCars(carsRes.data.cars || carsRes.data)
+        const fetchedCars = carsRes.data.cars || carsRes.data
+        setCars(fetchedCars)
         setBrands(filtersRes.data.brands || DEFAULT_BRANDS)
         setCategories(filtersRes.data.categories || DEFAULT_CATEGORIES)
+        const fetchedMaxPrice = Math.max(2000, ...fetchedCars.map(car => Number(car.pricePerDay) || 0))
+        setFilters(prev => ({ ...prev, maxPrice: Math.max(prev.maxPrice, fetchedMaxPrice) }))
       } catch {
         setDemoMode(true)
         setCars(MOCK_CARS)
+        const fallbackMaxPrice = Math.max(2000, ...MOCK_CARS.map(car => Number(car.pricePerDay) || 0))
+        setFilters(prev => ({ ...prev, maxPrice: Math.max(prev.maxPrice, fallbackMaxPrice) }))
       } finally {
         setLoading(false)
       }
@@ -136,7 +142,7 @@ export default function BrowsePage() {
                   <span style={{ color: '#6b7280', fontSize: 12 }}>{formatPrice(filters.minPrice)}</span>
                   <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 700 }}>{formatPrice(filters.maxPrice)}/day</span>
                 </div>
-                <input type="range" min={0} max={2000} step={50} value={filters.maxPrice} onChange={e => setFilters(f => ({ ...f, maxPrice: +e.target.value }))} style={{ width: '100%' }} />
+                <input type="range" min={0} max={maxPriceLimit} step={50} value={filters.maxPrice} onChange={e => setFilters(f => ({ ...f, maxPrice: +e.target.value }))} style={{ width: '100%' }} />
               </div>
 
               {/* Brand */}

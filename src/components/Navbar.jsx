@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings, FiCalendar } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import Logo from './common/Logo'
@@ -15,6 +15,7 @@ export default function Navbar({ hidden }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const navRef = useRef(null)
   const logoRef = useRef(null)
+  const shouldReduceMotion = useReducedMotion()
 
   useNavbarAnimation(navRef, logoRef)
 
@@ -23,6 +24,10 @@ export default function Navbar({ hidden }) {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
 
   const navLinks = [
     { label: 'Home', to: '/' },
@@ -42,25 +47,27 @@ export default function Navbar({ hidden }) {
   return (
     <nav ref={navRef} style={{ display: hidden ? 'none' : 'block', background: '#0a0a0a', borderBottom: '1px solid #1f2937', position: 'sticky', top: 0, zIndex: 100, transition: 'background-color 0.35s ease, backdrop-filter 0.35s ease' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: isMobile ? '0 16px' : '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-        {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', minWidth: 0 }} aria-label="Speed Toyz Cars home">
           <div ref={logoRef} style={{ display: 'flex', alignItems: 'center' }}>
             <Logo size="lg" />
           </div>
         </Link>
 
-        {/* Desktop Nav */}
         <div style={{ display: isMobile ? 'none' : 'flex', gap: 32, alignItems: 'center' }}>
           {navLinks.map(l => (
-            <Link key={`${l.to}-${l.label}`} to={l.to} className="nav-link" style={{ color: isActive(l.to) ? '#ef4444' : '#9ca3af', textDecoration: 'none', fontSize: 14, fontWeight: 500, transition: 'color 0.2s' }}
-              onMouseEnter={e => { if (!isActive(l.to)) e.target.style.color = '#d1d5db' }}
-              onMouseLeave={e => { if (!isActive(l.to)) e.target.style.color = '#9ca3af' }}>
-              {l.label}
-            </Link>
+            <motion.div key={`${l.to}-${l.label}`} whileHover={shouldReduceMotion ? undefined : { y: -1, scale: 1.02 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
+              <Link to={l.to} className="nav-link" style={{ color: isActive(l.to) ? '#ef4444' : '#9ca3af', textDecoration: 'none', fontSize: 14, fontWeight: 500, transition: 'color 0.2s', position: 'relative', display: 'inline-flex', paddingBottom: 4 }}
+                onMouseEnter={e => { if (!isActive(l.to)) e.target.style.color = '#d1d5db' }}
+                onMouseLeave={e => { if (!isActive(l.to)) e.target.style.color = '#9ca3af' }}>
+                <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                  {l.label}
+                  <motion.span initial={false} animate={{ scaleX: isActive(l.to) ? 1 : 0 }} whileHover={shouldReduceMotion ? undefined : { scaleX: 1 }} transition={{ duration: 0.2, ease: 'easeOut' }} style={{ position: 'absolute', left: 0, right: 0, bottom: -2, height: 2, borderRadius: 999, transformOrigin: 'left', background: isActive(l.to) ? '#ef4444' : '#fff' }} />
+                </span>
+              </Link>
+            </motion.div>
           ))}
         </div>
 
-        {/* Auth */}
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12 }}>
           {user ? (
             <div style={{ position: 'relative' }}>
@@ -111,17 +118,15 @@ export default function Navbar({ hidden }) {
             </>
           )}
 
-          {/* Mobile hamburger */}
           <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', display: isMobile ? 'block' : 'none', padding: '4px' }}>
             {menuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && isMobile && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: shouldReduceMotion ? 0.1 : 0.24, ease: 'easeOut' }}
             style={{ background: '#0a0a0a', borderTop: '1px solid #1f2937', padding: '16px 16px', overflow: 'hidden' }}>
             {navLinks.map(l => (
               <Link key={`${l.to}-${l.label}`} to={l.to} onClick={() => setMenuOpen(false)} style={{ display: 'block', color: isActive(l.to) ? '#ef4444' : '#d1d5db', textDecoration: 'none', padding: '12px 0', fontSize: 15, fontWeight: 500, borderBottom: '1px solid #1f2937' }}>
@@ -129,11 +134,9 @@ export default function Navbar({ hidden }) {
               </Link>
             ))}
             {!user && (
-              <>
-                <Link to="/login" onClick={() => setMenuOpen(false)} style={{ display: 'block', color: '#d1d5db', textDecoration: 'none', padding: '12px 0', fontSize: 15, fontWeight: 500, borderBottom: '1px solid #1f2937' }}>
-                  Login
-                </Link>
-              </>
+              <Link to="/login" onClick={() => setMenuOpen(false)} style={{ display: 'block', color: '#d1d5db', textDecoration: 'none', padding: '12px 0', fontSize: 15, fontWeight: 500, borderBottom: '1px solid #1f2937' }}>
+                Login
+              </Link>
             )}
           </motion.div>
         )}

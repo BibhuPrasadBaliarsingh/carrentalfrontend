@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { FiShield, FiCreditCard, FiCalendar, FiCheck } from 'react-icons/fi'
 import { Badge, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
@@ -18,14 +18,22 @@ const calcDays = (a, b) => {
 }
 
 function BookingField({ label, name, value, error, onChange, ...props }) {
+  const [focused, setFocused] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <div>
       <label htmlFor={name} style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8, cursor: 'text' }}>{label}</label>
-      <input
+      <motion.input
         id={name}
         name={name}
         value={value ?? ''}
         onChange={onChange}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        initial={false}
+        animate={shouldReduceMotion ? { borderColor: error ? '#ef4444' : '#374151', boxShadow: 'none' } : { borderColor: error ? '#ef4444' : focused ? '#f87171' : '#374151', boxShadow: focused ? '0 0 0 3px rgba(239,68,68,0.16)' : 'none' }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
         style={{ width: '100%', background: '#1f2937', border: `1px solid ${error ? '#ef4444' : '#374151'}`, borderRadius: 8, color: '#fff', padding: '10px 14px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
         {...props}
       />
@@ -39,6 +47,7 @@ export default function BookingPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { addToast } = useToast()
+  const shouldReduceMotion = useReducedMotion()
 
   const [car, setCar] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -162,10 +171,17 @@ export default function BookingPage() {
   if (success) {
     return (
       <div style={{ background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 200 }}
-          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 56, maxWidth: 500, width: '100%', textAlign: 'center' }}>
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(22,163,74,0.15)', border: '2px solid #16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 180, damping: 16 }}
+          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 56, maxWidth: 500, width: '100%', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          {!shouldReduceMotion && (
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+              {Array.from({ length: 10 }).map((_, idx) => (
+                <motion.span key={idx} initial={{ opacity: 0, y: 0, x: 0 }} animate={{ opacity: [0, 1, 0], y: [-8, -48], x: [0, (idx % 2 === 0 ? 1 : -1) * 24], rotate: 180 }} transition={{ duration: 0.8 + (idx % 3) * 0.1, ease: 'easeOut', delay: 0.1 + idx * 0.03 }} style={{ position: 'absolute', top: '28%', left: `${18 + idx * 7}%`, width: 8, height: 8, borderRadius: '50%', background: idx % 2 === 0 ? '#ef4444' : '#fbbf24' }} />
+              ))}
+            </div>
+          )}
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring', stiffness: 220, damping: 14 }}
+            style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(22,163,74,0.15)', border: '2px solid #16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', position: 'relative', zIndex: 1 }}>
             <FiCheck size={36} color="#16a34a" />
           </motion.div>
           <h2 style={{ color: '#fff', fontSize: 30, fontWeight: 900, margin: '0 0 10px' }}>Booking Confirmed!</h2>

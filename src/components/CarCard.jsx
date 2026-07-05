@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://loc
 
 export default function CarCard({ car, index = 0 }) {
   const navigate = useNavigate()
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const imgSrc = car.images?.[0]?.startsWith('http')
     ? car.images[0]
@@ -17,16 +18,17 @@ export default function CarCard({ car, index = 0 }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -6, scale: 1.01 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ delay: index * 0.06, duration: 0.35, ease: 'easeOut' }}
+      initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      whileInView={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+      animate={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+      whileHover={prefersReducedMotion ? { scale: 1 } : { y: -6, scale: 1.01, boxShadow: '0 20px 45px rgba(0,0,0,0.32)' }}
+      whileTap={prefersReducedMotion ? { scale: 1 } : { scale: 0.985 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ delay: prefersReducedMotion ? 0 : index * 0.06, duration: prefersReducedMotion ? 0.16 : 0.35, ease: 'easeOut' }}
       className="car-card"
       onClick={() => navigate(`/cars/${car._id}`)}
       style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, overflow: 'hidden', cursor: 'pointer' }}
     >
-      {/* Image */}
       <div style={{ position: 'relative', height: 190, overflow: 'hidden' }}>
         <img
           src={imgSrc}
@@ -48,7 +50,6 @@ export default function CarCard({ car, index = 0 }) {
         )}
       </div>
 
-      {/* Content */}
       <div style={{ padding: '16px 18px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           <div>

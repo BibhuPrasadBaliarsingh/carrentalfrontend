@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 import { FiShield, FiZap, FiStar, FiArrowRight, FiMapPin, FiCalendar, FiClock, FiCompass } from 'react-icons/fi'
 import CarCard from '../components/CarCard'
 import { CarCardSkeleton } from '../components/UI'
@@ -19,6 +21,7 @@ export default function HomePage() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
   const { isPageLoading, setIsPageLoading, hasInitialLoaderRun, setHasInitialLoaderRun } = useLoader()
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const contentRef = useRef(null)
   const heroRef = useRef(null)
   const loaderRef = useRef(null)
@@ -33,6 +36,30 @@ export default function HomePage() {
   const barHighlightRef = useRef(null)
 
   useHeroAnimation(heroRef, !isPageLoading)
+
+  useEffect(() => {
+    if (prefersReducedMotion || !contentRef.current) return
+
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray('.home-reveal').forEach((section, index) => {
+        gsap.fromTo(section, { opacity: 0, y: 28, scale: 0.98 }, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.72,
+          delay: index * 0.04,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 86%',
+            once: true,
+          },
+        })
+      })
+    }, contentRef)
+
+    return () => ctx.revert()
+  }, [prefersReducedMotion])
   const assetsReadyRef = useRef(false)
   const exitTriggeredRef = useRef(false)
   const loaderTimelineRef = useRef(null)
@@ -357,7 +384,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Search Bar ─────────────────────────────────────────────────────── */}
-      <div className="reveal-on-scroll" style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '24px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
+      <div className="home-reveal" style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '24px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
         <div
           style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : isTablet ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr)) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
           {[
@@ -382,7 +409,7 @@ export default function HomePage() {
       </div>
 
       {/* ── Booking Highlight ─────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ padding: isMobile ? '32px 16px 0' : '56px 80px 0', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="home-reveal" style={{ padding: isMobile ? '32px 16px 0' : '56px 80px 0', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 24, minHeight: isMobile ? 320 : 420, border: '1px solid #1f2937', boxShadow: '0 18px 40px rgba(0,0,0,0.35)' }}>
           <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1400&q=80" alt="Luxury car background" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.35 }} />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.75) 45%, rgba(5,5,5,0.4) 100%)' }} />
@@ -404,7 +431,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Popular Cars ───────────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ padding: isMobile ? '40px 16px' : '80px 80px 48px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="home-reveal" style={{ padding: isMobile ? '40px 16px' : '80px 80px 48px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', marginBottom: 36, gap: 16 }}>
           <div>
             <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Our Fleet</div>
@@ -429,7 +456,7 @@ export default function HomePage() {
       </section>
 
       {/* ── SEO Content Blocks ────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="home-reveal" style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 18 }}>
           {seoHighlights.map(item => (
             <article key={item.heading} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: isMobile ? 18 : 22 }}>
@@ -441,7 +468,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Fleet Scroll ───────────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="home-reveal" style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 16, marginBottom: 18 }}>
           <div>
             <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Fleet</div>
@@ -461,7 +488,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Why Choose ─────────────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
+      <section className="home-reveal" style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>Why Us</div>
@@ -491,7 +518,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Testimonials ──────────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
+      <section className="home-reveal" style={{ background: '#050505', padding: isMobile ? '40px 16px' : '72px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 16, marginBottom: 24 }}>
             <div>
@@ -514,7 +541,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Highlights of Us ──────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="home-reveal" style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
           <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Highlights</div>
           <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: '0 0 10px', letterSpacing: -1 }}>Odisha tourism, self-drive freedom, and 24/7 support</h2>
@@ -531,7 +558,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FAQs ──────────────────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1080, margin: '0 auto' }}>
+      <section className="home-reveal" style={{ padding: isMobile ? '0 16px 40px' : '0 80px 72px', maxWidth: 1080, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>FAQ</div>
           <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: 0, letterSpacing: -1 }}>Frequently asked questions</h2>
@@ -547,7 +574,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA Banner ─────────────────────────────────────────────────────── */}
-      <section className="reveal-on-scroll" style={{ position: 'relative', overflow: 'hidden' }}>
+      <section className="home-reveal" style={{ position: 'relative', overflow: 'hidden' }}>
         <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=80" alt="cta" loading="lazy" style={{ width: '100%', height: isMobile ? 180 : 300, objectFit: 'cover', opacity: 0.25 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.95), rgba(0,0,0,0.7))', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '20px 16px' : '0 120px', gap: 20 }}>
           <div>
