@@ -60,10 +60,7 @@ export default function CarDetailPage() {
     window.scrollTo(0, 0)
   }, [id])
 
-  if (loading) return <PageLoader />
-  if (!car) return <div style={{ color: '#fff', padding: 60, textAlign: 'center' }}>Car not found</div>
-
-  const imgs = resolveCarImages(car.images)
+  const imgs = resolveCarImages(car?.images)
   const imgSrc = (src) => {
     if (!src || typeof src !== 'string') return DEFAULT_CAR_IMAGE
     return src.startsWith('http') ? src : `${API_URL}/uploads/${src}`
@@ -75,6 +72,9 @@ export default function CarDetailPage() {
       setActiveImg(0)
     }
   }, [displayImgs.length, activeImg])
+
+  if (loading) return <PageLoader />
+  if (!car) return <div style={{ color: '#fff', padding: 60, textAlign: 'center' }}>Car not found</div>
 
   const handleBook = () => {
     if (!user) {
@@ -184,10 +184,10 @@ export default function CarDetailPage() {
               {/* ── Left: Images + Description ─────────────────────────────────── */}
               <div>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 14, height: 360, position: 'relative' }}>
-                  <img src={imgSrc(safeImgs[activeImg])} alt={car.name}
+                  <img src={imgSrc(displayImgs[activeImg])} alt={car.name}
                     loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800' }} />
+                    onError={e => { e.target.src = DEFAULT_CAR_IMAGE }} />
                   <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(6px)' }}>
                     {activeImg + 1} / {displayImgs.length}
                   </div>
