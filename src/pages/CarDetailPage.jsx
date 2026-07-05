@@ -84,15 +84,15 @@ export default function CarDetailPage() {
   ]
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '20px 16px 60px' : '36px 80px 60px' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '16px 12px 48px' : '36px 80px 60px', overflowX: 'hidden' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
         {/* Breadcrumb */}
         {demoMode && (
           <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 14px', borderRadius: 8, marginBottom: 16, fontSize: 13 }}>
             Showing demo data — could not reach the server.
           </div>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 28, color: '#6b7280', fontSize: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, color: '#6b7280', fontSize: 14, flexWrap: 'wrap' }}>
           <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 14, padding: 0 }}>
             <FiArrowLeft size={16} /> Back
           </button>
@@ -105,7 +105,7 @@ export default function CarDetailPage() {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.15fr 1fr', gap: isMobile ? 24 : 52 }}>
           {/* ── Left: Images + Description ─────────────────────────────────── */}
           <div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 14, height: 360, position: 'relative' }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 14, height: isMobile ? 240 : 360, position: 'relative' }}>
               <img src={imgSrc(imgs[activeImg])} alt={car.name}
                 loading="lazy"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -116,9 +116,9 @@ export default function CarDetailPage() {
             </motion.div>
 
             {imgs.length > 1 && (
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ display: 'flex', gap: 10, overflowX: isMobile ? 'auto' : 'visible', paddingBottom: isMobile ? 4 : 0 }}>
                 {imgs.map((img, i) => (
-                  <div key={i} onClick={() => setActiveImg(i)} style={{ flex: 1, height: 72, borderRadius: 10, overflow: 'hidden', cursor: 'pointer', border: `2px solid ${activeImg === i ? '#ef4444' : 'transparent'}`, opacity: activeImg === i ? 1 : 0.6, transition: 'all 0.2s' }}>
+                  <div key={i} onClick={() => setActiveImg(i)} style={{ flex: isMobile ? '0 0 72px' : 1, height: 72, borderRadius: 10, overflow: 'hidden', cursor: 'pointer', border: `2px solid ${activeImg === i ? '#ef4444' : 'transparent'}`, opacity: activeImg === i ? 1 : 0.6, transition: 'all 0.2s' }}>
                     <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200' }} />
                   </div>
                 ))}
@@ -126,15 +126,15 @@ export default function CarDetailPage() {
             )}
 
             {/* Description */}
-            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28, marginTop: 24 }}>
-              <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, marginBottom: 14 }}>About This Car</h3>
-              <p style={{ color: '#9ca3af', lineHeight: 1.85, fontSize: 15 }}>{car.description}</p>
+            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: isMobile ? 20 : 28, marginTop: 20 }}>
+              <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>About This Car</h3>
+              <p style={{ color: '#9ca3af', lineHeight: 1.85, fontSize: 15, margin: 0 }}>{car.description}</p>
             </div>
 
             {/* Included */}
-            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 28, marginTop: 18 }}>
-              <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, marginBottom: 16 }}>What's Included</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: isMobile ? 20 : 28, marginTop: 16 }}>
+              <h3 style={{ color: '#fff', fontSize: 18, fontWeight: 700, marginBottom: 14 }}>What's Included</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 10 }}>
                 {included.map(item => (
                   <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af', fontSize: 14 }}>
                     <FiShield size={14} color="#16a34a" /> {item}
@@ -147,12 +147,12 @@ export default function CarDetailPage() {
           {/* ── Right: Details + Booking ────────────────────────────────────── */}
           <div style={{ position: isMobile ? 'relative' : 'sticky', top: isMobile ? 0 : 80, height: 'fit-content' }}>
             <div style={{ marginBottom: 10 }}><Badge>{car.category}</Badge></div>
-            <h1 style={{ color: '#fff', fontSize: isMobile ? 24 : 38, fontWeight: 900, letterSpacing: -1.5, margin: '10px 0 4px' }}>{car.name}</h1>
-            <p style={{ color: '#6b7280', fontSize: isMobile ? 15 : 17, marginBottom: 16 }}>{car.brand}</p>
-            <div style={{ marginBottom: 24 }}><StarRating rating={car.rating || 4.8} /></div>
+            <h1 style={{ color: '#fff', fontSize: isMobile ? 24 : 38, fontWeight: 900, letterSpacing: -1.5, margin: '10px 0 4px', lineHeight: 1.1 }}>{car.name}</h1>
+            <p style={{ color: '#6b7280', fontSize: isMobile ? 15 : 17, marginBottom: 12 }}>{car.brand}</p>
+            <div style={{ marginBottom: 18 }}><StarRating rating={car.rating || 4.8} /></div>
 
             {/* Specs grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12, marginBottom: 18 }}>
               {specs.map(({ icon, label, val }) => (
                 <div key={label} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: isMobile ? '10px 12px' : '14px 16px' }}>
                   <div style={{ color: '#6b7280', fontSize: isMobile ? 11 : 12, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>{icon} {label}</div>
@@ -162,24 +162,24 @@ export default function CarDetailPage() {
             </div>
 
             {/* Pricing card */}
-            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 24, marginBottom: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
+            <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: isMobile ? 16 : 24, marginBottom: 16 }}>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', gap: isMobile ? 12 : 0, marginBottom: 16 }}>
                 <div>
                   <div style={{ color: '#6b7280', fontSize: 13, marginBottom: 4 }}>Daily Rate</div>
                   <div>
-                    <span style={{ color: '#ef4444', fontSize: 42, fontWeight: 900, letterSpacing: -1 }}>{formatPrice(car.pricePerDay)}</span>
+                    <span style={{ color: '#ef4444', fontSize: isMobile ? 32 : 42, fontWeight: 900, letterSpacing: -1 }}>{formatPrice(car.pricePerDay)}</span>
                     <span style={{ color: '#6b7280', fontSize: 16 }}>/day</span>
                   </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
+                <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
                   <div style={{ color: '#6b7280', fontSize: 12 }}>Weekly rate</div>
-                  <div style={{ color: '#fff', fontSize: 22, fontWeight: 800 }}>{formatPrice(Math.round(car.pricePerDay * 7 * 0.9))}</div>
+                  <div style={{ color: '#fff', fontSize: isMobile ? 18 : 22, fontWeight: 800 }}>{formatPrice(Math.round(car.pricePerDay * 7 * 0.9))}</div>
                   <div style={{ color: '#16a34a', fontSize: 11, marginTop: 2 }}>Save 10% weekly</div>
                 </div>
               </div>
 
               <button onClick={handleBook} disabled={!car.available}
-                style={{ width: '100%', background: car.available ? '#ef4444' : '#374151', border: 'none', color: '#fff', padding: '15px 0', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: car.available ? 'pointer' : 'not-allowed', transition: 'background 0.2s', marginBottom: 12 }}>
+                style={{ width: '100%', background: car.available ? '#ef4444' : '#374151', border: 'none', color: '#fff', padding: isMobile ? '13px 0' : '15px 0', borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: car.available ? 'pointer' : 'not-allowed', transition: 'background 0.2s', marginBottom: 12 }}>
                 {car.available ? '🚗 Book Now' : 'Currently Unavailable'}
               </button>
 
