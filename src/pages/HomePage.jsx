@@ -343,9 +343,9 @@ export default function HomePage() {
           src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80"
           alt="hero"
           loading="lazy"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center', opacity: 0.8 }}
         />
-        <div className="hero-overlay" style={{ position: 'absolute', inset: '0 0 auto 0', height: '42%', background: 'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.0) 100%)', pointerEvents: 'none', zIndex: 0 }} />
+        <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.72) 100%), linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.75) 100%)', pointerEvents: 'none', zIndex: 0 }} />
 
         <div style={{ position: isTablet ? 'relative' : 'absolute', inset: isTablet ? 'auto' : 0, zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: isTablet ? 'flex-start' : 'center', padding: isMobile ? '36px 16px 48px' : isTablet ? '56px 48px 64px' : '0 80px', maxWidth: 1280, margin: '0 auto', left: 0, right: 0 }}>
           <div>
@@ -355,7 +355,7 @@ export default function HomePage() {
             <h1 className="hero-headline" style={{ color: '#fff', fontSize: isMobile ? 32 : isTablet ? 44 : 60, fontWeight: 900, lineHeight: isMobile ? 1.2 : 1.08, margin: '0 0 16px', letterSpacing: -1 }}>
               Best Self Drive & Luxury <span className='text-red-500'>Car Rental</span> in Bhubaneswar
             </h1>
-            <p className="hero-subtitle" style={{ color: '#9ca3af', fontSize: isMobile ? 13 : 18, maxWidth: isMobile ? 340 : 580, marginBottom: isMobile ? 24 : 28, lineHeight: 1.6 }}>
+            <p className="hero-subtitle" style={{ color: '#f3f4f6', fontSize: isMobile ? 13 : 18, maxWidth: isMobile ? 340 : 580, marginBottom: isMobile ? 24 : 28, lineHeight: 1.6 }}>
               Book premium SUVs, hatchbacks, and self-drive cars instantly with clean vehicles, easy booking, and 24/7 support across Odisha.
             </p>
             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 24 : 14, width: isMobile ? '100%' : 'auto' }}>
