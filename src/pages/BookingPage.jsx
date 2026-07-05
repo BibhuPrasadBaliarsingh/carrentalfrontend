@@ -117,9 +117,16 @@ export default function BookingPage() {
   if (loading) return <PageLoader />
   if (!car) return null
 
-  const imgSrc = car.images?.[0]?.startsWith('http')
-    ? car.images[0]
-    : car.images?.[0] ? `${API_URL}/uploads/${car.images[0]}` : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80'
+  const bookingImageList = Array.isArray(car.images)
+    ? car.images.filter(src => typeof src === 'string' && src.trim().length)
+    : typeof car.images === 'string' && car.images.trim().length
+      ? [car.images.trim()]
+      : []
+  const bookingImageSrc = bookingImageList[0]
+    ? bookingImageList[0].startsWith('http')
+      ? bookingImageList[0]
+      : `${API_URL}/uploads/${bookingImageList[0]}`
+    : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80'
 
   const days = form.pickupDate && form.returnDate ? calcDays(form.pickupDate, form.returnDate) : 1
   const subtotal = days * car.pricePerDay

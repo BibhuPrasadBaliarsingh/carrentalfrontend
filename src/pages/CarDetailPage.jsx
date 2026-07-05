@@ -10,6 +10,13 @@ import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
 
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+const DEFAULT_CAR_IMAGE = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'
+
+const resolveCarImages = (images) => {
+  if (Array.isArray(images)) return images.filter(src => typeof src === 'string' && src.trim().length)
+  if (typeof images === 'string' && images.trim().length) return [images.trim()]
+  return []
+}
 
 export default function CarDetailPage() {
   const { id } = useParams()
@@ -56,8 +63,18 @@ export default function CarDetailPage() {
   if (loading) return <PageLoader />
   if (!car) return <div style={{ color: '#fff', padding: 60, textAlign: 'center' }}>Car not found</div>
 
-  const imgs = car.images?.length ? car.images : ['https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80']
-  const imgSrc = (src) => src?.startsWith('http') ? src : `${API_URL}/uploads/${src}`
+  const imgs = resolveCarImages(car.images)
+  const imgSrc = (src) => {
+    if (!src || typeof src !== 'string') return DEFAULT_CAR_IMAGE
+    return src.startsWith('http') ? src : `${API_URL}/uploads/${src}`
+  }
+  const displayImgs = imgs.length ? imgs : [DEFAULT_CAR_IMAGE]
+
+  useEffect(() => {
+    if (activeImg >= displayImgs.length) {
+      setActiveImg(0)
+    }
+  }, [displayImgs.length, activeImg])
 
   const handleBook = () => {
     if (!user) {
@@ -84,7 +101,7 @@ export default function CarDetailPage() {
   ]
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '12px 10px 48px' : '36px 80px 60px', overflowX: 'hidden' }}>
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '14px 14px 56px' : isTablet ? '24px 40px 60px' : '36px 80px 60px', overflowX: 'hidden' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
         {/* Breadcrumb */}
         {demoMode && (
@@ -102,24 +119,24 @@ export default function CarDetailPage() {
           <span style={{ color: '#fff' }}>{car.name}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.15fr 1fr', gap: isMobile ? 18 : 52 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.15fr 1fr', gap: isMobile ? 18 : isTablet ? 32 : 52 }}>
           {isMobile ? (
-            <div>
+            <div style={{ minWidth: 0 }}>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 10, height: isMobile ? 220 : 240, position: 'relative' }}>
-                <img src={imgSrc(imgs[activeImg])} alt={car.name}
+                <img src={imgSrc(displayImgs[activeImg])} alt={car.name}
                   loading="lazy"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800' }} />
+                  onError={e => { e.target.src = DEFAULT_CAR_IMAGE }} />
                 <div style={{ position: 'absolute', bottom: 10, right: 10, background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 12, padding: '4px 10px', borderRadius: 20, backdropFilter: 'blur(6px)' }}>
-                  {activeImg + 1} / {imgs.length}
+                  {activeImg + 1} / {displayImgs.length}
                 </div>
               </motion.div>
 
-              {imgs.length > 1 && (
+              {displayImgs.length > 1 && (
                 <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 12 }}>
-                  {imgs.map((img, i) => (
+                  {displayImgs.map((img, i) => (
                     <div key={i} onClick={() => setActiveImg(i)} style={{ flex: '0 0 72px', height: 72, borderRadius: 10, overflow: 'hidden', cursor: 'pointer', border: `2px solid ${activeImg === i ? '#ef4444' : 'transparent'}`, opacity: activeImg === i ? 1 : 0.6, transition: 'all 0.2s' }}>
-                      <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200' }} />
+                      <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = DEFAULT_CAR_IMAGE }} />
                     </div>
                   ))}
                 </div>
@@ -136,7 +153,7 @@ export default function CarDetailPage() {
 
               <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 18, marginBottom: 14 }}>
                 <h3 style={{ color: '#fff', fontSize: 17, fontWeight: 700, marginBottom: 10 }}>Car Details</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 10 }}>
                   {specs.map(({ icon, label, val }) => (
                     <div key={label} style={{ background: '#0f1727', border: '1px solid #1f2937', borderRadius: 10, padding: '10px 12px' }}>
                       <div style={{ color: '#6b7280', fontSize: 11, marginBottom: 5, display: 'flex', alignItems: 'center', gap: 6 }}>{icon} {label}</div>
@@ -153,7 +170,7 @@ export default function CarDetailPage() {
 
               <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 18 }}>
                 <h3 style={{ color: '#fff', fontSize: 17, fontWeight: 700, marginBottom: 10 }}>What's Included</h3>
-                <div style={{ display: 'grid', gap: 8 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr', gap: 8 }}>
                   {included.map(item => (
                     <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af', fontSize: 14 }}>
                       <FiShield size={14} color="#16a34a" /> {item}
@@ -167,20 +184,20 @@ export default function CarDetailPage() {
               {/* ── Left: Images + Description ─────────────────────────────────── */}
               <div>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 14, height: 360, position: 'relative' }}>
-                  <img src={imgSrc(imgs[activeImg])} alt={car.name}
+                  <img src={imgSrc(safeImgs[activeImg])} alt={car.name}
                     loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800' }} />
                   <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(6px)' }}>
-                    {activeImg + 1} / {imgs.length}
+                    {activeImg + 1} / {displayImgs.length}
                   </div>
                 </motion.div>
 
-                {imgs.length > 1 && (
+                {displayImgs.length > 1 && (
                   <div style={{ display: 'flex', gap: 10 }}>
-                    {imgs.map((img, i) => (
+                    {displayImgs.map((img, i) => (
                       <div key={i} onClick={() => setActiveImg(i)} style={{ flex: 1, height: 72, borderRadius: 10, overflow: 'hidden', cursor: 'pointer', border: `2px solid ${activeImg === i ? '#ef4444' : 'transparent'}`, opacity: activeImg === i ? 1 : 0.6, transition: 'all 0.2s' }}>
-                        <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200' }} />
+                        <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = DEFAULT_CAR_IMAGE }} />
                       </div>
                     ))}
                   </div>
@@ -206,7 +223,7 @@ export default function CarDetailPage() {
               </div>
 
               {/* ── Right: Details + Booking ────────────────────────────────────── */}
-              <div style={{ position: 'sticky', top: 80, height: 'fit-content' }}>
+              <div style={{ position: isTablet ? 'relative' : 'sticky', top: isTablet ? 'auto' : 80, height: 'fit-content' }}>
                 <div style={{ marginBottom: 10 }}><Badge>{car.category}</Badge></div>
                 <h1 style={{ color: '#fff', fontSize: 38, fontWeight: 900, letterSpacing: -1.5, margin: '10px 0 4px', lineHeight: 1.1 }}>{car.name}</h1>
                 <p style={{ color: '#6b7280', fontSize: 17, marginBottom: 12 }}>{car.brand}</p>
