@@ -156,7 +156,7 @@ export function ForgotPasswordPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      await authAPI.forgotPassword({ email })
+      await authAPI.forgotPassword(email)
       addToast('If an account exists, a reset link has been sent.', 'success')
       setEmail('')
     } catch (err) {
@@ -205,7 +205,7 @@ export function ResetPasswordPage() {
     }
     setLoading(true)
     try {
-      await authAPI.resetPassword(token, { password: form.password })
+      await authAPI.resetPassword(token, form.password)
       addToast('Password updated successfully.', 'success')
       navigate('/login')
     } catch (err) {

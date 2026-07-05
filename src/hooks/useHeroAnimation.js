@@ -20,44 +20,54 @@ export function useHeroAnimation(heroRef, enabled = true) {
 
       const heroIntro = gsap.timeline({ defaults: { ease: 'power4.out' } })
 
-      heroIntro.from(badge, {
-        autoAlpha: 0,
-        y: 18,
-        duration: 0.65,
-      })
+      if (badge) {
+        heroIntro.from(badge, {
+          autoAlpha: 0,
+          y: 18,
+          duration: 0.65,
+        })
+      }
 
       if (headline) {
         split = new SplitType(headline, { types: ['words'], tagName: 'span' })
         const words = split.words || []
-        heroIntro.from(words, {
-          autoAlpha: 0,
-          y: 36,
-          filter: 'blur(20px)',
-          stagger: 0.08,
-          duration: 0.9,
-        }, '-=0.35')
+        if (words.length) {
+          heroIntro.from(words, {
+            autoAlpha: 0,
+            y: 36,
+            filter: 'blur(20px)',
+            stagger: 0.08,
+            duration: 0.9,
+          }, '-=0.35')
+        }
       }
 
-      heroIntro.from(subtitle, {
-        autoAlpha: 0,
-        y: 24,
-        duration: 0.75,
-      }, '-=0.55')
+      if (subtitle) {
+        heroIntro.from(subtitle, {
+          autoAlpha: 0,
+          y: 24,
+          duration: 0.75,
+        }, '-=0.55')
+      }
 
-      heroIntro.from(buttons, {
-        autoAlpha: 0,
-        y: 18,
-        scale: 0.96,
-        duration: 0.68,
-        stagger: 0.08,
-      }, '-=0.45')
+      if (buttons?.length) {
+        heroIntro.from(buttons, {
+          autoAlpha: 0,
+          y: 18,
+          scale: 0.96,
+          duration: 0.68,
+          stagger: 0.08,
+        }, '-=0.45')
+      }
 
-      heroIntro.from(stats, {
-        autoAlpha: 0,
-        y: 26,
-        duration: 0.75,
-        stagger: 0.08,
-      }, '-=0.55')
+      if (stats?.length) {
+        heroIntro.from(stats, {
+          autoAlpha: 0,
+          y: 26,
+          duration: 0.75,
+          stagger: 0.08,
+        }, '-=0.55')
+      }
 
       heroIntro.add(() => {
         const statElements = heroRef.current.querySelectorAll('.hero-stat-value')

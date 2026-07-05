@@ -17,6 +17,7 @@ export default function CarDetailPage() {
   const [car, setCar] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeImg, setActiveImg] = useState(0)
+  const [demoMode, setDemoMode] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
 
@@ -35,6 +36,7 @@ export default function CarDetailPage() {
         const res = await carsAPI.getById(id)
         setCar(res.data.car || res.data)
       } catch {
+        setDemoMode(true)
         const found = MOCK_CARS.find(c => c._id === id)
         setCar(found || MOCK_CARS[0])
       } finally {
@@ -79,6 +81,11 @@ export default function CarDetailPage() {
     <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '20px 16px 60px' : '36px 80px 60px' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Breadcrumb */}
+        {demoMode && (
+          <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 14px', borderRadius: 8, marginBottom: 16, fontSize: 13 }}>
+            Showing demo data — could not reach the server.
+          </div>
+        )}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 28, color: '#6b7280', fontSize: 14 }}>
           <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 14, padding: 0 }}>
             <FiArrowLeft size={16} /> Back

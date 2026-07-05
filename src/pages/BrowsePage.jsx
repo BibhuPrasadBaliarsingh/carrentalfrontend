@@ -16,6 +16,7 @@ export default function BrowsePage() {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [demoMode, setDemoMode] = useState(false)
   const [sort, setSort] = useState('price-asc')
   const [currentPage, setCurrentPage] = useState(1)
   const [filtersOpen, setFiltersOpen] = useState(() => window.innerWidth >= 768)
@@ -56,6 +57,7 @@ export default function BrowsePage() {
         setBrands(filtersRes.data.brands || DEFAULT_BRANDS)
         setCategories(filtersRes.data.categories || DEFAULT_CATEGORIES)
       } catch {
+        setDemoMode(true)
         setCars(MOCK_CARS)
       } finally {
         setLoading(false)
@@ -92,6 +94,11 @@ export default function BrowsePage() {
     <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '20px 16px' : '40px 48px' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Header */}
+        {demoMode && (
+          <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 14px', borderRadius: 8, marginBottom: 16, fontSize: 13 }}>
+            Showing demo data — could not reach the server.
+          </div>
+        )}
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ color: '#fff', fontSize: isMobile ? 26 : 34, fontWeight: 800, margin: '0 0 8px', letterSpacing: -1 }}>Browse Cars</h1>
           <p style={{ color: '#6b7280', fontSize: 15 }}>Find the perfect luxury car for your next journey</p>

@@ -25,6 +25,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [showAddCar, setShowAddCar] = useState(false)
+  const [demoMode, setDemoMode] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
@@ -68,6 +69,7 @@ export default function AdminDashboard() {
         setBookings(bookingsRes.data.bookings || [])
         setUsers(usersRes.data.users || [])
       } catch {
+        setDemoMode(true)
         setCars(MOCK_CARS)
         setStats(MOCK_STATS)
       } finally {
@@ -337,6 +339,11 @@ export default function AdminDashboard() {
         </div>
 
         <div style={{ padding: isMobile ? '80px 16px 16px' : '80px 28px 28px' }}>
+          {demoMode && (
+            <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 14px', borderRadius: 8, marginBottom: 16, fontSize: 13 }}>
+              Showing demo data — could not reach the server.
+            </div>
+          )}
 
           {/* ── Overview ─────────────────────────────────────────────────────── */}
           {activePage === 'overview' && (

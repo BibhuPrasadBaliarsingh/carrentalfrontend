@@ -31,6 +31,7 @@ export default function MyBookingsPage() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [cancellingId, setCancellingId] = useState(null)
+  const [demoMode, setDemoMode] = useState(false)
   const [activeTab, setActiveTab] = useState('all')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
@@ -51,6 +52,7 @@ export default function MyBookingsPage() {
         const data = res.data?.bookings ?? res.data
         setBookings(Array.isArray(data) ? data : [])
       } catch {
+        setDemoMode(true)
         setBookings(MOCK_MY_BOOKINGS)
       } finally {
         setLoading(false)
@@ -98,6 +100,11 @@ export default function MyBookingsPage() {
               </div>
             </div>
             <h1 style={{ color: '#fff', fontSize: isMobile ? 26 : 34, fontWeight: 800, letterSpacing: -1, margin: '0 0 8px' }}>My Bookings</h1>
+            {demoMode && (
+              <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 14px', borderRadius: 8, marginTop: 12, fontSize: 13 }}>
+                Showing demo data — could not reach the server.
+              </div>
+            )}
             <p style={{ color: '#6b7280', fontSize: 15 }}>Track and manage your rental history</p>
           </div>
           <button onClick={() => navigate('/cars')} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap', width: isMobile ? '100%' : 'auto' }}>

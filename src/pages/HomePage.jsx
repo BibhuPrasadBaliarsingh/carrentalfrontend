@@ -15,6 +15,7 @@ export default function HomePage() {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState({ pickup: '', dropoff: '', pickupDate: '', returnDate: '' })
+  const [demoMode, setDemoMode] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
   const { isPageLoading, setIsPageLoading, hasInitialLoaderRun, setHasInitialLoaderRun } = useLoader()
@@ -171,6 +172,7 @@ export default function HomePage() {
         const res = await carsAPI.getAll({ limit: 6 })
         setCars(res.data.cars || res.data)
       } catch {
+        setDemoMode(true)
         setCars(MOCK_CARS.slice(0, 6))
       } finally {
         setLoading(false)
@@ -298,6 +300,11 @@ export default function HomePage() {
         </div>
       </div>
       <div ref={contentRef} style={{ background: '#0a0a0a' }}>
+      {demoMode && (
+        <div style={{ background: 'rgba(239,68,68,0.12)', borderBottom: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 16px', textAlign: 'center', fontSize: 13 }}>
+          Showing demo data — could not reach the server.
+        </div>
+      )}
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section ref={heroRef} style={{ position: 'relative', minHeight: isTablet ? 'auto' : 600, height: isTablet ? 'auto' : 600, overflow: 'hidden' }}>

@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext'
 import { carsAPI, bookingsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
+import { useEffect as useReactEffect } from 'react'
 
 const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
 const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank Transfer' }
@@ -44,6 +45,10 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [bookingRef, setBookingRef] = useState('')
+  const [demoMode, setDemoMode] = useState(false)
+  const [taxRate, setTaxRate] = useState(0.08)
+  const [taxAmount, setTaxAmount] = useState(0)
+  const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 8 })
 
   const [form, setForm] = useState({
     firstName: user?.name?.split(' ')[0] || '',
@@ -62,12 +67,29 @@ export default function BookingPage() {
   })
   const [errors, setErrors] = useState({})
 
+  useReactEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/settings/public`)
+        const data = await res.json()
+        if (data?.success) {
+          setPublicSettings(data.settings || publicSettings)
+          if (data.settings?.taxRate) setTaxRate(Number(data.settings.taxRate) / 100)
+        }
+      } catch {
+        // keep defaults
+      }
+    }
+    fetchSettings()
+  }, [])
+
   useEffect(() => {
     const fetchCar = async () => {
       try {
         const res = await carsAPI.getById(id)
         setCar(res.data.car || res.data)
       } catch {
+        setDemoMode(true)
         const found = MOCK_CARS.find(c => c._id === id)
         setCar(found || MOCK_CARS[0])
       } finally {
@@ -87,7 +109,7 @@ export default function BookingPage() {
   const days = form.pickupDate && form.returnDate ? calcDays(form.pickupDate, form.returnDate) : 1
   const subtotal = days * car.pricePerDay
   const insuranceFee = form.insurance ? 50 * days : 0
-  const tax = Math.round(subtotal * 0.08)
+  const tax = taxAmount || Math.round(subtotal * taxRate * 100) / 100
   const total = subtotal + insuranceFee + tax
 
   const validate = () => {
@@ -124,6 +146,8 @@ export default function BookingPage() {
       }
       const res = await bookingsAPI.create(payload)
       setBookingRef(res.data?.booking?.bookingRef || res.data?.booking?._id || res.data?._id || '')
+      setTaxRate(Number(res.data?.taxRate || 0.08))
+      setTaxAmount(Number(res.data?.taxAmount || 0))
       setSuccess(true)
       addToast('Booking confirmed! 🎉', 'success')
     } catch (err) {
@@ -183,6 +207,11 @@ export default function BookingPage() {
   return (
     <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: '40px 80px 60px' }}>
       <div style={{ maxWidth: 1150, margin: '0 auto' }}>
+        {demoMode && (
+          <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 14px', borderRadius: 8, marginBottom: 16, fontSize: 13 }}>
+            Showing demo data — could not reach the server.
+          </div>
+        )}
         <h1 style={{ color: '#fff', fontSize: 34, fontWeight: 800, letterSpacing: -1, marginBottom: 36 }}>Complete Your Booking</h1>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32 }}>
@@ -281,7 +310,7 @@ export default function BookingPage() {
                   ['Daily Rate', `${formatPrice(car.pricePerDay)}/day`],
                   ['Subtotal', formatPrice(subtotal)],
                   form.insurance && ['Insurance', formatPrice(insuranceFee)],
-                  ['Tax (8%)', formatPrice(tax)],
+                  [`Tax (${Math.round(taxRate * 100)}%)`, formatPrice(tax)],
                 ].filter(Boolean).map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
                     <span style={{ color: '#6b7280' }}>{k}</span>

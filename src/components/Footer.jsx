@@ -5,17 +5,32 @@ import { FaWhatsapp } from 'react-icons/fa'
 import Logo from './common/Logo'
 import { useToast } from '../context/ToastContext'
 import { newsletterAPI } from '../services/api'
+import { formatPrice } from '../utils/format'
 
 export default function Footer() {
   const { addToast } = useToast()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [subscribing, setSubscribing] = useState(false)
+  const [settings, setSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)' })
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/settings/public`)
+        const data = await res.json()
+        if (data?.success) setSettings(data.settings || settings)
+      } catch {
+        // keep defaults
+      }
+    }
+    fetchSettings()
   }, [])
 
   const links = {
@@ -84,7 +99,7 @@ export default function Footer() {
                   <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Contact US</strong>
                   <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Location: {locationAddress}</span>
                   <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>+91 98613 32857</a>, <a href="tel:+917608068450" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>+91 76080 68450</a></span>
-                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>speedtoyzcarsodisha@gmail.com</a></span>
+                  <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: <a href={`mailto:${settings.supportEmail}`} style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>{settings.supportEmail}</a></span>
                 </div>
                 
               </div>
@@ -116,7 +131,7 @@ export default function Footer() {
             <div style={{ display: 'grid', gap: 8, color: '#d1d5db', fontSize: 13, marginBottom: 18 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={34} color="#ef4444" /> {locationAddress}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> <a href="tel:+919861332857" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>98613 32857</a>, <a href="tel:+917608068450" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>76080 68450</a></span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>speedtoyzcarsodisha@gmail.com</a></span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> <a href={`mailto:${settings.supportEmail}`} style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>{settings.supportEmail}</a></span>
             </div>
             <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 12 }}>
               <input value={newsletterEmail} onChange={e => setNewsletterEmail(e.target.value)} type="email" placeholder="Email for updates" style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }} />
@@ -154,7 +169,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 12 }}>
-          <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} Speed Toyz Cars. All rights reserved.</span>
+          <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} {settings.platformName}. All rights reserved.</span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 24 }}>
             {[
               ['Privacy Policy', '/privacy'],
