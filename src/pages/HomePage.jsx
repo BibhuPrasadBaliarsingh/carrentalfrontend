@@ -481,7 +481,7 @@ export default function HomePage() {
         </div>
         <div style={{ overflow: 'hidden', width: '100%' }}>
           <div className="marquee-track" style={{ display: 'flex', gap: 18, width: 'max-content', animation: 'marqueeLeft 28s linear infinite' }}>
-            {(cars.length ? cars : MOCK_CARS).concat(cars.length ? cars : MOCK_CARS).slice(0, 16).map((car, i) => (
+            {(cars.length ? cars : MOCK_CARS).slice(0, 16).map((car, i) => (
               <div key={`${car._id || car.name}-${i}`} style={{ minWidth: isMobile ? 260 : 320, maxWidth: isMobile ? 260 : 320 }}>
                 <CarCard car={car} index={i} />
               </div>
