@@ -84,7 +84,7 @@ export default function CarDetailPage() {
   ]
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '16px 12px 48px' : '36px 80px 60px', overflowX: 'hidden' }}>
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '12px 10px 48px' : '36px 80px 60px', overflowX: 'hidden' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
         {/* Breadcrumb */}
         {demoMode && (
@@ -92,7 +92,7 @@ export default function CarDetailPage() {
             Showing demo data — could not reach the server.
           </div>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, color: '#6b7280', fontSize: 14, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: isMobile ? 16 : 24, color: '#6b7280', fontSize: isMobile ? 13 : 14, flexWrap: 'wrap' }}>
           <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 14, padding: 0 }}>
             <FiArrowLeft size={16} /> Back
           </button>
@@ -105,7 +105,7 @@ export default function CarDetailPage() {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.15fr 1fr', gap: isMobile ? 18 : 52 }}>
           {isMobile ? (
             <div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 12, height: 240, position: 'relative' }}>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 10, height: isMobile ? 220 : 240, position: 'relative' }}>
                 <img src={imgSrc(imgs[activeImg])} alt={car.name}
                   loading="lazy"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -126,11 +126,11 @@ export default function CarDetailPage() {
               )}
 
               <div style={{ marginBottom: 8 }}><Badge>{car.category}</Badge></div>
-              <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 900, letterSpacing: -1.2, margin: '4px 0 6px', lineHeight: 1.1 }}>{car.name}</h1>
-              <div style={{ color: '#ef4444', fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{formatPrice(car.pricePerDay)} <span style={{ color: '#6b7280', fontSize: 14 }}>/day</span></div>
+              <h1 style={{ color: '#fff', fontSize: isMobile ? 22 : 24, fontWeight: 900, letterSpacing: -1.2, margin: '4px 0 6px', lineHeight: 1.1 }}>{car.name}</h1>
+              <div style={{ color: '#ef4444', fontSize: isMobile ? 20 : 24, fontWeight: 800, marginBottom: 12 }}>{formatPrice(car.pricePerDay)} <span style={{ color: '#6b7280', fontSize: 13 }}>/day</span></div>
 
               <button onClick={handleBook} disabled={!car.available}
-                style={{ width: '100%', background: car.available ? '#ef4444' : '#374151', border: 'none', color: '#fff', padding: '13px 0', borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: car.available ? 'pointer' : 'not-allowed', transition: 'background 0.2s', marginBottom: 14 }}>
+                style={{ width: '100%', background: car.available ? '#ef4444' : '#374151', border: 'none', color: '#fff', padding: '13px 0', borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: car.available ? 'pointer' : 'not-allowed', transition: 'background 0.2s', marginBottom: 12 }}>
                 {car.available ? '🚗 Book Now' : 'Currently Unavailable'}
               </button>
 
