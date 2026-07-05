@@ -261,12 +261,12 @@ export default function AdminDashboard() {
           <motion.div initial={{ x: -224 }} animate={{ x: 0 }} exit={{ x: -224 }} transition={{ type: 'tween', duration: 0.2 }}
             style={{ width: 224, background: '#050505', borderRight: '1px solid #1f2937', display: 'flex', flexDirection: 'column', position: isTablet ? 'fixed' : 'sticky', top: 0, height: '100vh', zIndex: 50, left: 0 }}>
             <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1f2937' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+              <button onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
                 <div>
                   <Logo size="sm" />
                   <div style={{ color: '#4b5563', fontSize: 12, marginTop: 2 }}>Admin Panel</div>
                 </div>
-              </div>
+              </button>
             </div>
 
             <div style={{ flex: 1, padding: '14px 10px', overflowY: 'auto' }}>
