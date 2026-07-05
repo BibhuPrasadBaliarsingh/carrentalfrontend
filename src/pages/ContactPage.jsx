@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useToast } from '../context/ToastContext'
+import { useLoader } from '../context/LoaderContext'
 import { contactAPI } from '../services/api'
 
 export default function ContactPage() {
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
   const shouldReduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)

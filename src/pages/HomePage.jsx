@@ -109,6 +109,9 @@ export default function HomePage() {
       return
     }
 
+    // Show loader and hide navbar during animation
+    setIsPageLoading(true)
+
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
     loaderTimelineRef.current = tl
 

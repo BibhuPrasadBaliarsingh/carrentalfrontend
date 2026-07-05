@@ -4,6 +4,7 @@ import { FiSearch, FiFilter, FiX } from 'react-icons/fi'
 import CarCard from '../components/CarCard'
 import { CarCardSkeleton, EmptyState } from '../components/UI'
 import { carsAPI, siteAPI } from '../services/api'
+import { useLoader } from '../context/LoaderContext'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
 
@@ -12,6 +13,7 @@ const DEFAULT_CATEGORIES = ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar']
 const FUELS = ['Petrol', 'Hybrid', 'Electric', 'Diesel']
 
 export default function BrowsePage() {
+  const { setIsPageLoading } = useLoader()
   const [searchParams, setSearchParams] = useSearchParams()
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
@@ -44,6 +46,10 @@ export default function BrowsePage() {
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    setIsPageLoading(false)
   }, [])
 
   useEffect(() => {

@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useLoader } from '../context/LoaderContext'
 import { authAPI, bookingsAPI } from '../services/api'
 import { formatPrice } from '../utils/format'
 
 export default function AccountPage() {
   const { user, logout } = useAuth()
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
 
   useEffect(() => {
     const load = async () => {

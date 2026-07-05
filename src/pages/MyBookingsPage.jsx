@@ -5,6 +5,7 @@ import { FiCalendar, FiMapPin, FiHash } from 'react-icons/fi'
 import { StatusBadge, EmptyState, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useLoader } from '../context/LoaderContext'
 import { bookingsAPI } from '../services/api'
 import Logo from '../components/common/Logo'
 import { formatPrice } from '../utils/format'
@@ -28,6 +29,11 @@ export default function MyBookingsPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [cancellingId, setCancellingId] = useState(null)

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useLoader } from '../context/LoaderContext'
 import { authAPI } from '../services/api'
 import Logo from '../components/common/Logo'
 
@@ -30,6 +31,7 @@ export function LoginPage() {
   const location = useLocation()
   const { login, user } = useAuth()
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
   const [form, setForm] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -45,6 +47,10 @@ export function LoginPage() {
     }
     return fromPath
   }
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
 
   useEffect(() => {
     if (redirectTo && user) {
@@ -149,8 +155,13 @@ export function LoginPage() {
 
 export function ForgotPasswordPage() {
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -189,9 +200,14 @@ export function ResetPasswordPage() {
   const navigate = useNavigate()
   const { token } = useParams()
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
   const [form, setForm] = useState({ password: '', confirmPassword: '' })
   const [loading, setLoading] = useState(false)
   const [showPw, setShowPw] = useState(false)
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -236,10 +252,15 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [showPw, setShowPw] = useState(false)
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
 
   const validate = () => {
     const e = {}

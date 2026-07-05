@@ -1,4 +1,13 @@
+import { useEffect } from 'react'
+import { useLoader } from '../context/LoaderContext'
+
 export default function NotFoundPage() {
+  const { setIsPageLoading } = useLoader()
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
+
   return (
     <div style={{ minHeight: '70vh', padding: '40px 24px', background: '#0a0a0a', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center', maxWidth: 560 }}>

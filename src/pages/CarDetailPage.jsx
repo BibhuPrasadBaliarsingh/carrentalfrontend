@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { FiZap, FiUsers, FiSettings, FiCalendar, FiShield, FiMapPin, FiArrowLeft } from 'react-icons/fi'
 import { Badge, StarRating, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
+import { useLoader } from '../context/LoaderContext'
 import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
@@ -14,12 +15,17 @@ export default function CarDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { setIsPageLoading } = useLoader()
   const [car, setCar] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeImg, setActiveImg] = useState(0)
   const [demoMode, setDemoMode] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
 
   useEffect(() => {
     const handleResize = () => {

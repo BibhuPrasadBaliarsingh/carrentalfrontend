@@ -1,4 +1,13 @@
+import { useEffect } from 'react'
+import { useLoader } from '../context/LoaderContext'
+
 export function TermsPage() {
+  const { setIsPageLoading } = useLoader()
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
+
   return (
     <div style={{ minHeight: '70vh', padding: '40px 24px', background: '#0a0a0a', color: '#fff' }}>
       <div style={{ maxWidth: 860, margin: '0 auto', background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 28 }}>
@@ -133,6 +142,12 @@ export function TermsPage() {
 }
 
 export function PrivacyPage() {
+  const { setIsPageLoading } = useLoader()
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
+
   return (
     <div style={{ minHeight: '70vh', padding: '40px 24px', background: '#0a0a0a', color: '#fff' }}>
       <div style={{ maxWidth: 860, margin: '0 auto', background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 28 }}>

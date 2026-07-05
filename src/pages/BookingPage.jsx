@@ -5,6 +5,7 @@ import { FiShield, FiCreditCard, FiCalendar, FiCheck } from 'react-icons/fi'
 import { Badge, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useLoader } from '../context/LoaderContext'
 import { carsAPI, bookingsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
@@ -47,6 +48,11 @@ export default function BookingPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { addToast } = useToast()
+  const { setIsPageLoading } = useLoader()
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
   const shouldReduceMotion = useReducedMotion()
 
   const [car, setCar] = useState(null)

@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from 'react'
 const LoaderContext = createContext(null)
 
 export function LoaderProvider({ children }) {
-  const [isPageLoading, setIsPageLoading] = useState(true)
+  const [isPageLoading, setIsPageLoading] = useState(false)
   const [hasInitialLoaderRun, setHasInitialLoaderRun] = useState(false)
 
   return (
