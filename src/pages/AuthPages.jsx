@@ -144,9 +144,9 @@ export function LoginPage() {
             <Link to="/register" style={{ color: '#ef4444', textDecoration: 'none', fontWeight: 700 }}>Create one</Link>
           </div>
 
-          <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14, fontSize: 12, color: '#6b7280', lineHeight: 1.7 }}>
+          {/* <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14, fontSize: 12, color: '#6b7280', lineHeight: 1.7 }}>
             💡 <strong style={{ color: '#9ca3af' }}>Demo:</strong> Admin — admin@speedtoyz.com / Admin@123  |  User — john@example.com / User@123
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </div>
