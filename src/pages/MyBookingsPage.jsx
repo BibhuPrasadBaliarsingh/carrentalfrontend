@@ -162,7 +162,7 @@ export default function MyBookingsPage() {
                 {/* Info */}
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-                    <span style={{ color: '#fff', fontWeight: 700, fontSize: isMobile ? 15 : 18 }}>{booking.car?.name}</span>
+                    <span style={{ color: '#fff', fontWeight: 700, fontSize: isMobile ? 15 : 18 }}>{booking.car?.name?.split(' - ')[0]}</span>
                     <StatusBadge status={booking.bookingStatus} />
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 20, color: '#9ca3af', fontSize: isMobile ? 12 : 13 }}>

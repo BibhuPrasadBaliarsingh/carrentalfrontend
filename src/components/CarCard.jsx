@@ -59,7 +59,7 @@ export default function CarCard({ car, index = 0 }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           <div>
             <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>{car.brand}</div>
-            <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{car.name}</div>
+            <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{car.name?.split(' - ')[0]}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 20 }}>{formatPrice(car.pricePerDay)}</div>

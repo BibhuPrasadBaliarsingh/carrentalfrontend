@@ -115,7 +115,7 @@ export default function CarDetailPage() {
           <span>›</span>
           <span style={{ cursor: 'pointer', color: '#9ca3af' }} onClick={() => navigate('/cars')}>Browse Cars</span>
           <span>›</span>
-          <span style={{ color: '#fff' }}>{car.name}</span>
+          <span style={{ color: '#fff' }}>{car.name?.split(' - ')[0]}</span>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.15fr 1fr', gap: isMobile ? 18 : isTablet ? 32 : 52 }}>
@@ -142,7 +142,7 @@ export default function CarDetailPage() {
               )}
 
               <div style={{ marginBottom: 8 }}><Badge>{car.category}</Badge></div>
-              <h1 style={{ color: '#fff', fontSize: isMobile ? 22 : 24, fontWeight: 900, letterSpacing: -1.2, margin: '4px 0 6px', lineHeight: 1.1 }}>{car.name}</h1>
+              <h1 style={{ color: '#fff', fontSize: isMobile ? 22 : 24, fontWeight: 900, letterSpacing: -1.2, margin: '4px 0 6px', lineHeight: 1.1 }}>{car.name?.split(' - ')[0]}</h1>
               <div style={{ color: '#ef4444', fontSize: isMobile ? 20 : 24, fontWeight: 800, marginBottom: 12 }}>{formatPrice(car.pricePerDay)} <span style={{ color: '#6b7280', fontSize: 13 }}>/day</span></div>
 
               <button onClick={handleBook} disabled={!car.available}
@@ -224,7 +224,7 @@ export default function CarDetailPage() {
               {/* ── Right: Details + Booking ────────────────────────────────────── */}
               <div style={{ position: isTablet ? 'relative' : 'sticky', top: isTablet ? 'auto' : 80, height: 'fit-content' }}>
                 <div style={{ marginBottom: 10 }}><Badge>{car.category}</Badge></div>
-                <h1 style={{ color: '#fff', fontSize: 38, fontWeight: 900, letterSpacing: -1.5, margin: '10px 0 4px', lineHeight: 1.1 }}>{car.name}</h1>
+                <h1 style={{ color: '#fff', fontSize: 38, fontWeight: 900, letterSpacing: -1.5, margin: '10px 0 4px', lineHeight: 1.1 }}>{car.name?.split(' - ')[0]}</h1>
                 <p style={{ color: '#6b7280', fontSize: 17, marginBottom: 12 }}>{car.brand}</p>
                 <div style={{ marginBottom: 18 }}><StarRating rating={car.rating || 4.8} /></div>
 

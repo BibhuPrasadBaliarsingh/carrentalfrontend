@@ -197,7 +197,7 @@ export default function BookingPage() {
             <FiCheck size={36} color="#16a34a" />
           </motion.div>
           <h2 style={{ color: '#fff', fontSize: 30, fontWeight: 900, margin: '0 0 10px' }}>Booking Confirmed!</h2>
-          <p style={{ color: '#9ca3af', fontSize: 16, marginBottom: 8 }}>Your {car.name} has been successfully reserved.</p>
+          <p style={{ color: '#9ca3af', fontSize: 16, marginBottom: 8 }}>Your {car.name?.split(' - ')[0]} has been successfully reserved.</p>
           <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 28 }}>Ref: <strong style={{ color: '#ef4444' }}>#{bookingRef}</strong></p>
 
           <div style={{ background: '#1f2937', borderRadius: 12, padding: 20, marginBottom: 28 }}>
@@ -325,11 +325,11 @@ export default function BookingPage() {
               <h3 style={{ color: '#fff', fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Booking Summary</h3>
 
               <div style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16, height: 160 }}>
-                <img src={imgSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400' }} />
+                <img src={bookingImageSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400' }} />
               </div>
 
               <div style={{ marginBottom: 6 }}><Badge>{car.category}</Badge></div>
-              <h4 style={{ color: '#fff', fontWeight: 800, fontSize: 18, margin: '8px 0 4px' }}>{car.name}</h4>
+              <h4 style={{ color: '#fff', fontWeight: 800, fontSize: 18, margin: '8px 0 4px' }}>{car.name?.split(' - ')[0]}</h4>
               <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 20 }}>{car.brand}</p>
 
               <div style={{ borderTop: '1px solid #1f2937', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>

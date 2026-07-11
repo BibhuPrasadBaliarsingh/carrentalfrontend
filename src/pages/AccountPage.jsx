@@ -62,7 +62,7 @@ export default function AccountPage() {
               {bookings.slice(0, 5).map((booking) => (
                 <div key={booking._id} style={{ background: '#1f2937', borderRadius: 12, padding: 14, display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                   <div>
-                    <div style={{ fontWeight: 700 }}>{booking.car?.name || 'Car'}</div>
+                    <div style={{ fontWeight: 700 }}>{booking.car?.name?.split(' - ')[0] || 'Car'}</div>
                     <div style={{ color: '#9ca3af', fontSize: 13 }}>{booking.pickupDate} → {booking.returnDate}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>

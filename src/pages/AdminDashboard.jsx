@@ -414,7 +414,7 @@ export default function AdminDashboard() {
                   <tbody>{bookings.slice(0, 5).map(b => (
                     <tr key={b._id} style={{ transition: 'background 0.15s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <td style={{ ...tdStyle, color: '#6b7280', fontSize: 13 }}>{b._id}</td>
-                      <td style={{ ...tdStyle, color: '#fff', fontWeight: 600, fontSize: 14 }}>{b.car?.name}</td>
+                      <td style={{ ...tdStyle, color: '#fff', fontWeight: 600, fontSize: 14 }}>{b.car?.name?.split(' - ')[0]}</td>
                       <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{b.user?.name}</td>
                       <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{b.pickupDate}</td>
                       <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>{fmt(b.totalPrice)}</td>
@@ -460,7 +460,7 @@ export default function AdminDashboard() {
                             <div style={{ width: 56, height: 38, borderRadius: 7, overflow: 'hidden', flexShrink: 0 }}>
                               <img src={imgSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=100' }} />
                             </div>
-                            <span style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>{car.name}</span>
+                            <span style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>{car.name?.split(' - ')[0]}</span>
                           </div>
                         </td>
                         <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{car.brand}</td>
@@ -508,7 +508,7 @@ export default function AdminDashboard() {
                 <tbody>{bookings.map(b => (
                   <tr key={b._id} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     <td style={{ ...tdStyle, color: '#6b7280', fontSize: 12, fontFamily: 'monospace' }}>{b._id}</td>
-                    <td style={{ ...tdStyle, color: '#fff', fontWeight: 600, fontSize: 14 }}>{b.car?.name}</td>
+                    <td style={{ ...tdStyle, color: '#fff', fontWeight: 600, fontSize: 14 }}>{b.car?.name?.split(' - ')[0]}</td>
                     <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13 }}>{b.user?.name}</td>
                     <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{b.pickupDate}</td>
                     <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{b.returnDate}</td>
