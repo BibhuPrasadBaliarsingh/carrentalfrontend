@@ -16,7 +16,8 @@ export default function HomePage() {
   const navigate = useNavigate()
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState({ pickup: '', dropoff: '', pickupDate: '', returnDate: '' })
+  const [deliveryMode, setDeliveryMode] = useState('Parking')
+  const [search, setSearch] = useState({ location: '', pickupDate: '', returnDate: '' })
   const [demoMode, setDemoMode] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
@@ -207,8 +208,13 @@ export default function HomePage() {
   }, [])
 
   const handleSearch = () => {
+    sessionStorage.setItem('bookingIntent', JSON.stringify({
+      deliveryMode,
+      location: deliveryMode === 'Parking' ? 'Speedtoyz Parking' : search.location,
+      pickupDate: search.pickupDate,
+      returnDate: search.returnDate
+    }))
     const params = new URLSearchParams()
-    if (search.pickup) params.set('location', search.pickup)
     if (search.pickupDate) params.set('pickupDate', search.pickupDate)
     if (search.returnDate) params.set('returnDate', search.returnDate)
     navigate(`/cars?${params.toString()}`)
@@ -383,25 +389,67 @@ export default function HomePage() {
 
       {/* ── Search Bar ─────────────────────────────────────────────────────── */}
       <div className="home-reveal" style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '24px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
+        
+        {/* Delivery Mode Tabs */}
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
+          {['Parking', 'Doorstep', 'Airport'].map(mode => (
+            <button
+              key={mode}
+              onClick={() => { setDeliveryMode(mode); setSearch({ ...search, location: '' }) }}
+              style={{
+                padding: '10px 20px',
+                borderRadius: 24,
+                border: `1px solid ${deliveryMode === mode ? '#ef4444' : '#374151'}`,
+                background: deliveryMode === mode ? 'rgba(239,68,68,0.1)' : '#111827',
+                color: deliveryMode === mode ? '#ef4444' : '#9ca3af',
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s'
+              }}
+            >
+              {mode === 'Parking' ? '🅿️ Speedtoyz Parking' : mode === 'Doorstep' ? '🏡 Doorstep Delivery' : '✈️ Airport Pickup'}
+            </button>
+          ))}
+        </div>
+
         <div
-          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : isTablet ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr)) auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
-          {[
-            { label: 'Pickup Location', icon: <FiMapPin />, key: 'pickup', type: 'text', placeholder: 'City or Airport' },
-            { label: 'Dropoff Location', icon: <FiMapPin />, key: 'dropoff', type: 'text', placeholder: 'Same as pickup' },
-            { label: 'Pickup Date', icon: <FiCalendar />, key: 'pickupDate', type: 'date', placeholder: '' },
-            { label: 'Return Date', icon: <FiCalendar />, key: 'returnDate', type: 'date', placeholder: '' },
-          ].map(({ label, icon, key, type, placeholder }) => (
-            <div key={key}>
-              <label style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>{label}</label>
+          style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : deliveryMode === 'Parking' ? '1fr 1fr auto' : '1fr 1fr 1fr auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
+          
+          {deliveryMode !== 'Parking' && (
+            <div>
+              <label style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>
+                {deliveryMode === 'Doorstep' ? 'Delivery Address' : 'Airport Name / Terminal'}
+              </label>
               <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}>{icon}</span>
-                <input type={type} value={search[key]} onChange={e => setSearch(s => ({ ...s, [key]: e.target.value }))} placeholder={placeholder}
-                  style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
+                <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiMapPin /></span>
+                <input type="text" value={search.location} onChange={e => setSearch(s => ({ ...s, location: e.target.value }))} placeholder={deliveryMode === 'Doorstep' ? 'Enter full address map link' : 'BPIA Bhubaneswar'}
+                  style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box' }} />
               </div>
             </div>
-          ))}
+          )}
+
+          <div>
+            <label style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Pickup Date</label>
+            <div style={{ position: 'relative' }}>
+              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiCalendar /></span>
+              <input type="date" value={search.pickupDate} onChange={e => setSearch(s => ({ ...s, pickupDate: e.target.value }))}
+                style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
+            </div>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Return Date</label>
+            <div style={{ position: 'relative' }}>
+              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiCalendar /></span>
+              <input type="date" value={search.returnDate} onChange={e => setSearch(s => ({ ...s, returnDate: e.target.value }))}
+                style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
+            </div>
+          </div>
+
           <button onClick={handleSearch} className="btn-primary" style={{ border: 'none', color: '#fff', padding: isMobile ? '8px 16px' : '11px 28px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', width: isTablet ? '100%' : 'auto', gridColumn: isTablet ? '1 / -1' : 'auto' }}>
-            {isMobile ? 'Search' : 'Search Now'}
+            {isMobile ? 'Search' : 'Search Cars'}
           </button>
         </div>
       </div>

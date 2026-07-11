@@ -57,7 +57,10 @@ export default function BrowsePage() {
       setLoading(true)
       try {
         const [carsRes, filtersRes] = await Promise.all([
-          carsAPI.getAll(),
+          carsAPI.getAll({
+            pickupDate: searchParams.get('pickupDate') || undefined,
+            returnDate: searchParams.get('returnDate') || undefined,
+          }),
           siteAPI.filters(),
         ])
         const fetchedCars = carsRes.data.cars || carsRes.data

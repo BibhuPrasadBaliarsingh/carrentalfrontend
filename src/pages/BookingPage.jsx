@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { FiShield, FiCreditCard, FiCalendar, FiCheck } from 'react-icons/fi'
+import { FiShield, FiCreditCard, FiCalendar, FiCheck, FiUpload, FiFileText } from 'react-icons/fi'
 import { Badge, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -64,20 +64,35 @@ export default function BookingPage() {
   const [taxAmount, setTaxAmount] = useState(0)
   const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 8 })
 
-  const [form, setForm] = useState({
-    firstName: user?.name?.split(' ')[0] || '',
-    lastName: user?.name?.split(' ').slice(1).join(' ') || '',
-    email: user?.email || '',
-    phone: '',
-    pickupDate: '',
-    returnDate: '',
-    pickupLocation: '',
-    insurance: false,
-    paymentMethod: 'card',
-    cardNumber: '',
-    cardExpiryMonth: '',
-    cardExpiryYear: '',
-    cardCVV: '',
+  const [form, setForm] = useState(() => {
+    let intent = {};
+    try {
+      const stored = sessionStorage.getItem('bookingIntent');
+      if (stored) intent = JSON.parse(stored);
+    } catch {}
+
+    return {
+      firstName: user?.name?.split(' ')[0] || '',
+      lastName: user?.name?.split(' ').slice(1).join(' ') || '',
+      email: user?.email || '',
+      phone: '',
+      pickupDate: intent.pickupDate || '',
+      returnDate: intent.returnDate || '',
+      pickupLocation: intent.location || '',
+      deliveryMode: intent.deliveryMode || 'Parking',
+      drivingLicenseNumber: '',
+      aadhaarNumber: '',
+      address: '',
+      dlDocument: null,
+      aadhaarDocument: null,
+      paymentScreenshot: null,
+      insurance: false,
+      paymentMethod: 'card',
+      cardNumber: '',
+      cardExpiryMonth: '',
+      cardExpiryYear: '',
+      cardCVV: '',
+    };
   })
   const [errors, setErrors] = useState({})
 
@@ -143,12 +158,12 @@ export default function BookingPage() {
     if (!form.returnDate) e.returnDate = 'Required'
     if (form.pickupDate && form.returnDate && new Date(form.returnDate) <= new Date(form.pickupDate)) e.returnDate = 'Return must be after pickup'
     if (!form.pickupLocation) e.pickupLocation = 'Required'
-    if (form.paymentMethod === 'card') {
-      if (!form.cardNumber) e.cardNumber = 'Required'
-      if (!form.cardExpiryMonth) e.cardExpiryMonth = 'Required'
-      if (!form.cardExpiryYear) e.cardExpiryYear = 'Required'
-      if (!form.cardCVV) e.cardCVV = 'Required'
-    }
+    if (!form.drivingLicenseNumber) e.drivingLicenseNumber = 'Required'
+    if (!form.aadhaarNumber) e.aadhaarNumber = 'Required'
+    if (!form.address) e.address = 'Required'
+    if (!form.dlDocument) e.dlDocument = 'Required'
+    if (!form.aadhaarDocument) e.aadhaarDocument = 'Required'
+    if (!form.paymentScreenshot) e.paymentScreenshot = 'Required'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -157,20 +172,34 @@ export default function BookingPage() {
     if (!validate()) { addToast('Please fill in all required fields', 'error'); return }
     setSubmitting(true)
     try {
-      const payload = {
-        carId: car._id,
-        pickupDate: form.pickupDate,
-        returnDate: form.returnDate,
-        pickupLocation: form.pickupLocation,
-        includesInsurance: form.insurance,
-        paymentMethod: PAYMENT_METHOD_MAP[form.paymentMethod] || 'Credit Card',
-      }
+      const payload = new FormData()
+      payload.append('carId', car._id)
+      payload.append('pickupDate', form.pickupDate)
+      payload.append('returnDate', form.returnDate)
+      payload.append('pickupLocation', form.pickupLocation)
+      payload.append('deliveryMode', form.deliveryMode)
+      payload.append('includesInsurance', form.insurance)
+      payload.append('paymentMethod', 'Bank Transfer')
+      payload.append('drivingLicenseNumber', form.drivingLicenseNumber)
+      payload.append('aadhaarNumber', form.aadhaarNumber)
+      payload.append('address', form.address)
+      payload.append('dlDocument', form.dlDocument)
+      payload.append('aadhaarDocument', form.aadhaarDocument)
+      payload.append('paymentScreenshot', form.paymentScreenshot)
+      
       const res = await bookingsAPI.create(payload)
-      setBookingRef(res.data?.booking?.bookingRef || res.data?.booking?._id || res.data?._id || '')
+      const bRef = res.data?.booking?.bookingRef || res.data?.booking?._id || res.data?._id || '';
+      setBookingRef(bRef)
       setTaxRate(Number(res.data?.taxRate || 0.08))
       setTaxAmount(Number(res.data?.taxAmount || 0))
       setSuccess(true)
       addToast('Booking confirmed! 🎉', 'success')
+      
+      // WhatsApp redirect (using placeholder number 919999999999)
+      const waNumber = '919999999999';
+      const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bRef}\nCar: ${car.name}\nMode: ${form.deliveryMode}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
+      const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+      window.open(waUrl, '_blank');
     } catch (err) {
       const message = err.response?.data?.message || 'Could not create your booking. Please try again.'
       addToast(message, 'error')
@@ -216,6 +245,14 @@ export default function BookingPage() {
             </div>
           </div>
 
+          <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+            <button onClick={() => {
+              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${car.name}\nMode: ${form.deliveryMode}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
+              window.open(`https://wa.me/919999999999?text=${encodeURIComponent(waMessage)}`, '_blank');
+            }} style={{ flex: 1, background: '#25D366', border: 'none', color: '#fff', padding: '12px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
+              Message on WhatsApp
+            </button>
+          </div>
           <div style={{ display: 'flex', gap: 12 }}>
             <button onClick={() => navigate('/my-bookings')} style={{ flex: 1, background: '#ef4444', border: 'none', color: '#fff', padding: '12px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>View Bookings</button>
             <button onClick={() => navigate('/cars')} style={{ flex: 1, background: 'none', border: '1px solid #374151', color: '#d1d5db', padding: '12px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>Browse More</button>
@@ -251,6 +288,26 @@ export default function BookingPage() {
                   <BookingField label="Last Name" name="lastName" value={form.lastName} error={errors.lastName} onChange={e => { setForm(f => ({ ...f, lastName: e.target.value })); setErrors(e2 => ({ ...e2, lastName: '' })) }} placeholder="Doe" />
                   <BookingField label="Email Address" name="email" type="email" value={form.email} error={errors.email} onChange={e => { setForm(f => ({ ...f, email: e.target.value })); setErrors(e2 => ({ ...e2, email: '' })) }} placeholder="john@example.com" />
                   <BookingField label="Phone Number" name="phone" value={form.phone} error={errors.phone} onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setErrors(e2 => ({ ...e2, phone: '' })) }} placeholder="+1 (555) 000-0000" />
+                  <BookingField label="Driving License No." name="drivingLicenseNumber" value={form.drivingLicenseNumber} error={errors.drivingLicenseNumber} onChange={e => { setForm(f => ({ ...f, drivingLicenseNumber: e.target.value })); setErrors(e2 => ({ ...e2, drivingLicenseNumber: '' })) }} placeholder="DL-123456789" />
+                  <BookingField label="Aadhaar / ID No." name="aadhaarNumber" value={form.aadhaarNumber} error={errors.aadhaarNumber} onChange={e => { setForm(f => ({ ...f, aadhaarNumber: e.target.value })); setErrors(e2 => ({ ...e2, aadhaarNumber: '' })) }} placeholder="1234 5678 9012" />
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <BookingField label="Full Address" name="address" value={form.address} error={errors.address} onChange={e => { setForm(f => ({ ...f, address: e.target.value })); setErrors(e2 => ({ ...e2, address: '' })) }} placeholder="123 Main St, City, State" />
+                  </div>
+              </div>
+            ))}
+
+            {section('Required Documents', <FiFileText />, (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div>
+                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Driving License Image</label>
+                  <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, dlDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.dlDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
+                  {errors.dlDocument && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.dlDocument}</p>}
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Aadhaar / ID Proof Image</label>
+                  <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, aadhaarDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.aadhaarDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
+                  {errors.aadhaarDocument && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.aadhaarDocument}</p>}
+                </div>
               </div>
             ))}
 
@@ -282,40 +339,20 @@ export default function BookingPage() {
               </div>
             ))}
 
-            {section('Payment Method', <FiCreditCard />, (
-              <>
-                <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-                  {[['card', '💳 Credit Card'], ['paypal', '🅿️ PayPal'], ['bank', '🏦 Bank Transfer']].map(([val, label]) => (
-                    <button key={val} onClick={() => setForm(f => ({ ...f, paymentMethod: val }))}
-                      style={{ flex: 1, padding: '11px', borderRadius: 8, border: `1px solid ${form.paymentMethod === val ? '#ef4444' : '#374151'}`, background: form.paymentMethod === val ? 'rgba(239,68,68,0.08)' : 'transparent', color: form.paymentMethod === val ? '#ef4444' : '#9ca3af', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'all 0.2s' }}>
-                      {label}
-                    </button>
-                  ))}
+            {section('Advance Payment', <FiCreditCard />, (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ background: '#1f2937', borderRadius: 10, padding: 20, color: '#9ca3af', fontSize: 14, lineHeight: 1.8 }}>
+                  <strong style={{ color: '#fff', display: 'block', marginBottom: 8 }}>Please pay the booking advance using UPI / Bank Transfer to secure your rental:</strong>
+                  UPI ID: <strong style={{ color: '#fff' }}>speedtoyz@upi</strong><br />
+                  Account Name: SpeedToyz Cars<br />
+                  Account Number: 1234-5678-9012 (IFSC: SBIN0001234)
                 </div>
-                {form.paymentMethod === 'card' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    <BookingField label="Card Number" name="cardNumber" placeholder="1234 5678 9012 3456" value={form.cardNumber} error={errors.cardNumber} onChange={e => { setForm(f => ({ ...f, cardNumber: e.target.value })); setErrors(e2 => ({ ...e2, cardNumber: '' })) }} maxLength={19} />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
-                      <BookingField label="Month" name="cardExpiryMonth" placeholder="MM" value={form.cardExpiryMonth} error={errors.cardExpiryMonth} onChange={e => { setForm(f => ({ ...f, cardExpiryMonth: e.target.value })); setErrors(e2 => ({ ...e2, cardExpiryMonth: '' })) }} />
-                      <BookingField label="Year" name="cardExpiryYear" placeholder="YY" value={form.cardExpiryYear} error={errors.cardExpiryYear} onChange={e => { setForm(f => ({ ...f, cardExpiryYear: e.target.value })); setErrors(e2 => ({ ...e2, cardExpiryYear: '' })) }} />
-                      <BookingField label="CVV" name="cardCVV" placeholder="123" value={form.cardCVV} error={errors.cardCVV} onChange={e => { setForm(f => ({ ...f, cardCVV: e.target.value })); setErrors(e2 => ({ ...e2, cardCVV: '' })) }} maxLength={4} />
-                    </div>
-                  </div>
-                )}
-                {form.paymentMethod === 'paypal' && (
-                  <div style={{ background: '#1f2937', borderRadius: 10, padding: 20, textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
-                    You will be redirected to PayPal to complete payment.
-                  </div>
-                )}
-                {form.paymentMethod === 'bank' && (
-                  <div style={{ background: '#1f2937', borderRadius: 10, padding: 20, color: '#9ca3af', fontSize: 14, lineHeight: 1.8 }}>
-                    <strong style={{ color: '#fff' }}>Bank Transfer Details:</strong><br />
-                    Account Name: SpeedToyz LLC<br />
-                    Account Number: 1234-5678-9012<br />
-                    Routing: 021000021
-                  </div>
-                )}
-              </>
+                <div>
+                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Upload Payment Screenshot</label>
+                  <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, paymentScreenshot: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.paymentScreenshot ? '1px solid #ef4444' : '1px solid #374151' }} />
+                  {errors.paymentScreenshot && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.paymentScreenshot}</p>}
+                </div>
+              </div>
             ))}
           </div>
 

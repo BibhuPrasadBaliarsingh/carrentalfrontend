@@ -43,7 +43,13 @@ export default function CarCard({ car, index = 0 }) {
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
           onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
           onMouseLeave={e => e.target.style.transform = 'scale(1)'}
-          onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80' }}
+          onError={e => { 
+            if (car.fallbackImage && e.target.src !== car.fallbackImage) {
+              e.target.src = car.fallbackImage;
+            } else {
+              e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80';
+            }
+          }}
         />
         <div style={{ position: 'absolute', top: 12, left: 12 }}>
           <Badge>{car.category}</Badge>
