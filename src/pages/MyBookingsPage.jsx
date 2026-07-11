@@ -9,8 +9,7 @@ import { useLoader } from '../context/LoaderContext'
 import { bookingsAPI } from '../services/api'
 import Logo from '../components/common/Logo'
 import { formatPrice } from '../utils/format'
-
-const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+import { API_URL } from '../config'
 
 const MOCK_MY_BOOKINGS = [
   {

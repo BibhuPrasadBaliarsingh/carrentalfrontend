@@ -9,9 +9,8 @@ import { useLoader } from '../context/LoaderContext'
 import { carsAPI, bookingsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
-import { useEffect as useReactEffect } from 'react'
+import { API_URL, API_BASE } from '../config'
 
-const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
 const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank Transfer' }
 const calcDays = (a, b) => {
   const diff = (new Date(b) - new Date(a)) / 86400000
@@ -85,7 +84,7 @@ export default function BookingPage() {
   useReactEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/settings/public`)
+        const res = await fetch(`${API_BASE}/settings/public`)
         const data = await res.json()
         if (data?.success) {
           setPublicSettings(data.settings || publicSettings)

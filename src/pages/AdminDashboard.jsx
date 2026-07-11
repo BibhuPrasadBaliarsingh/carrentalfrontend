@@ -9,9 +9,9 @@ import { dashboardAPI, carsAPI, bookingsAPI, usersAPI, settingsAPI } from '../se
 import { MOCK_CARS, MOCK_STATS } from '../data/mockData'
 import Logo from '../components/common/Logo'
 import { formatPrice } from '../utils/format'
+import { API_URL } from '../config'
 
 const fmt = formatPrice
-const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
 const EMPTY_CAR = { name: '', brand: '', category: 'Sports', pricePerDay: '', fuelType: 'Petrol', seats: '', transmission: 'Automatic', description: '' }
 
 export default function AdminDashboard() {
@@ -471,15 +471,21 @@ export default function AdminDashboard() {
                         <td style={tdStyle}><StatusBadge status={car.available !== false ? 'Active' : 'Banned'} /></td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', gap: 8 }}>
-                            <button onClick={() => handleToggleAvailability(car)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(16,185,129,0.1)', border: 'none', color: '#10b981', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
-                              {car.available === false ? <FiToggleLeft size={12} /> : <FiToggleRight size={12} />} {car.available === false ? 'Offline' : 'Live'}
-                            </button>
-                            <button onClick={() => openEditCar(car)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(59,130,246,0.1)', border: 'none', color: '#3b82f6', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
-                              <FiEdit2 size={12} /> Edit
-                            </button>
-                            <button onClick={() => handleDeleteCar(car._id)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
-                              <FiTrash2 size={12} /> Delete
-                            </button>
+                            {car.isExternal ? (
+                              <span style={{ color: '#6b7280', fontSize: 12, fontWeight: 600, padding: '5px 0' }}>External Source (Read-only)</span>
+                            ) : (
+                              <>
+                                <button onClick={() => handleToggleAvailability(car)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(16,185,129,0.1)', border: 'none', color: '#10b981', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                                  {car.available === false ? <FiToggleLeft size={12} /> : <FiToggleRight size={12} />} {car.available === false ? 'Offline' : 'Live'}
+                                </button>
+                                <button onClick={() => openEditCar(car)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(59,130,246,0.1)', border: 'none', color: '#3b82f6', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                                  <FiEdit2 size={12} /> Edit
+                                </button>
+                                <button onClick={() => handleDeleteCar(car._id)} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
+                                  <FiTrash2 size={12} /> Delete
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>

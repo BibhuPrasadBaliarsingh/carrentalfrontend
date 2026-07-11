@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
+import { API_BASE } from '../config'
 import { contactAPI } from '../services/api'
 
 export default function ContactPage() {
@@ -20,7 +21,7 @@ export default function ContactPage() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/settings/public`)
+        const res = await fetch(`${API_BASE}/settings/public`)
         const data = await res.json()
         if (data?.success) setSettings(data.settings || settings)
       } catch {

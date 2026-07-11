@@ -126,42 +126,37 @@ export default function HomePage() {
     tl.set(progressTextRef.current, { autoAlpha: 1 })
     tl.set(barHighlightRef.current, { x: '-30%' })
 
-    tl.to(carRef.current, { autoAlpha: 1, scale: 1, duration: 1.05 }, 0)
-    tl.to(headlightsRef.current, { autoAlpha: 0.95, duration: 0.9 }, 0.16)
-    tl.to(redGlowRef.current, { autoAlpha: 0.55, scale: 1, duration: 1.05 }, 0.08)
-    tl.to(streaksRef.current, { x: '100%', duration: 5.5, repeat: -1, ease: 'none' }, 0)
-    tl.to(carRef.current, { y: -6, repeat: -1, yoyo: true, duration: 4.2, ease: 'sine.inOut' }, 0)
-    tl.to(carRef.current, { rotationZ: 0.5, repeat: -1, yoyo: true, duration: 5.8, ease: 'sine.inOut' }, 0)
-    tl.to(barHighlightRef.current, { x: '120%', duration: 2.4, repeat: -1, ease: 'linear' }, 0.6)
+    tl.to(carRef.current, { autoAlpha: 1, scale: 1, duration: 0.5 }, 0)
+    tl.to(headlightsRef.current, { autoAlpha: 0.95, duration: 0.4 }, 0.1)
+    tl.to(redGlowRef.current, { autoAlpha: 0.55, scale: 1, duration: 0.5 }, 0.05)
+    tl.to(streaksRef.current, { x: '100%', duration: 3, repeat: -1, ease: 'none' }, 0)
+    tl.to(carRef.current, { y: -6, repeat: -1, yoyo: true, duration: 2, ease: 'sine.inOut' }, 0)
+    tl.to(carRef.current, { rotationZ: 0.5, repeat: -1, yoyo: true, duration: 2.5, ease: 'sine.inOut' }, 0)
+    tl.to(barHighlightRef.current, { x: '120%', duration: 1.5, repeat: -1, ease: 'linear' }, 0.2)
 
-    tl.addLabel('brand', 0.85)
-    tl.to(logoChars, { autoAlpha: 1, y: 0, duration: 0.75, stagger: 0.05, ease: 'power4.out' }, 'brand')
-    tl.to(taglineRef.current, { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 'brand+=0.45')
+    tl.addLabel('brand', 0.2)
+    tl.to(logoChars, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.02, ease: 'power4.out' }, 'brand')
+    tl.to(taglineRef.current, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 'brand+=0.2')
 
-    tl.addLabel('progress', 1.2)
-    tl.to(progressState, { value: 10, duration: 0.48, ease: 'power1.out', onUpdate: updateProgress }, 'progress')
-    tl.to(progressState, { value: 25, duration: 0.52, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=0.48')
-    tl.to(progressState, { value: 48, duration: 0.62, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=1.0')
-    tl.to(progressState, { value: 71, duration: 0.62, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=1.62')
-    tl.to(progressState, { value: 92, duration: 0.5, ease: 'power1.out', onUpdate: updateProgress }, 'progress+=2.24')
+    tl.addLabel('progress', 0.4)
+    tl.to(progressState, { value: 100, duration: 1.2, ease: 'power1.inOut', onUpdate: updateProgress }, 'progress')
 
-    tl.addLabel('engine', 'progress+=2.45')
-    tl.to(carRef.current, { scale: 1.01, duration: 0.14, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 'engine')
-    tl.to(redGlowRef.current, { autoAlpha: 0.78, duration: 0.28, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 'engine')
-    tl.to(headlightsRef.current, { autoAlpha: 1, duration: 0.3, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 'engine')
+    tl.addLabel('engine', 'progress+=1.0')
+    tl.to(carRef.current, { scale: 1.01, duration: 0.1, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 'engine')
+    tl.to(redGlowRef.current, { autoAlpha: 0.78, duration: 0.1, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 'engine')
+    tl.to(headlightsRef.current, { autoAlpha: 1, duration: 0.1, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 'engine')
 
-    tl.to(progressState, { value: 100, duration: 0.38, ease: 'power1.out', onUpdate: updateProgress }, 'engine+=0.38')
     tl.add(() => {
       if (!assetsReadyRef.current) {
         exitTriggeredRef.current = true
         tl.pause()
       }
-    }, 'engine+=0.88')
+    }, 'engine+=0.3')
 
-    tl.addLabel('exit', 'engine+=1.1')
-    tl.to([logoChars, taglineRef.current, progressTextRef.current], { autoAlpha: 0, y: -24, duration: 0.9, ease: 'power3.in' }, 'exit')
-    tl.to(barFillRef.current, { opacity: 0.18, duration: 0.6, ease: 'power3.in' }, 'exit')
-    tl.to(carRef.current, { scale: 1.25, y: -120, autoAlpha: 0, duration: 1.05, ease: 'power2.in' }, 'exit')
+    tl.addLabel('exit', 'engine+=0.4')
+    tl.to([logoChars, taglineRef.current, progressTextRef.current], { autoAlpha: 0, y: -24, duration: 0.4, ease: 'power3.in' }, 'exit')
+    tl.to(barFillRef.current, { opacity: 0.18, duration: 0.3, ease: 'power3.in' }, 'exit')
+    tl.to(carRef.current, { scale: 1.25, y: -120, autoAlpha: 0, duration: 0.5, ease: 'power2.in' }, 'exit')
     tl.to(loaderRef.current, {
       autoAlpha: 0,
       duration: 1.05,

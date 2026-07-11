@@ -8,8 +8,7 @@ import { useLoader } from '../context/LoaderContext'
 import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice } from '../utils/format'
-
-const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+import { API_URL } from '../config'
 const DEFAULT_CAR_IMAGE = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'
 
 const resolveCarImages = (images) => {

@@ -1,8 +1,10 @@
+import { API_BASE } from '../config'
+
 const currencyCache = { value: null, symbol: '₹', locale: 'en-IN' }
 
 export const resolveCurrencySettings = async () => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/settings/public`)
+    const res = await fetch(`${API_BASE}/settings/public`)
     const data = await res.json()
     if (data?.success && data?.settings?.currency) {
       const currency = data.settings.currency

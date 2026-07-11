@@ -62,8 +62,18 @@ export default function BrowsePage() {
         ])
         const fetchedCars = carsRes.data.cars || carsRes.data
         setCars(fetchedCars)
-        setBrands(filtersRes.data.brands || DEFAULT_BRANDS)
-        setCategories(filtersRes.data.categories || DEFAULT_CATEGORIES)
+        
+        // Extract unique brands and categories dynamically from the complete car list (including external API cars)
+        const dynamicBrands = [...new Set(fetchedCars.map(c => c.brand).filter(Boolean))]
+        const dynamicCategories = [...new Set(fetchedCars.map(c => c.category).filter(Boolean))]
+
+        const apiBrands = filtersRes.data.brands || DEFAULT_BRANDS
+        const apiCategories = filtersRes.data.categories || DEFAULT_CATEGORIES
+
+        // Merge local settings with dynamic external properties
+        setBrands([...new Set([...apiBrands, ...dynamicBrands])])
+        setCategories([...new Set([...apiCategories, ...dynamicCategories])])
+        
         const fetchedMaxPrice = Math.max(2000, ...fetchedCars.map(car => Number(car.pricePerDay) || 0))
         setFilters(prev => ({ ...prev, maxPrice: Math.max(prev.maxPrice, fetchedMaxPrice) }))
       } catch {

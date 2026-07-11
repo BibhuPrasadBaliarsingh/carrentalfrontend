@@ -3,8 +3,7 @@ import { motion } from 'framer-motion'
 import { FiZap, FiUsers, FiSettings } from 'react-icons/fi'
 import { Badge, StarRating } from './UI'
 import { formatPrice } from '../utils/format'
-
-const API_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+import { API_URL } from '../config'
 
 export default function CarCard({ car, index = 0 }) {
   const navigate = useNavigate()

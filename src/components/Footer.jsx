@@ -6,6 +6,7 @@ import Logo from './common/Logo'
 import { useToast } from '../context/ToastContext'
 import { newsletterAPI } from '../services/api'
 import { formatPrice } from '../utils/format'
+import { API_BASE } from '../config'
 
 export default function Footer() {
   const { addToast } = useToast()
@@ -23,7 +24,7 @@ export default function Footer() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/settings/public`)
+        const res = await fetch(`${API_BASE}/settings/public`)
         const data = await res.json()
         if (data?.success) setSettings(data.settings || settings)
       } catch {
@@ -186,10 +187,19 @@ export default function Footer() {
         </div>
       </div>
       <a
+        href="tel:+919861332857"
+        className="animate-float"
+        style={{ position: 'fixed', right: 18, bottom: 86, zIndex: 50, width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #ef4444, #dc2626)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 12px 30px rgba(239, 68, 68, 0.35)', textDecoration: 'none' }}
+        aria-label="Call Us"
+      >
+        <FiPhone size={26} aria-hidden="true" />
+      </a>
+      <a
         href="https://wa.me/919861332857?text=Hi%20Speed%20Toyz%20Cars%2C%20I%20would%20like%20to%20book%20a%20self-drive%20car%20in%20Bhubaneswar."
         target="_blank"
         rel="noreferrer"
-        style={{ position: 'fixed', right: 18, bottom: 18, zIndex: 50, width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #25d366, #128c7e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 12px 30px rgba(37, 211, 102, 0.35)', textDecoration: 'none' }}
+        className="animate-float"
+        style={{ position: 'fixed', right: 18, bottom: 18, zIndex: 50, width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #25d366, #128c7e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 12px 30px rgba(37, 211, 102, 0.35)', textDecoration: 'none', animationDelay: '1.5s' }}
         aria-label="Chat on WhatsApp"
       >
         <FaWhatsapp size={28} aria-hidden="true" />
