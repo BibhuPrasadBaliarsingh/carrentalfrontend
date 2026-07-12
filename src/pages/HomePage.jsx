@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 import { FiShield, FiZap, FiStar, FiArrowRight, FiMapPin, FiCalendar, FiClock, FiCompass } from 'react-icons/fi'
+import { FaParking, FaHome, FaPlane } from 'react-icons/fa'
 import CarCard from '../components/CarCard'
 import { CarCardSkeleton } from '../components/UI'
 import { carsAPI } from '../services/api'
@@ -195,8 +196,25 @@ export default function HomePage() {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const res = await carsAPI.getAll({ limit: 6 })
-        setCars(res.data.cars || res.data)
+        const res = await carsAPI.getAll({ limit: 50 })
+        const allCars = res.data.cars || res.data
+        
+        const uniqueCarsMap = new Map()
+        allCars.forEach(car => {
+          const baseName = car.name.split(' - ')[0].trim()
+          if (!uniqueCarsMap.has(baseName)) {
+            uniqueCarsMap.set(baseName, car)
+          }
+        })
+        const uniqueCars = Array.from(uniqueCarsMap.values())
+        
+        // Shuffle the unique cars array randomly
+        for (let i = uniqueCars.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [uniqueCars[i], uniqueCars[j]] = [uniqueCars[j], uniqueCars[i]];
+        }
+        
+        setCars(uniqueCars)
       } catch {
         setDemoMode(true)
         setCars(MOCK_CARS.slice(0, 6))
@@ -409,7 +427,10 @@ export default function HomePage() {
                 transition: 'all 0.2s'
               }}
             >
-              {mode === 'Parking' ? '🅿️ Speedtoyz Parking' : mode === 'Doorstep' ? '🏡 Doorstep Delivery' : '✈️ Airport Pickup'}
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {mode === 'Parking' ? <FaParking size={16} /> : mode === 'Doorstep' ? <FaHome size={16} /> : <FaPlane size={16} />}
+                {mode === 'Parking' ? 'Speedtoyz Parking' : mode === 'Doorstep' ? 'Doorstep Delivery' : 'Airport Pickup'}
+              </span>
             </button>
           ))}
         </div>
@@ -478,19 +499,10 @@ export default function HomePage() {
 
       {/* ── Popular Cars ───────────────────────────────────────────────────── */}
       <section className="home-reveal" style={{ padding: isMobile ? '40px 16px' : '80px 80px 48px', maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'flex-end', marginBottom: 36, gap: 16 }}>
-          <div>
-            <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Our Fleet</div>
-            <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 34, fontWeight: 800, margin: 0, letterSpacing: -1 }}>Popular Cars</h2>
-            <p style={{ color: '#6b7280', fontSize: isMobile ? 13 : 15, marginTop: 8 }}>Discover our most sought-after premium vehicles</p>
-          </div>
-          {!isMobile && (
-            <button onClick={() => navigate('/cars')} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '10px 20px', borderRadius: 8, fontSize: 14, cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s', whiteSpace: 'nowrap' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#ef4444'; e.currentTarget.style.color = '#ef4444' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#374151'; e.currentTarget.style.color = '#9ca3af' }}>
-              View All <FiArrowRight size={15} />
-            </button>
-          )}
+        <div style={{ marginBottom: 36 }}>
+          <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Our Fleet</div>
+          <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 34, fontWeight: 800, margin: 0, letterSpacing: -1 }}>Popular Cars</h2>
+          <p style={{ color: '#6b7280', fontSize: isMobile ? 13 : 15, marginTop: 8 }}>Discover our most sought-after premium vehicles</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 24 }}>
@@ -498,6 +510,14 @@ export default function HomePage() {
             ? Array(6).fill(0).map((_, i) => <CarCardSkeleton key={i} />)
             : cars.slice(0, 6).map((car, i) => <div key={car._id} style={{ width: '100%' }}><CarCard car={car} index={i} /></div>)
           }
+        </div>
+        
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 36 }}>
+          <button onClick={() => navigate('/cars')} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '12px 28px', borderRadius: 8, fontSize: 15, cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s', whiteSpace: 'nowrap' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#ef4444'; e.currentTarget.style.color = '#ef4444' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#374151'; e.currentTarget.style.color = '#9ca3af' }}>
+            View All Cars <FiArrowRight size={16} />
+          </button>
         </div>
       </section>
 
