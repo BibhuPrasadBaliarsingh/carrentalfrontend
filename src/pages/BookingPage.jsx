@@ -96,7 +96,7 @@ export default function BookingPage() {
   })
   const [errors, setErrors] = useState({})
 
-  useReactEffect(() => {
+  useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await fetch(`${API_BASE}/settings/public`)
