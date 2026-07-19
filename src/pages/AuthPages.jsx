@@ -64,8 +64,7 @@ export function LoginPage() {
 
   const validate = () => {
     const e = {}
-    if (!form.email) e.email = 'Email is required'
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email'
+    if (!form.email) e.email = 'Email or Phone is required'
     if (!form.password) e.password = 'Password is required'
     setErrors(e)
     return Object.keys(e).length === 0
@@ -110,7 +109,7 @@ export function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <AuthInput icon={<FiMail size={16} />} type="email" placeholder="Email address" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} error={errors.email} />
+          <AuthInput icon={<FiUser size={16} />} type="text" placeholder="Email or Phone Number" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} error={errors.email} />
           <AuthInput icon={<FiLock size={16} />} type={showPw ? 'text' : 'password'} placeholder="Password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} error={errors.password}
             rightIcon={showPw ? <FiEyeOff size={16} /> : <FiEye size={16} />} onRightClick={() => setShowPw(!showPw)} />
 
@@ -140,65 +139,13 @@ export function LoginPage() {
 export function ForgotPasswordPage() {
   const { addToast } = useToast()
   const { setIsPageLoading } = useLoader()
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    setIsPageLoading(false)
-  }, [setIsPageLoading])
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      await authAPI.forgotPassword(email)
-      addToast('If an account exists, a reset link has been sent.', 'success')
-      setEmail('')
-    } catch (err) {
-      addToast(err.response?.data?.message || 'Could not send reset email.', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: 20 }}>
-      {/* Background Image */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop" alt="luxury car"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(12px)', transform: 'scale(1.05)' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%)' }} />
-      </div>
-
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }}
-        style={{ width: '100%', maxWidth: 440, background: 'rgba(10,10,10,0.65)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 24, padding: '48px 40px', position: 'relative', zIndex: 1, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-          <Link to="/" style={{ textDecoration: 'none' }}><Logo size="sm" /></Link>
-        </div>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.5px' }}>Reset Password</h2>
-          <p style={{ color: '#9ca3af', fontSize: 15, margin: 0 }}>Enter your email to receive a reset link</p>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <AuthInput icon={<FiMail size={16} />} type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <button type="submit" disabled={loading} style={{ width: '100%', background: 'linear-gradient(to right, #ef4444, #dc2626)', border: 'none', color: '#fff', padding: '14px 0', borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1, transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 4px 14px 0 rgba(239, 68, 68, 0.39)', marginTop: 8 }}>
-            {loading ? 'Sending...' : 'Send reset link'}
-          </button>
-        </form>
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
-          <Link to="/login" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, borderBottom: '1px solid #ef4444', paddingBottom: 2 }}>Back to login</Link>
-        </div>
-      </motion.div>
-    </div>
-  )
-}
-
-export function ResetPasswordPage() {
   const navigate = useNavigate()
-  const { token } = useParams()
-  const { addToast } = useToast()
-  const { setIsPageLoading } = useLoader()
-  const [form, setForm] = useState({ password: '', confirmPassword: '' })
+  
+  const [step, setStep] = useState(1)
+  const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPw, setShowPw] = useState(false)
 
@@ -206,19 +153,30 @@ export function ResetPasswordPage() {
     setIsPageLoading(false)
   }, [setIsPageLoading])
 
-  const handleSubmit = async (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault()
-    if (!form.password || form.password.length < 6) {
-      addToast('Password must be at least 6 characters.', 'error')
-      return
-    }
-    if (form.password !== form.confirmPassword) {
-      addToast('Passwords do not match.', 'error')
-      return
-    }
+    if (!email) return addToast('Please enter an email address', 'error')
     setLoading(true)
     try {
-      await authAPI.resetPassword(token, form.password)
+      await authAPI.forgotPassword(email)
+      addToast('If an account exists, an OTP has been sent.', 'success')
+      setStep(2)
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Could not send reset email.', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault()
+    if (!otp || otp.length !== 6) return addToast('Please enter a valid 6-digit OTP', 'error')
+    if (password.length < 6) return addToast('Password must be at least 6 characters.', 'error')
+    if (password !== confirmPassword) return addToast('Passwords do not match.', 'error')
+    
+    setLoading(true)
+    try {
+      await authAPI.resetPassword({ email, otp, password })
       addToast('Password updated successfully.', 'success')
       navigate('/login')
     } catch (err) {
@@ -230,7 +188,6 @@ export function ResetPasswordPage() {
 
   return (
     <div style={{ background: '#0a0a0a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: 20 }}>
-      {/* Background Image */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
         <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop" alt="luxury car"
           style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(12px)', transform: 'scale(1.05)' }} />
@@ -239,21 +196,41 @@ export function ResetPasswordPage() {
 
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }}
         style={{ width: '100%', maxWidth: 440, background: 'rgba(10,10,10,0.65)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 24, padding: '48px 40px', position: 'relative', zIndex: 1, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
-        
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
           <Link to="/" style={{ textDecoration: 'none' }}><Logo size="sm" /></Link>
         </div>
+        
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.5px' }}>Set New Password</h2>
-          <p style={{ color: '#9ca3af', fontSize: 15, margin: 0 }}>Choose a strong password for your account</p>
+          <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.5px' }}>
+            {step === 1 ? 'Reset Password' : 'Set New Password'}
+          </h2>
+          <p style={{ color: '#9ca3af', fontSize: 15, margin: 0 }}>
+            {step === 1 ? 'Enter your email to receive a 6-digit OTP' : 'Enter the OTP and your new password'}
+          </p>
         </div>
-        <form onSubmit={handleSubmit}>
-          <AuthInput icon={<FiLock size={16} />} type={showPw ? 'text' : 'password'} placeholder="New password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} rightIcon={showPw ? <FiEyeOff size={16} /> : <FiEye size={16} />} onRightClick={() => setShowPw(!showPw)} />
-          <AuthInput icon={<FiLock size={16} />} type="password" placeholder="Confirm new password" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} />
-          <button type="submit" disabled={loading} style={{ width: '100%', background: 'linear-gradient(to right, #ef4444, #dc2626)', border: 'none', color: '#fff', padding: '14px 0', borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1, transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 4px 14px 0 rgba(239, 68, 68, 0.39)', marginTop: 8 }}>
-            {loading ? 'Updating...' : 'Update password'}
-          </button>
-        </form>
+
+        {step === 1 ? (
+          <form onSubmit={handleSendOtp}>
+            <AuthInput icon={<FiMail size={16} />} type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <button type="submit" disabled={loading} style={{ width: '100%', background: 'linear-gradient(to right, #ef4444, #dc2626)', border: 'none', color: '#fff', padding: '14px 0', borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1, transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 4px 14px 0 rgba(239, 68, 68, 0.39)', marginTop: 8 }}>
+              {loading ? 'Sending...' : 'Send OTP'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleResetPassword}>
+            <AuthInput icon={<FiMail size={16} />} type="text" placeholder="6-digit OTP" value={otp} onChange={(e) => setOtp(e.target.value)} />
+            <AuthInput icon={<FiLock size={16} />} type={showPw ? 'text' : 'password'} placeholder="New password" value={password} onChange={(e) => setPassword(e.target.value)} rightIcon={showPw ? <FiEyeOff size={16} /> : <FiEye size={16} />} onRightClick={() => setShowPw(!showPw)} />
+            <AuthInput icon={<FiLock size={16} />} type="password" placeholder="Confirm new password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            
+            <button type="submit" disabled={loading} style={{ width: '100%', background: 'linear-gradient(to right, #ef4444, #dc2626)', border: 'none', color: '#fff', padding: '14px 0', borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.8 : 1, transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 4px 14px 0 rgba(239, 68, 68, 0.39)', marginTop: 8 }}>
+              {loading ? 'Updating...' : 'Update password'}
+            </button>
+          </form>
+        )}
+
+        <div style={{ textAlign: 'center', marginTop: 24 }}>
+          <Link to="/login" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, borderBottom: '1px solid #ef4444', paddingBottom: 2 }}>Back to login</Link>
+        </div>
       </motion.div>
     </div>
   )

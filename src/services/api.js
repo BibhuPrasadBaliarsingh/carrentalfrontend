@@ -43,7 +43,7 @@ export const authAPI = {
   updateProfile: (data) => api.put('/auth/profile', data),
   changePassword: (data) => api.put('/auth/password', data),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (token, password) => api.put(`/auth/reset-password/${token}`, { password }),
+  resetPassword: (data) => api.put('/auth/reset-password', data),
 }
 
 // ── Cars ──────────────────────────────────────────────────────────────────────

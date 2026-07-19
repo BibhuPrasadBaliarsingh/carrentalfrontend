@@ -60,6 +60,13 @@ export default function BookingPage() {
   const [success, setSuccess] = useState(false)
   const [bookingRef, setBookingRef] = useState('')
   const [demoMode, setDemoMode] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   const [taxRate, setTaxRate] = useState(0.08)
   const [taxAmount, setTaxAmount] = useState(0)
   const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 8 })
@@ -158,11 +165,7 @@ export default function BookingPage() {
     if (!form.returnDate) e.returnDate = 'Required'
     if (form.pickupDate && form.returnDate && new Date(form.returnDate) <= new Date(form.pickupDate)) e.returnDate = 'Return must be after pickup'
     if (!form.pickupLocation) e.pickupLocation = 'Required'
-    if (!form.drivingLicenseNumber) e.drivingLicenseNumber = 'Required'
-    if (!form.aadhaarNumber) e.aadhaarNumber = 'Required'
     if (!form.address) e.address = 'Required'
-    if (!form.dlDocument) e.dlDocument = 'Required'
-    if (!form.aadhaarDocument) e.aadhaarDocument = 'Required'
     if (!form.paymentScreenshot) e.paymentScreenshot = 'Required'
     setErrors(e)
     return Object.keys(e).length === 0
@@ -270,41 +273,41 @@ export default function BookingPage() {
   )
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: '40px 80px 60px' }}>
+    <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '24px 16px 40px' : '40px 80px 60px' }}>
       <div style={{ maxWidth: 1150, margin: '0 auto' }}>
         {demoMode && (
           <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)', color: '#fecaca', padding: '10px 14px', borderRadius: 8, marginBottom: 16, fontSize: 13 }}>
             Showing demo data — could not reach the server.
           </div>
         )}
-        <h1 style={{ color: '#fff', fontSize: 34, fontWeight: 800, letterSpacing: -1, marginBottom: 36 }}>Complete Your Booking</h1>
+        <h1 style={{ color: '#fff', fontSize: isMobile ? 26 : 34, fontWeight: 800, letterSpacing: -1, marginBottom: 36 }}>Complete Your Booking</h1>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: 32 }}>
           {/* Left */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {section('Personal Information', '👤', (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
                   <BookingField label="First Name" name="firstName" value={form.firstName} error={errors.firstName} onChange={e => { setForm(f => ({ ...f, firstName: e.target.value })); setErrors(e2 => ({ ...e2, firstName: '' })) }} placeholder="John" />
                   <BookingField label="Last Name" name="lastName" value={form.lastName} error={errors.lastName} onChange={e => { setForm(f => ({ ...f, lastName: e.target.value })); setErrors(e2 => ({ ...e2, lastName: '' })) }} placeholder="Doe" />
                   <BookingField label="Email Address" name="email" type="email" value={form.email} error={errors.email} onChange={e => { setForm(f => ({ ...f, email: e.target.value })); setErrors(e2 => ({ ...e2, email: '' })) }} placeholder="john@example.com" />
                   <BookingField label="Phone Number" name="phone" value={form.phone} error={errors.phone} onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setErrors(e2 => ({ ...e2, phone: '' })) }} placeholder="+1 (555) 000-0000" />
-                  <BookingField label="Driving License No." name="drivingLicenseNumber" value={form.drivingLicenseNumber} error={errors.drivingLicenseNumber} onChange={e => { setForm(f => ({ ...f, drivingLicenseNumber: e.target.value })); setErrors(e2 => ({ ...e2, drivingLicenseNumber: '' })) }} placeholder="DL-123456789" />
-                  <BookingField label="Aadhaar / ID No." name="aadhaarNumber" value={form.aadhaarNumber} error={errors.aadhaarNumber} onChange={e => { setForm(f => ({ ...f, aadhaarNumber: e.target.value })); setErrors(e2 => ({ ...e2, aadhaarNumber: '' })) }} placeholder="1234 5678 9012" />
+                  <BookingField label="Driving License No. (Optional)" name="drivingLicenseNumber" value={form.drivingLicenseNumber} error={errors.drivingLicenseNumber} onChange={e => { setForm(f => ({ ...f, drivingLicenseNumber: e.target.value })); setErrors(e2 => ({ ...e2, drivingLicenseNumber: '' })) }} placeholder="DL-123456789" />
+                  <BookingField label="Aadhaar / ID No. (Optional)" name="aadhaarNumber" value={form.aadhaarNumber} error={errors.aadhaarNumber} onChange={e => { setForm(f => ({ ...f, aadhaarNumber: e.target.value })); setErrors(e2 => ({ ...e2, aadhaarNumber: '' })) }} placeholder="1234 5678 9012" />
                   <div style={{ gridColumn: '1 / -1' }}>
                     <BookingField label="Full Address" name="address" value={form.address} error={errors.address} onChange={e => { setForm(f => ({ ...f, address: e.target.value })); setErrors(e2 => ({ ...e2, address: '' })) }} placeholder="123 Main St, City, State" />
                   </div>
               </div>
             ))}
 
-            {section('Required Documents', <FiFileText />, (
+            {section('Documents (Optional)', <FiFileText />, (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Driving License Image</label>
+                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Driving License Image (Optional)</label>
                   <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, dlDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.dlDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
                   {errors.dlDocument && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.dlDocument}</p>}
                 </div>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Aadhaar / ID Proof Image</label>
+                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Aadhaar / ID Proof Image (Optional)</label>
                   <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, aadhaarDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.aadhaarDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
                   {errors.aadhaarDocument && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.aadhaarDocument}</p>}
                 </div>
@@ -312,7 +315,7 @@ export default function BookingPage() {
             ))}
 
             {section('Pickup & Return Details', <FiCalendar />, (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
                 <BookingField label="Pickup Date" name="pickupDate" type="date" value={form.pickupDate} error={errors.pickupDate} onChange={e => { setForm(f => ({ ...f, pickupDate: e.target.value })); setErrors(e2 => ({ ...e2, pickupDate: '' })) }} />
                 <BookingField label="Return Date" name="returnDate" type="date" value={form.returnDate} error={errors.returnDate} onChange={e => { setForm(f => ({ ...f, returnDate: e.target.value })); setErrors(e2 => ({ ...e2, returnDate: '' })) }} />
                 <div style={{ gridColumn: '1 / -1' }}>

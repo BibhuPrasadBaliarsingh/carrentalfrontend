@@ -64,11 +64,21 @@ export default function BrowsePage() {
           siteAPI.filters(),
         ])
         const fetchedCars = carsRes.data.cars || carsRes.data
-        setCars(fetchedCars)
         
-        // Extract unique brands and categories dynamically from the complete car list (including external API cars)
-        const dynamicBrands = [...new Set(fetchedCars.map(c => c.brand).filter(Boolean))]
-        const dynamicCategories = [...new Set(fetchedCars.map(c => c.category).filter(Boolean))]
+        // Deduplicate cars by base name (stripping out license plates)
+        const uniqueCarsMap = new Map()
+        fetchedCars.forEach(car => {
+          const baseName = car.name.split(' - ')[0].trim()
+          if (!uniqueCarsMap.has(baseName)) {
+            uniqueCarsMap.set(baseName, car)
+          }
+        })
+        const uniqueCars = Array.from(uniqueCarsMap.values())
+        setCars(uniqueCars)
+        
+        // Extract unique brands and categories dynamically from the unique car list
+        const dynamicBrands = [...new Set(uniqueCars.map(c => c.brand).filter(Boolean))]
+        const dynamicCategories = [...new Set(uniqueCars.map(c => c.category).filter(Boolean))]
 
         const apiBrands = filtersRes.data.brands || DEFAULT_BRANDS
         const apiCategories = filtersRes.data.categories || DEFAULT_CATEGORIES
@@ -77,12 +87,23 @@ export default function BrowsePage() {
         setBrands([...new Set([...apiBrands, ...dynamicBrands])])
         setCategories([...new Set([...apiCategories, ...dynamicCategories])])
         
-        const fetchedMaxPrice = Math.max(2000, ...fetchedCars.map(car => Number(car.pricePerDay) || 0))
+        const fetchedMaxPrice = Math.max(2000, ...uniqueCars.map(car => Number(car.pricePerDay) || 0))
         setFilters(prev => ({ ...prev, maxPrice: Math.max(prev.maxPrice, fetchedMaxPrice) }))
       } catch {
         setDemoMode(true)
-        setCars(MOCK_CARS)
-        const fallbackMaxPrice = Math.max(2000, ...MOCK_CARS.map(car => Number(car.pricePerDay) || 0))
+        
+        // Deduplicate mock cars as well
+        const uniqueMockMap = new Map()
+        MOCK_CARS.forEach(car => {
+          const baseName = car.name.split(' - ')[0].trim()
+          if (!uniqueMockMap.has(baseName)) {
+            uniqueMockMap.set(baseName, car)
+          }
+        })
+        const uniqueMockCars = Array.from(uniqueMockMap.values())
+        setCars(uniqueMockCars)
+        
+        const fallbackMaxPrice = Math.max(2000, ...uniqueMockCars.map(car => Number(car.pricePerDay) || 0))
         setFilters(prev => ({ ...prev, maxPrice: Math.max(prev.maxPrice, fallbackMaxPrice) }))
       } finally {
         setLoading(false)

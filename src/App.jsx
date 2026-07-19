@@ -11,7 +11,7 @@ import CarDetailPage from './pages/CarDetailPage'
 import BookingPage from './pages/BookingPage'
 import MyBookingsPage from './pages/MyBookingsPage'
 import AdminDashboard from './pages/AdminDashboard'
-import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from './pages/AuthPages'
+import { LoginPage, RegisterPage, ForgotPasswordPage } from './pages/AuthPages'
 import AccountPage from './pages/AccountPage'
 import ContactPage from './pages/ContactPage'
 import { TermsPage, PrivacyPage } from './pages/InfoPages'
@@ -45,7 +45,6 @@ export default function App() {
               <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
               <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
               <Route path="/forgot-password" element={<PageTransition><ForgotPasswordPage /></PageTransition>} />
-              <Route path="/reset-password/:token" element={<PageTransition><ResetPasswordPage /></PageTransition>} />
               <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
               <Route path="/terms" element={<PageTransition><TermsPage /></PageTransition>} />
               <Route path="/privacy" element={<PageTransition><PrivacyPage /></PageTransition>} />
