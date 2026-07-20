@@ -52,16 +52,34 @@ export default function MyBookingsPage() {
 
   useEffect(() => {
     const fetchBookings = async () => {
+      let apiList = []
       try {
         const res = await bookingsAPI.myBookings()
         const data = res.data?.bookings ?? res.data
-        setBookings(Array.isArray(data) ? data : [])
+        if (Array.isArray(data)) apiList = data
       } catch {
         setDemoMode(true)
-        setBookings(MOCK_MY_BOOKINGS)
-      } finally {
-        setLoading(false)
       }
+
+      let localList = []
+      try {
+        const saved = localStorage.getItem('speedtoyz_user_bookings')
+        if (saved) localList = JSON.parse(saved)
+      } catch {}
+
+      const combinedMap = new Map()
+      apiList.forEach(b => {
+        const key = b._id || b.bookingRef
+        if (key) combinedMap.set(key, b)
+      })
+      localList.forEach(b => {
+        const key = b._id || b.bookingRef
+        if (key && !combinedMap.has(key)) combinedMap.set(key, b)
+      })
+
+      const finalBookings = Array.from(combinedMap.values())
+      setBookings(finalBookings.length > 0 ? finalBookings : (apiList.length === 0 && localList.length === 0 ? MOCK_MY_BOOKINGS : []))
+      setLoading(false)
     }
     fetchBookings()
   }, [])

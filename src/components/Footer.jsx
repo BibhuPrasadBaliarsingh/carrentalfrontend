@@ -169,17 +169,37 @@ export default function Footer() {
         
 
         {/* Bottom bar */}
-        <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 12 }}>
-          <span style={{ color: '#4b5563', fontSize: 13 }}>© {new Date().getFullYear()} {settings.platformName}. All rights reserved.</span>
+        <div style={{ borderTop: '1px solid #1f2937', paddingTop: 24, display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: 16 }}>
+          <span style={{ color: '#6b7280', fontSize: 13 }}>© {new Date().getFullYear()} {settings.platformName}. All rights reserved.</span>
+          
+          <span style={{ color: '#9ca3af', fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
+            Designed and Developed by{' '}
+            <a
+              href="https://www.odify.agency"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: 'linear-gradient(135deg, #ff3131, #ff914d)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontWeight: 700,
+                textDecoration: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              Odify
+            </a>
+          </span>
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 24 }}>
             {[
               ['Privacy Policy', '/privacy'],
               ['Terms of Service', '/terms'],
               ['Cookie Policy', '/privacy'],
             ].map(([t, to]) => (
-              <Link key={t} to={to} style={{ color: '#4b5563', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}
+              <Link key={t} to={to} style={{ color: '#6b7280', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}
                 onMouseEnter={e => e.target.style.color = '#9ca3af'}
-                onMouseLeave={e => e.target.style.color = '#4b5563'}>
+                onMouseLeave={e => e.target.style.color = '#6b7280'}>
                 {t}
               </Link>
             ))}
