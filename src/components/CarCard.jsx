@@ -2,24 +2,14 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FiZap, FiUsers, FiSettings } from 'react-icons/fi'
 import { Badge, StarRating } from './UI'
-import { formatPrice } from '../utils/format'
+import { formatPrice, cleanCarName, getCarImageSrc, CAR_IMAGE_FALLBACK } from '../utils/format'
 import { API_URL } from '../config'
 
 export default function CarCard({ car, index = 0 }) {
   const navigate = useNavigate()
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  const imageList = Array.isArray(car.images)
-    ? car.images.filter(src => typeof src === 'string' && src.trim().length)
-    : typeof car.images === 'string' && car.images.trim().length
-      ? [car.images.trim()]
-      : []
-  const firstImage = imageList[0]
-  const imgSrc = firstImage
-    ? firstImage.startsWith('http')
-      ? firstImage
-      : `${API_URL}/uploads/${firstImage}`
-    : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80'
+  const imgSrc = getCarImageSrc(car, 600)
 
   return (
     <motion.div
@@ -43,13 +33,7 @@ export default function CarCard({ car, index = 0 }) {
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
           onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
           onMouseLeave={e => e.target.style.transform = 'scale(1)'}
-          onError={e => { 
-            if (car.fallbackImage && e.target.src !== car.fallbackImage) {
-              e.target.src = car.fallbackImage;
-            } else {
-              e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80';
-            }
-          }}
+          onError={e => { e.target.onerror = null; e.target.src = CAR_IMAGE_FALLBACK }}
         />
         <div style={{ position: 'absolute', top: 12, left: 12 }}>
           <Badge>{car.category}</Badge>
@@ -65,7 +49,7 @@ export default function CarCard({ car, index = 0 }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           <div>
             <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>{car.brand}</div>
-            <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{car.name?.split(' - ')[0]}</div>
+            <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{cleanCarName(car.name)}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 20 }}>{formatPrice(car.pricePerDay)}</div>

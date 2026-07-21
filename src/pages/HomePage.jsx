@@ -12,6 +12,7 @@ import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { useLoader } from '../context/LoaderContext.jsx'
 import { useHeroAnimation } from '../hooks/useHeroAnimation.js'
+import { cleanCarName } from '../utils/format'
 
 export default function HomePage() {
   const navigate = useNavigate()
@@ -201,7 +202,7 @@ export default function HomePage() {
         
         const uniqueCarsMap = new Map()
         allCars.forEach(car => {
-          const baseName = car.name.split(' - ')[0].trim()
+          const baseName = cleanCarName(car.name)
           if (!uniqueCarsMap.has(baseName)) {
             uniqueCarsMap.set(baseName, car)
           }

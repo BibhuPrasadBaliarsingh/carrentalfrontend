@@ -6,7 +6,7 @@ import { CarCardSkeleton, EmptyState } from '../components/UI'
 import { carsAPI, siteAPI } from '../services/api'
 import { useLoader } from '../context/LoaderContext'
 import { MOCK_CARS } from '../data/mockData'
-import { formatPrice } from '../utils/format'
+import { formatPrice, cleanCarName } from '../utils/format'
 
 const DEFAULT_BRANDS = ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren']
 const DEFAULT_CATEGORIES = ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar']
@@ -68,7 +68,7 @@ export default function BrowsePage() {
         // Deduplicate cars by base name (stripping out license plates)
         const uniqueCarsMap = new Map()
         fetchedCars.forEach(car => {
-          const baseName = car.name.split(' - ')[0].trim()
+          const baseName = cleanCarName(car.name)
           if (!uniqueCarsMap.has(baseName)) {
             uniqueCarsMap.set(baseName, car)
           }
@@ -88,6 +88,7 @@ export default function BrowsePage() {
         setCategories([...new Set([...apiCategories, ...dynamicCategories])])
         
         const fetchedMaxPrice = Math.max(2000, ...uniqueCars.map(car => Number(car.pricePerDay) || 0))
+        setMaxPriceLimit(fetchedMaxPrice)
         setFilters(prev => ({ ...prev, maxPrice: Math.max(prev.maxPrice, fetchedMaxPrice) }))
       } catch {
         setDemoMode(true)
@@ -95,7 +96,7 @@ export default function BrowsePage() {
         // Deduplicate mock cars as well
         const uniqueMockMap = new Map()
         MOCK_CARS.forEach(car => {
-          const baseName = car.name.split(' - ')[0].trim()
+          const baseName = cleanCarName(car.name)
           if (!uniqueMockMap.has(baseName)) {
             uniqueMockMap.set(baseName, car)
           }
@@ -104,6 +105,7 @@ export default function BrowsePage() {
         setCars(uniqueMockCars)
         
         const fallbackMaxPrice = Math.max(2000, ...uniqueMockCars.map(car => Number(car.pricePerDay) || 0))
+        setMaxPriceLimit(fallbackMaxPrice)
         setFilters(prev => ({ ...prev, maxPrice: Math.max(prev.maxPrice, fallbackMaxPrice) }))
       } finally {
         setLoading(false)
@@ -112,7 +114,7 @@ export default function BrowsePage() {
     fetchCars()
   }, [])
 
-  const resetFilters = () => setFilters({ brand: '', category: '', fuel: '', minPrice: 0, maxPrice: 2000, transmission: '', available: true })
+  const resetFilters = () => setFilters({ brand: '', category: '', fuel: '', minPrice: 0, maxPrice: maxPriceLimit, transmission: '', available: true })
 
   const filtered = cars.filter(c => {
     if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !c.brand.toLowerCase().includes(search.toLowerCase())) return false

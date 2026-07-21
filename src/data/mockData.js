@@ -85,3 +85,6 @@ export const MOCK_STATS = {
     { category: 'Electric', count: 15 },
   ],
 }
+
+export const MOCK_BOOKINGS = []
+

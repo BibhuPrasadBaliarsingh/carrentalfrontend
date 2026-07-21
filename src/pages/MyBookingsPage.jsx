@@ -8,21 +8,10 @@ import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
 import { bookingsAPI } from '../services/api'
 import Logo from '../components/common/Logo'
-import { formatPrice } from '../utils/format'
+import { formatPrice, cleanCarName, getCarImageSrc, CAR_IMAGE_FALLBACK } from '../utils/format'
 import { API_URL } from '../config'
 
-const MOCK_MY_BOOKINGS = [
-  {
-    _id: 'BK001',
-    car: { _id: '4', name: 'Porsche 911 Carrera S', brand: 'Porsche', category: 'Sports', images: ['https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&q=80'] },
-    pickupDate: '2025-07-10', returnDate: '2025-07-13', totalPrice: 2397, bookingStatus: 'Confirmed', pickupLocation: 'Miami International Airport',
-  },
-  {
-    _id: 'BK002',
-    car: { _id: '1', name: 'Ferrari F8 Tributo', brand: 'Ferrari', category: 'Sports', images: ['https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=400&q=80'] },
-    pickupDate: '2025-06-20', returnDate: '2025-06-22', totalPrice: 1798, bookingStatus: 'Completed', pickupLocation: 'Downtown Miami',
-  },
-]
+const MOCK_MY_BOOKINGS = []
 
 export default function MyBookingsPage() {
   const navigate = useNavigate()
@@ -52,48 +41,28 @@ export default function MyBookingsPage() {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      let apiList = []
       try {
         const res = await bookingsAPI.myBookings()
         const data = res.data?.bookings ?? res.data
-        if (Array.isArray(data)) apiList = data
+        if (Array.isArray(data)) setBookings(data)
       } catch {
         setDemoMode(true)
+      } finally {
+        setLoading(false)
       }
-
-      let localList = []
-      try {
-        const saved = localStorage.getItem('speedtoyz_user_bookings')
-        if (saved) localList = JSON.parse(saved)
-      } catch {}
-
-      const combinedMap = new Map()
-      apiList.forEach(b => {
-        const key = b._id || b.bookingRef
-        if (key) combinedMap.set(key, b)
-      })
-      localList.forEach(b => {
-        const key = b._id || b.bookingRef
-        if (key && !combinedMap.has(key)) combinedMap.set(key, b)
-      })
-
-      const finalBookings = Array.from(combinedMap.values())
-      setBookings(finalBookings.length > 0 ? finalBookings : (apiList.length === 0 && localList.length === 0 ? MOCK_MY_BOOKINGS : []))
-      setLoading(false)
     }
     fetchBookings()
-  }, [])
+  }, [user])
 
   const handleCancel = async (id) => {
     if (!confirm('Are you sure you want to cancel this booking?')) return
     setCancellingId(id)
     try {
       await bookingsAPI.cancel(id)
-      setBookings(prev => prev.map(b => b._id === id ? { ...b, bookingStatus: 'Cancelled' } : b))
+      setBookings(prev => prev.map(b => (b._id === id || b.bookingRef === id) ? { ...b, bookingStatus: 'Cancelled', paymentStatus: 'Refunded' } : b))
       addToast('Booking cancelled successfully', 'info')
     } catch (err) {
-      const message = err.response?.data?.message || 'Could not cancel this booking. Please try again.'
-      addToast(message, 'error')
+      addToast(err.response?.data?.message || 'Could not cancel this booking. Please try again.', 'error')
     } finally {
       setCancellingId(null)
     }
@@ -104,11 +73,7 @@ export default function MyBookingsPage() {
 
   if (loading) return <PageLoader />
 
-  const imgSrc = (car) => {
-    const src = car?.images?.[0]
-    if (!src) return 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400'
-    return src.startsWith('http') ? src : `${API_URL}/uploads/${src}`
-  }
+  const imgSrc = (car) => getCarImageSrc(car, 400)
 
   return (
     <div style={{ background: '#0a0a0a', minHeight: '100vh', padding: isMobile ? '24px 16px 60px' : '44px 80px 60px' }}>
@@ -174,13 +139,13 @@ export default function MyBookingsPage() {
                   <img src={imgSrc(booking.car)} alt={booking.car?.name}
                     loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=200' }} />
+                    onError={e => { e.target.onerror = null; e.target.src = CAR_IMAGE_FALLBACK }} />
                 </div>
 
                 {/* Info */}
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-                    <span style={{ color: '#fff', fontWeight: 700, fontSize: isMobile ? 15 : 18 }}>{booking.car?.name?.split(' - ')[0]}</span>
+                    <span style={{ color: '#fff', fontWeight: 700, fontSize: isMobile ? 15 : 18 }}>{cleanCarName(booking.car?.name || (typeof booking.car === 'string' ? booking.car : 'Rental Car'))}</span>
                     <StatusBadge status={booking.bookingStatus} />
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 20, color: '#9ca3af', fontSize: isMobile ? 12 : 13 }}>

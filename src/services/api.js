@@ -83,6 +83,7 @@ export const contactAPI = { send: (data) => api.post('/contact', data) }
 export const newsletterAPI = { subscribe: (email) => api.post('/newsletter', { email }) }
 export const settingsAPI = {
   get: () => api.get('/settings'),
+  getPublic: () => api.get('/settings/public'),
   update: (data) => api.put('/settings', data),
 }
 

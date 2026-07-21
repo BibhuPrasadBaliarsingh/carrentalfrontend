@@ -49,6 +49,7 @@ export function AuthProvider({ children }) {
     setUser(null)
     localStorage.removeItem('speedtoyz_user')
     localStorage.removeItem('speedtoyz_token')
+    localStorage.removeItem('speedtoyz_user_bookings')
   }, [])
 
   const updateUser = useCallback((data) => {

@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
 import { authAPI, bookingsAPI } from '../services/api'
-import { formatPrice } from '../utils/format'
+import { formatPrice, cleanCarName } from '../utils/format'
 import { StatusBadge } from '../components/UI'
 
 export default function AccountPage() {
@@ -131,7 +131,7 @@ export default function AccountPage() {
                       <FaCarSide size={22} color="#ef4444" />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>{booking.car?.name?.split(' - ')[0] || 'Luxury Car'}</div>
+                      <div style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>{cleanCarName(booking.car?.name || (typeof booking.car === 'string' ? booking.car : 'Luxury Car'))}</div>
                       <div style={{ color: '#9ca3af', fontSize: 13, marginTop: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
                         <FiCalendar size={13} color="#9ca3af" /> {formatDateStr(booking.pickupDate)} → {formatDateStr(booking.returnDate)}
                       </div>

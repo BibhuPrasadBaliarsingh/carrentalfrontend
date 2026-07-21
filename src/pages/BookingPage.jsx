@@ -7,9 +7,9 @@ import { Badge, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
-import { carsAPI, bookingsAPI } from '../services/api'
+import { carsAPI, bookingsAPI, settingsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
-import { formatPrice } from '../utils/format'
+import { formatPrice, cleanCarName, getCarImageSrc, CAR_IMAGE_FALLBACK } from '../utils/format'
 import { API_URL, API_BASE } from '../config'
 
 const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank Transfer' }
@@ -108,8 +108,8 @@ export default function BookingPage() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch(`${API_BASE}/settings/public`)
-        const data = await res.json()
+        const res = await settingsAPI.getPublic()
+        const data = res.data
         if (data?.success) {
           setPublicSettings(data.settings || publicSettings)
           if (data.settings?.taxRate) setTaxRate(Number(data.settings.taxRate) / 100)
@@ -140,16 +140,7 @@ export default function BookingPage() {
   if (loading) return <PageLoader />
   if (!car) return null
 
-  const bookingImageList = Array.isArray(car.images)
-    ? car.images.filter(src => typeof src === 'string' && src.trim().length)
-    : typeof car.images === 'string' && car.images.trim().length
-      ? [car.images.trim()]
-      : []
-  const bookingImageSrc = bookingImageList[0]
-    ? bookingImageList[0].startsWith('http')
-      ? bookingImageList[0]
-      : `${API_URL}/uploads/${bookingImageList[0]}`
-    : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80'
+  const bookingImageSrc = getCarImageSrc(car, 600)
 
   const days = form.pickupDate && form.returnDate ? calcDays(form.pickupDate, form.returnDate) : 1
   const subtotal = days * car.pricePerDay
@@ -181,7 +172,7 @@ export default function BookingPage() {
       const waMessage = `🏎️ *SPEEDTOYZ BOOKING CONFIRMATION* 🏎️\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `📌 *Booking Ref:* #${refCode}\n` +
-        `🚗 *Car:* ${car.name}\n` +
+        `🚗 *Car:* ${cleanCarName(car.name)}\n` +
         `🏷️ *Brand:* ${car.brand || 'SpeedToyz'}\n` +
         `📅 *Pickup Date:* ${form.pickupDate}\n` +
         `📅 *Return Date:* ${form.returnDate} (${days} day${days > 1 ? 's' : ''})\n` +
@@ -202,30 +193,30 @@ export default function BookingPage() {
       window.open(waUrl, '_blank');
     };
 
-    const saveLocalBooking = (newBooking) => {
-      try {
-        const existing = JSON.parse(localStorage.getItem('speedtoyz_user_bookings') || '[]')
-        const updated = [newBooking, ...existing.filter(b => b._id !== newBooking._id)]
-        localStorage.setItem('speedtoyz_user_bookings', JSON.stringify(updated))
-      } catch {}
-    };
-
     try {
       const payload = new FormData()
       payload.append('carId', car._id)
-      payload.append('carName', car.name)
+      payload.append('carName', cleanCarName(car.name))
       payload.append('carBrand', car.brand || '')
       payload.append('carCategory', car.category || '')
       payload.append('pricePerDay', car.pricePerDay || 500)
+      payload.append('carImage', getCarImageSrc(car, 800))
+      payload.append('carFuelType', car.fuelType || car.fuel || 'Petrol')
+      payload.append('carSeats', car.seats || 5)
+      payload.append('carTransmission', car.transmission || 'Automatic')
       payload.append('pickupDate', form.pickupDate)
       payload.append('returnDate', form.returnDate)
       payload.append('pickupLocation', form.pickupLocation)
       payload.append('deliveryMode', form.deliveryMode)
       payload.append('includesInsurance', form.insurance)
-      payload.append('paymentMethod', 'Bank Transfer')
+      payload.append('paymentMethod', PAYMENT_METHOD_MAP[form.paymentMethod] || 'Bank Transfer')
       payload.append('drivingLicenseNumber', form.drivingLicenseNumber || '')
       payload.append('aadhaarNumber', form.aadhaarNumber || '')
       payload.append('address', form.address || '')
+      payload.append('firstName', form.firstName || '')
+      payload.append('lastName', form.lastName || '')
+      payload.append('email', form.email || user?.email || '')
+      payload.append('phone', form.phone || user?.phone || '')
       if (form.dlDocument instanceof File) payload.append('dlDocument', form.dlDocument)
       if (form.aadhaarDocument instanceof File) payload.append('aadhaarDocument', form.aadhaarDocument)
       if (form.paymentScreenshot instanceof File) payload.append('paymentScreenshot', form.paymentScreenshot)
@@ -233,10 +224,6 @@ export default function BookingPage() {
       const res = await bookingsAPI.create(payload)
       const createdBooking = res.data?.booking
       const bRef = createdBooking?.bookingRef || createdBooking?._id || ('BK' + Math.floor(100000 + Math.random() * 900000));
-      
-      if (createdBooking) {
-        saveLocalBooking(createdBooking)
-      }
 
       setBookingRef(bRef)
       setTaxRate(Number(res.data?.taxRate || 0.08))
@@ -245,25 +232,7 @@ export default function BookingPage() {
       addToast('Booking confirmed & saved to database! 🎉', 'success')
       sendToWhatsApp(bRef)
     } catch (err) {
-      // Fallback: save booking locally and notify WhatsApp
-      const fallbackRef = 'BK' + Math.floor(100000 + Math.random() * 900000)
-      const fallbackBooking = {
-        _id: fallbackRef,
-        bookingRef: fallbackRef,
-        car: car,
-        pickupDate: form.pickupDate,
-        returnDate: form.returnDate,
-        totalPrice: total,
-        bookingStatus: 'Confirmed',
-        pickupLocation: form.pickupLocation,
-        createdAt: new Date().toISOString()
-      }
-      saveLocalBooking(fallbackBooking)
-
-      setBookingRef(fallbackRef)
-      setSuccess(true)
-      addToast('Booking confirmed! 🎉', 'success')
-      sendToWhatsApp(fallbackRef)
+      addToast(err.response?.data?.message || 'Could not place booking. Please try again.', 'error')
     } finally {
       setSubmitting(false)
     }
@@ -308,7 +277,7 @@ export default function BookingPage() {
 
           <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
             <button onClick={() => {
-              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${car.name}\nMode: ${form.deliveryMode}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
+              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${cleanCarName(car.name)}\nMode: ${form.deliveryMode}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
               window.open(`https://wa.me/919861332857?text=${encodeURIComponent(waMessage)}`, '_blank');
             }} style={{ flex: 1, background: '#25D366', border: 'none', color: '#fff', padding: '12px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
               Message on WhatsApp

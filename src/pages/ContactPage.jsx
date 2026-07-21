@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
-import { API_BASE } from '../config'
-import { contactAPI } from '../services/api'
+import { contactAPI, settingsAPI } from '../services/api'
 
 export default function ContactPage() {
   const { addToast } = useToast()
@@ -21,8 +20,8 @@ export default function ContactPage() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch(`${API_BASE}/settings/public`)
-        const data = await res.json()
+        const res = await settingsAPI.getPublic()
+        const data = res.data
         if (data?.success) setSettings(data.settings || settings)
       } catch {
         // keep defaults

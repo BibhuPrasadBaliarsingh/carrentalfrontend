@@ -4,7 +4,7 @@ import { FiInstagram, FiFacebook, FiMapPin, FiPhone, FiMail, FiSend } from 'reac
 import { FaWhatsapp } from 'react-icons/fa'
 import Logo from './common/Logo'
 import { useToast } from '../context/ToastContext'
-import { newsletterAPI } from '../services/api'
+import { newsletterAPI, settingsAPI } from '../services/api'
 import { formatPrice } from '../utils/format'
 import { API_BASE } from '../config'
 
@@ -24,8 +24,8 @@ export default function Footer() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch(`${API_BASE}/settings/public`)
-        const data = await res.json()
+        const res = await settingsAPI.getPublic()
+        const data = res.data
         if (data?.success) setSettings(data.settings || settings)
       } catch {
         // keep defaults
