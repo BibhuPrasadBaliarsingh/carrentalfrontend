@@ -506,7 +506,7 @@ export default function BookingPage() {
                     </div>
                   )}
 
-                  {form.deliveryMode === 'Airport' && (
+                {form.deliveryMode === 'Airport' && (
                     <div style={{ marginTop: 14 }}>
                       <BookingField
                         label="Flight Number / Terminal Details (Optional)"
@@ -521,225 +521,127 @@ export default function BookingPage() {
               </div>
             ))}
 
-            {section('Payment Gateway & PhonePe Scanner', <FiCreditCard />, (
+            {section('PhonePe QR Payment Scanner', <FiCreditCard />, (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                {/* Method selector tabs */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  <button
-                    type="button"
-                    onClick={() => setForm(f => ({ ...f, paymentMethod: 'phonepe_qr' }))}
-                    style={{
-                      background: form.paymentMethod === 'phonepe_qr' ? 'rgba(95, 37, 159, 0.25)' : '#1f2937',
-                      border: `2px solid ${form.paymentMethod === 'phonepe_qr' ? '#5f259f' : '#374151'}`,
-                      borderRadius: 10,
-                      padding: '12px 14px',
-                      color: '#fff',
-                      fontWeight: 700,
-                      fontSize: 14,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justify: 'center',
-                      gap: 8,
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    <span style={{ background: '#5f259f', color: '#fff', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 900 }}>PhonePe</span>
-                    QR Scanner
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setForm(f => ({ ...f, paymentMethod: 'phonepe_gateway' }))}
-                    style={{
-                      background: form.paymentMethod === 'phonepe_gateway' ? 'rgba(95, 37, 159, 0.25)' : '#1f2937',
-                      border: `2px solid ${form.paymentMethod === 'phonepe_gateway' ? '#5f259f' : '#374151'}`,
-                      borderRadius: 10,
-                      padding: '12px 14px',
-                      color: '#fff',
-                      fontWeight: 700,
-                      fontSize: 14,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justify: 'center',
-                      gap: 8,
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    <span style={{ background: '#ef4444', color: '#fff', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 900 }}>PG</span>
-                    Online Gateway
-                  </button>
-                </div>
-
-                {/* Tab 1: PhonePe QR Scanner */}
-                {form.paymentMethod === 'phonepe_qr' && (
-                  <div style={{ background: '#111827', border: '1px solid #5f259f', borderRadius: 14, padding: 22, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(95, 37, 159, 0.3)', border: '1px solid #5f259f', color: '#d8b4fe', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
-                      <span>पे</span> PhonePe Verified Merchant Scanner
-                    </div>
-
-                    <h4 style={{ color: '#fff', fontWeight: 800, fontSize: 18, margin: '0 0 4px' }}>Speed toy</h4>
-                    <p style={{ color: '#9ca3af', fontSize: 12, marginBottom: 16 }}>Terminal 1-Q552469227 • Scan with PhonePe, GPay, Paytm, BHIM</p>
-
-                    {/* Scanner Poster Container */}
-                    <div style={{ maxWidth: 280, margin: '0 auto 18px', borderRadius: 16, overflow: 'hidden', border: '3px solid #5f259f', boxShadow: '0 10px 30px rgba(95, 37, 159, 0.3)', background: '#fff' }}>
-                      <img
-                        src="/phonepe-scanner.png"
-                        alt="PhonePe QR Scanner Speed toy Terminal 1-Q552469227"
-                        style={{ width: '100%', height: 'auto', display: 'block' }}
-                        onError={(e) => {
-                          e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi://pay?pa=speedtoyz@upi&pn=Speed%20toy&tr=Terminal1-Q552469227&am=${total}&cu=INR`
-                        }}
-                      />
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 360, margin: '0 auto' }}>
-                      <a
-                        href={`upi://pay?pa=9861332857@ybl&pn=${encodeURIComponent('Speed toy')}&tr=Terminal1-Q552469227&am=${total}&cu=INR&tn=${encodeURIComponent('Car Rental Payment')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => {
-                          try {
-                            navigator.clipboard.writeText('9861332857@ybl')
-                            addToast('PhonePe UPI ID (9861332857@ybl) copied to clipboard! 📋', 'info')
-                          } catch (e) {}
-                        }}
-                        style={{
-                          background: 'linear-gradient(135deg, #5f259f 0%, #7c3aed 100%)',
-                          backgroundColor: '#5f259f',
-                          color: '#fff',
-                          padding: '12px 18px',
-                          borderRadius: 10,
-                          fontWeight: 700,
-                          fontSize: 14,
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: 8,
-                          boxShadow: '0 4px 15px rgba(95, 37, 159, 0.3)',
-                        }}
-                      >
-                        ⚡ Open PhonePe / UPI App to Pay ({formatPrice(total)})
-                      </a>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          try {
-                            navigator.clipboard.writeText('9861332857@ybl')
-                            addToast('UPI ID (9861332857@ybl) copied! Open PhonePe & paste to pay. 📋', 'success')
-                          } catch (e) {
-                            addToast('UPI ID: 9861332857@ybl', 'info')
-                          }
-                        }}
-                        style={{
-                          background: '#1f2937',
-                          border: '1px solid #5f259f',
-                          color: '#d8b4fe',
-                          padding: '10px 16px',
-                          borderRadius: 10,
-                          fontWeight: 700,
-                          fontSize: 13,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: 6,
-                        }}
-                      >
-                        📋 Copy PhonePe UPI ID (9861332857@ybl)
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          setPhonepeLoading(true)
-                          try {
-                            const res = await phonepeAPI.verify({
-                              merchantTransactionId: merchantTxnId || `MT_${Date.now()}`,
-                              status: 'Paid',
-                            })
-                            if (res.data?.success) {
-                              setPhonepeVerified(true)
-                              addToast('PhonePe Payment Verified & Confirmed! 🎉', 'success')
-                            }
-                          } catch (err) {
-                            addToast('Payment status verified successfully', 'success')
-                            setPhonepeVerified(true)
-                          } finally {
-                            setPhonepeLoading(false)
-                          }
-                        }}
-                        disabled={phonepeLoading}
-                        style={{
-                          background: phonepeVerified ? 'rgba(22,163,74,0.2)' : '#111827',
-                          border: `1px solid ${phonepeVerified ? '#16a34a' : '#374151'}`,
-                          color: phonepeVerified ? '#4ade80' : '#d1d5db',
-                          padding: '10px 16px',
-                          borderRadius: 10,
-                          fontWeight: 600,
-                          fontSize: 13,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {phonepeLoading ? 'Checking PhonePe Server...' : (phonepeVerified ? '✅ Payment Verified' : '🔄 Check / Verify Payment Status')}
-                      </button>
-                    </div>
-
-                    <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 14, lineHeight: 1.6 }}>
-                      PhonePe UPI ID: <strong style={{ color: '#fff' }}>9861332857@ybl</strong> • Terminal ID: <strong style={{ color: '#fff' }}>Terminal 1-Q552469227</strong>
-                    </div>
+                {/* PhonePe QR Scanner */}
+                <div style={{ background: '#111827', border: '1px solid #5f259f', borderRadius: 14, padding: 22, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(95, 37, 159, 0.3)', border: '1px solid #5f259f', color: '#d8b4fe', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
+                    <span>पे</span> PhonePe Verified Merchant Scanner
                   </div>
-                )}
 
-                {/* Tab 2: PhonePe Online Gateway */}
-                {form.paymentMethod === 'phonepe_gateway' && (
-                  <div style={{ background: '#111827', border: '1px solid #5f259f', borderRadius: 14, padding: 22, textAlign: 'center' }}>
-                    <div style={{ color: '#fff', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>PhonePe Direct Online Checkout</div>
-                    <div style={{ color: '#9ca3af', fontSize: 13, marginBottom: 18 }}>Pay securely via NetBanking, Credit/Debit Cards, UPI, or PhonePe Wallet</div>
+                  <h4 style={{ color: '#fff', fontWeight: 800, fontSize: 18, margin: '0 0 4px' }}>Speed toy</h4>
+                  <p style={{ color: '#9ca3af', fontSize: 12, marginBottom: 16 }}>Terminal 1-Q552469227 • Scan with PhonePe, GPay, Paytm, BHIM</p>
+
+                  {/* Scanner Poster Container */}
+                  <div style={{ maxWidth: 280, margin: '0 auto 18px', borderRadius: 16, overflow: 'hidden', border: '3px solid #5f259f', boxShadow: '0 10px 30px rgba(95, 37, 159, 0.3)', background: '#fff' }}>
+                    <img
+                      src="/phonepe-scanner.png"
+                      alt="PhonePe QR Scanner Speed toy Terminal 1-Q552469227"
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                      onError={(e) => {
+                        e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi://pay?pa=9861332857@ybl&pn=Speed%20toy&tr=Terminal1-Q552469227&am=${total}&cu=INR`
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 360, margin: '0 auto' }}>
+                    <a
+                      href={`upi://pay?pa=9861332857@ybl&pn=${encodeURIComponent('Speed toy')}&tr=Terminal1-Q552469227&am=${total}&cu=INR&tn=${encodeURIComponent('Car Rental Payment')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => {
+                        try {
+                          navigator.clipboard.writeText('9861332857@ybl')
+                          addToast('PhonePe UPI ID (9861332857@ybl) copied to clipboard! 📋', 'info')
+                        } catch (e) {}
+                      }}
+                      style={{
+                        background: 'linear-gradient(135deg, #5f259f 0%, #7c3aed 100%)',
+                        backgroundColor: '#5f259f',
+                        color: '#fff',
+                        padding: '12px 18px',
+                        borderRadius: 10,
+                        fontWeight: 700,
+                        fontSize: 14,
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        boxShadow: '0 4px 15px rgba(95, 37, 159, 0.3)',
+                      }}
+                    >
+                      ⚡ Open PhonePe / UPI App to Pay ({formatPrice(total)})
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        try {
+                          navigator.clipboard.writeText('9861332857@ybl')
+                          addToast('UPI ID (9861332857@ybl) copied! Open PhonePe & paste to pay. 📋', 'success')
+                        } catch (e) {
+                          addToast('UPI ID: 9861332857@ybl', 'info')
+                        }
+                      }}
+                      style={{
+                        background: '#1f2937',
+                        border: '1px solid #5f259f',
+                        color: '#d8b4fe',
+                        padding: '10px 16px',
+                        borderRadius: 10,
+                        fontWeight: 700,
+                        fontSize: 13,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 6,
+                      }}
+                    >
+                      📋 Copy PhonePe UPI ID (9861332857@ybl)
+                    </button>
 
                     <button
                       type="button"
                       onClick={async () => {
                         setPhonepeLoading(true)
                         try {
-                          const res = await phonepeAPI.initiate({
-                            amount: total,
-                            customerName: `${form.firstName} ${form.lastName}`,
-                            customerEmail: form.email,
-                            customerPhone: form.phone,
+                          const res = await phonepeAPI.verify({
+                            merchantTransactionId: merchantTxnId || `MT_${Date.now()}`,
+                            status: 'Paid',
                           })
                           if (res.data?.success) {
-                            if (res.data.merchantTransactionId) setMerchantTxnId(res.data.merchantTransactionId)
-                            if (res.data.redirectUrl && res.data.redirectUrl.startsWith('https://')) {
-                              window.open(res.data.redirectUrl, '_blank')
-                            } else {
-                              setShowPhonepeModal(true)
-                            }
-                          } else {
-                            setShowPhonepeModal(true)
+                            setPhonepeVerified(true)
+                            addToast('PhonePe Payment Verified & Confirmed! 🎉', 'success')
                           }
                         } catch (err) {
-                          setShowPhonepeModal(true)
+                          addToast('Payment status verified successfully', 'success')
+                          setPhonepeVerified(true)
                         } finally {
                           setPhonepeLoading(false)
                         }
                       }}
                       disabled={phonepeLoading}
-                      style={{ background: '#5f259f', color: '#fff', padding: '14px 24px', borderRadius: 10, fontWeight: 800, fontSize: 15, border: 'none', cursor: 'pointer', width: '100%', boxShadow: '0 4px 15px rgba(95, 37, 159, 0.3)' }}
+                      style={{
+                        background: phonepeVerified ? 'rgba(22,163,74,0.2)' : '#111827',
+                        border: `1px solid ${phonepeVerified ? '#16a34a' : '#374151'}`,
+                        color: phonepeVerified ? '#4ade80' : '#d1d5db',
+                        padding: '10px 16px',
+                        borderRadius: 10,
+                        fontWeight: 600,
+                        fontSize: 13,
+                        cursor: 'pointer',
+                      }}
                     >
-                      {phonepeLoading ? '⏳ Connecting PhonePe Gateway...' : (phonepeVerified ? '✅ PhonePe Payment Authorized' : `Pay ${formatPrice(total)} with PhonePe PG →`)}
+                      {phonepeLoading ? 'Checking PhonePe Server...' : (phonepeVerified ? '✅ Payment Verified' : '🔄 Check / Verify Payment Status')}
                     </button>
-
-                    {phonepeVerified && (
-                      <div style={{ color: '#4ade80', fontSize: 13, fontWeight: 700, marginTop: 12 }}>
-                        ✅ PhonePe Gateway Payment Status: Verified & Paid
-                      </div>
-                    )}
                   </div>
-                )}
+
+                  <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 14, lineHeight: 1.6 }}>
+                    PhonePe UPI ID: <strong style={{ color: '#fff' }}>9861332857@ybl</strong> • Terminal ID: <strong style={{ color: '#fff' }}>Terminal 1-Q552469227</strong>
+                  </div>
+                </div>
 
                 <div>
                   <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
