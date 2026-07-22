@@ -35,8 +35,11 @@ export default function CarCard({ car, index = 0 }) {
           onMouseLeave={e => e.target.style.transform = 'scale(1)'}
           onError={e => { e.target.onerror = null; e.target.src = CAR_IMAGE_FALLBACK }}
         />
-        <div style={{ position: 'absolute', top: 12, left: 12 }}>
+        <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 6 }}>
           <Badge>{car.category}</Badge>
+          <span style={{ background: car.transmission === 'Manual' ? '#2563eb' : '#7c3aed', color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            ⚙️ {car.transmission || 'Automatic'}
+          </span>
         </div>
         {!car.available && (
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -49,7 +52,9 @@ export default function CarCard({ car, index = 0 }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           <div>
             <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>{car.brand}</div>
-            <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>{cleanCarName(car.name)}</div>
+            <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginTop: 2 }}>
+              {cleanCarName(car.name)}{!cleanCarName(car.name).toLowerCase().includes('manual') && !cleanCarName(car.name).toLowerCase().includes('automatic') ? ` ` : ''}
+            </div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 20 }}>{formatPrice(car.pricePerDay)}</div>

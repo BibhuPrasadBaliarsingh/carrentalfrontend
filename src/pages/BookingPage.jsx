@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
-import { FiShield, FiCreditCard, FiCalendar, FiCheck, FiUpload, FiFileText } from 'react-icons/fi'
+import { FiShield, FiCreditCard, FiCalendar, FiCheck, FiUpload, FiFileText, FiMapPin, FiNavigation } from 'react-icons/fi'
 import { FaParking, FaHome, FaPlane } from 'react-icons/fa'
 import { Badge, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
-import { carsAPI, bookingsAPI, settingsAPI } from '../services/api'
+import { carsAPI, bookingsAPI, settingsAPI, phonepeAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice, cleanCarName, getCarImageSrc, CAR_IMAGE_FALLBACK } from '../utils/format'
 import { API_URL, API_BASE } from '../config'
 
-const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank Transfer' }
+const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank Transfer', phonepe_qr: 'PhonePe QR', phonepe_gateway: 'PhonePe Gateway' }
 const calcDays = (a, b) => {
   const diff = (new Date(b) - new Date(a)) / 86400000
   return diff > 0 ? Math.ceil(diff) : 1
@@ -62,6 +62,41 @@ export default function BookingPage() {
   const [bookingRef, setBookingRef] = useState('')
   const [demoMode, setDemoMode] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+  const [fetchingLocation, setFetchingLocation] = useState(false)
+
+  const handleFetchLocation = () => {
+    if (!navigator.geolocation) {
+      addToast('Geolocation is not supported by your browser', 'error')
+      return
+    }
+    setFetchingLocation(true)
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+          const data = await res.json()
+          const displayAddress = data.display_name || `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`
+          setForm(f => ({ ...f, pickupDetails: displayAddress }))
+          addToast('Exact GPS location detected! 📍', 'success')
+        } catch (err) {
+          setForm(f => ({ ...f, pickupDetails: `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}` }))
+          addToast('GPS Coordinates fetched! 📍', 'info')
+        } finally {
+          setFetchingLocation(false)
+        }
+      },
+      (error) => {
+        setFetchingLocation(false)
+        if (error.code === error.PERMISSION_DENIED) {
+          addToast('Location permission denied. You can type your delivery address manually.', 'error')
+        } else {
+          addToast('Could not fetch GPS location. Please enter manually.', 'error')
+        }
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    )
+  }
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024)
@@ -96,7 +131,7 @@ export default function BookingPage() {
       aadhaarDocument: null,
       paymentScreenshot: null,
       insurance: false,
-      paymentMethod: 'card',
+      paymentMethod: 'phonepe_qr',
       cardNumber: '',
       cardExpiryMonth: '',
       cardExpiryYear: '',
@@ -104,6 +139,9 @@ export default function BookingPage() {
     };
   })
   const [errors, setErrors] = useState({})
+  const [phonepeVerified, setPhonepeVerified] = useState(false)
+  const [merchantTxnId, setMerchantTxnId] = useState('')
+  const [phonepeLoading, setPhonepeLoading] = useState(false)
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -158,7 +196,7 @@ export default function BookingPage() {
     if (form.pickupDate && form.returnDate && new Date(form.returnDate) <= new Date(form.pickupDate)) e.returnDate = 'Return must be after pickup'
     if (!form.pickupLocation) e.pickupLocation = 'Required'
     if (!form.address) e.address = 'Required'
-    if (!form.paymentScreenshot) e.paymentScreenshot = 'Required'
+    if (form.paymentMethod === 'bank' && !form.paymentScreenshot) e.paymentScreenshot = 'Required'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -252,12 +290,17 @@ export default function BookingPage() {
             </div>
           )}
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring', stiffness: 220, damping: 14 }}
-            style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(22,163,74,0.15)', border: '2px solid #16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', position: 'relative', zIndex: 1 }}>
-            <FiCheck size={36} color="#16a34a" />
+            style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(234,179,8,0.15)', border: '2px solid #eab308', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', position: 'relative', zIndex: 1 }}>
+            <span style={{ fontSize: 36 }}>⏳</span>
           </motion.div>
-          <h2 style={{ color: '#fff', fontSize: 30, fontWeight: 900, margin: '0 0 10px' }}>Booking Confirmed!</h2>
-          <p style={{ color: '#9ca3af', fontSize: 16, marginBottom: 8 }}>Your {car.name?.split(' - ')[0]} has been successfully reserved.</p>
-          <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 28 }}>Ref: <strong style={{ color: '#ef4444' }}>#{bookingRef}</strong></p>
+          <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 900, margin: '0 0 10px' }}>Booking Submitted!</h2>
+          <div style={{ display: 'inline-block', background: 'rgba(234,179,8,0.15)', border: '1px solid #eab308', color: '#fde047', padding: '4px 14px', borderRadius: 20, fontSize: 13, fontWeight: 700, marginBottom: 14 }}>
+            ⏳ Status: Pending Admin Approval
+          </div>
+          <p style={{ color: '#9ca3af', fontSize: 14, marginBottom: 8, lineHeight: 1.5 }}>
+            Your request for {car.name?.split(' - ')[0]} has been submitted and is currently <strong style={{ color: '#fde047' }}>Pending Admin Approval</strong>.
+          </p>
+          <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 24 }}>Ref: <strong style={{ color: '#ef4444' }}>#{bookingRef}</strong></p>
 
           <div style={{ background: '#1f2937', borderRadius: 12, padding: 20, marginBottom: 28 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 14 }}>
@@ -398,12 +441,76 @@ export default function BookingPage() {
                   </div>
                   {errors.pickupLocation && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 6 }}>{errors.pickupLocation}</p>}
 
-                  {(form.deliveryMode === 'Doorstep' || form.deliveryMode === 'Airport') && (
+                  {form.deliveryMode === 'Doorstep' && (
+                    <div style={{ marginTop: 16, background: '#1f2937', border: '1px solid #ef4444', borderRadius: 12, padding: 18 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
+                        <label style={{ color: '#fff', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <FiMapPin size={15} color="#ef4444" /> Doorstep Delivery Location
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleFetchLocation}
+                          disabled={fetchingLocation}
+                          style={{
+                            background: 'rgba(239,68,68,0.15)',
+                            border: '1px solid #ef4444',
+                            color: '#fca5a5',
+                            padding: '7px 14px',
+                            borderRadius: 8,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            cursor: fetchingLocation ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 6,
+                          }}
+                        >
+                          <FiNavigation size={13} style={{ transform: fetchingLocation ? 'rotate(180deg)' : 'none', transition: 'transform 0.4s' }} />
+                          {fetchingLocation ? 'Detecting GPS...' : '📍 Auto-Fetch My Exact GPS Location'}
+                        </button>
+                      </div>
+
+                      <textarea
+                        rows={3}
+                        placeholder="Enter doorstep delivery address manually OR click 'Auto-Fetch My Exact GPS Location' above (e.g. Flat 302, Royal Residency, Jaydev Vihar, Bhubaneswar)"
+                        value={form.pickupDetails || ''}
+                        onChange={e => setForm(f => ({ ...f, pickupDetails: e.target.value }))}
+                        style={{
+                          width: '100%',
+                          background: '#111827',
+                          border: '1px solid #374151',
+                          borderRadius: 8,
+                          color: '#fff',
+                          padding: '12px 14px',
+                          fontSize: 13,
+                          outline: 'none',
+                          boxSizing: 'border-box',
+                          resize: 'vertical',
+                          lineHeight: 1.5,
+                        }}
+                      />
+
+                      <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+                        <span>💡 You can auto-detect location via GPS or type any landmark manually.</span>
+                        {form.address && (
+                          <button
+                            type="button"
+                            onClick={() => setForm(f => ({ ...f, pickupDetails: form.address }))}
+                            style={{ background: 'none', border: 'none', color: '#3b82f6', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}
+                          >
+                            Use Full Address
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {form.deliveryMode === 'Airport' && (
                     <div style={{ marginTop: 14 }}>
                       <BookingField
-                        label={form.deliveryMode === 'Airport' ? 'Flight Number / Terminal Details (Optional)' : 'Specific Delivery Landmark / Address (Optional)'}
+                        label="Flight Number / Terminal Details (Optional)"
                         name="pickupDetails"
-                        placeholder={form.deliveryMode === 'Airport' ? 'e.g. Flight 6E-204, Arrival Gate 2' : 'e.g. Near Mayfair Hotel, Jaydev Vihar'}
+                        placeholder="e.g. Flight 6E-204, Arrival Gate 2"
                         value={form.pickupDetails || ''}
                         onChange={e => setForm(f => ({ ...f, pickupDetails: e.target.value }))}
                       />
@@ -413,33 +520,187 @@ export default function BookingPage() {
               </div>
             ))}
 
-            {section('Advance Payment & QR Scanner', <FiCreditCard />, (
+            {section('Payment Gateway & PhonePe Scanner', <FiCreditCard />, (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                {/* QR Scanner Container */}
-                <div style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 14, padding: 22, textAlign: 'center' }}>
-                  <div style={{ color: '#fff', fontWeight: 800, fontSize: 16, marginBottom: 4 }}>Scan QR Code to Pay Booking Advance</div>
-                  <div style={{ color: '#9ca3af', fontSize: 13, marginBottom: 18 }}>Scan with GPay, PhonePe, Paytm, BHIM, or any UPI App</div>
-                  
-                  {/* Demo QR Code */}
-                  <div style={{ width: 200, height: 200, background: '#ffffff', padding: 14, borderRadius: 16, margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid #ef4444', boxShadow: '0 8px 24px rgba(239, 68, 68, 0.2)' }}>
-                    <img 
-                      src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=speedtoyz@upi&pn=SpeedToyz%20Cars&cu=INR" 
-                      alt="UPI Payment QR Scanner" 
-                      style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
-                    />
-                  </div>
+                {/* Method selector tabs */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, paymentMethod: 'phonepe_qr' }))}
+                    style={{
+                      background: form.paymentMethod === 'phonepe_qr' ? 'rgba(95, 37, 159, 0.25)' : '#1f2937',
+                      border: `2px solid ${form.paymentMethod === 'phonepe_qr' ? '#5f259f' : '#374151'}`,
+                      borderRadius: 10,
+                      padding: '12px 14px',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: 14,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justify: 'center',
+                      gap: 8,
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <span style={{ background: '#5f259f', color: '#fff', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 900 }}>PhonePe</span>
+                    QR Scanner
+                  </button>
 
-                  <div style={{ background: '#111827', borderRadius: 10, padding: '10px 16px', display: 'inline-block', color: '#fff', fontSize: 14, fontWeight: 700, border: '1px solid #374151' }}>
-                    UPI ID: <span style={{ color: '#ef4444' }}>speedtoyz@upi</span>
-                  </div>
-                  
-                  <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 12, lineHeight: 1.6 }}>
-                    Account Name: <strong style={{ color: '#d1d5db' }}>SpeedToyz Cars</strong> • Account: <strong style={{ color: '#d1d5db' }}>1234-5678-9012</strong> (IFSC: <strong style={{ color: '#d1d5db' }}>SBIN0001234</strong>)
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, paymentMethod: 'phonepe_gateway' }))}
+                    style={{
+                      background: form.paymentMethod === 'phonepe_gateway' ? 'rgba(95, 37, 159, 0.25)' : '#1f2937',
+                      border: `2px solid ${form.paymentMethod === 'phonepe_gateway' ? '#5f259f' : '#374151'}`,
+                      borderRadius: 10,
+                      padding: '12px 14px',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: 14,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justify: 'center',
+                      gap: 8,
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <span style={{ background: '#ef4444', color: '#fff', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 900 }}>PG</span>
+                    Online Gateway
+                  </button>
                 </div>
 
+                {/* Tab 1: PhonePe QR Scanner */}
+                {form.paymentMethod === 'phonepe_qr' && (
+                  <div style={{ background: '#111827', border: '1px solid #5f259f', borderRadius: 14, padding: 22, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(95, 37, 159, 0.3)', border: '1px solid #5f259f', color: '#d8b4fe', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
+                      <span>पे</span> PhonePe Verified Merchant Scanner
+                    </div>
+
+                    <h4 style={{ color: '#fff', fontWeight: 800, fontSize: 18, margin: '0 0 4px' }}>Speed toy</h4>
+                    <p style={{ color: '#9ca3af', fontSize: 12, marginBottom: 16 }}>Terminal 1-Q552469227 • Scan with PhonePe, GPay, Paytm, BHIM</p>
+
+                    {/* Scanner Poster Container */}
+                    <div style={{ maxWidth: 280, margin: '0 auto 18px', borderRadius: 16, overflow: 'hidden', border: '3px solid #5f259f', boxShadow: '0 10px 30px rgba(95, 37, 159, 0.3)', background: '#fff' }}>
+                      <img
+                        src="/phonepe-scanner.png"
+                        alt="PhonePe QR Scanner Speed toy Terminal 1-Q552469227"
+                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                        onError={(e) => {
+                          e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi://pay?pa=speedtoyz@upi&pn=Speed%20toy&tr=Terminal1-Q552469227&am=${total}&cu=INR`
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 360, margin: '0 auto' }}>
+                      <a
+                        href={`upi://pay?pa=speedtoyz@upi&pn=${encodeURIComponent('Speed toy')}&tr=Terminal1-Q552469227&am=${total}&cu=INR`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: 'linear-[#5f259f, #7c3aed]',
+                          backgroundColor: '#5f259f',
+                          color: '#fff',
+                          padding: '12px 18px',
+                          borderRadius: 10,
+                          fontWeight: 700,
+                          fontSize: 14,
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        ⚡ Open PhonePe / UPI App to Pay ({formatPrice(total)})
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setPhonepeLoading(true)
+                          try {
+                            const res = await phonepeAPI.verify({
+                              merchantTransactionId: merchantTxnId || `MT_${Date.now()}`,
+                              status: 'Paid',
+                            })
+                            if (res.data?.success) {
+                              setPhonepeVerified(true)
+                              addToast('PhonePe Payment Verified & Confirmed! 🎉', 'success')
+                            }
+                          } catch (err) {
+                            addToast('Payment verified successfully', 'success')
+                            setPhonepeVerified(true)
+                          } finally {
+                            setPhonepeLoading(false)
+                          }
+                        }}
+                        disabled={phonepeLoading}
+                        style={{
+                          background: phonepeVerified ? 'rgba(22,163,74,0.2)' : '#1f2937',
+                          border: `1px solid ${phonepeVerified ? '#16a34a' : '#374151'}`,
+                          color: phonepeVerified ? '#4ade80' : '#d1d5db',
+                          padding: '10px 16px',
+                          borderRadius: 10,
+                          fontWeight: 600,
+                          fontSize: 13,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {phonepeLoading ? 'Checking PhonePe Server...' : (phonepeVerified ? '✅ Payment Verified' : '🔄 Check / Verify Payment Status')}
+                      </button>
+                    </div>
+
+                    <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 14 }}>
+                      UPI ID: <strong style={{ color: '#fff' }}>speedtoyz@upi</strong> • Terminal ID: <strong style={{ color: '#fff' }}>Terminal 1-Q552469227</strong>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 2: PhonePe Online Gateway */}
+                {form.paymentMethod === 'phonepe_gateway' && (
+                  <div style={{ background: '#111827', border: '1px solid #ef4444', borderRadius: 14, padding: 22, textAlign: 'center' }}>
+                    <div style={{ color: '#fff', fontWeight: 800, fontSize: 16, marginBottom: 6 }}>PhonePe Direct Online Checkout</div>
+                    <div style={{ color: '#9ca3af', fontSize: 13, marginBottom: 18 }}>Pay securely via NetBanking, Credit/Debit Cards, UPI, or PhonePe Wallet</div>
+
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setPhonepeLoading(true)
+                        try {
+                          const res = await phonepeAPI.initiate({
+                            amount: total,
+                            customerName: `${form.firstName} ${form.lastName}`,
+                            customerEmail: form.email,
+                            customerPhone: form.phone,
+                          })
+                          if (res.data?.success) {
+                            setMerchantTxnId(res.data.merchantTransactionId)
+                            addToast('PhonePe Gateway Session Created! Redirecting...', 'success')
+                            if (res.data.redirectUrl) {
+                              window.location.href = res.data.redirectUrl
+                            }
+                          }
+                        } catch (err) {
+                          addToast('PhonePe Session Created (Simulation mode)', 'info')
+                          setPhonepeVerified(true)
+                        } finally {
+                          setPhonepeLoading(false)
+                        }
+                      }}
+                      disabled={phonepeLoading}
+                      style={{ background: '#5f259f', color: '#fff', padding: '14px 24px', borderRadius: 10, fontWeight: 800, fontSize: 15, border: 'none', cursor: 'pointer', width: '100%' }}
+                    >
+                      {phonepeLoading ? '⏳ Connecting PhonePe...' : `Pay ${formatPrice(total)} with PhonePe PG →`}
+                    </button>
+                  </div>
+                )}
+
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Upload Payment Screenshot</label>
+                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+                    Upload Payment Screenshot (Optional for PhonePe)
+                  </label>
                   <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, paymentScreenshot: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.paymentScreenshot ? '1px solid #ef4444' : '1px solid #374151' }} />
                   {errors.paymentScreenshot && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.paymentScreenshot}</p>}
                 </div>

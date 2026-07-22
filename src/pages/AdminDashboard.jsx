@@ -734,7 +734,12 @@ export default function AdminDashboard() {
                               <button onClick={() => setViewBookingModal(b)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.25)', color: '#60a5fa', padding: '5px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>
                                 <FiEye size={13} /> View Proofs
                               </button>
-                              <select value={b.bookingStatus || 'Confirmed'} onChange={(e) => handleBookingStatusChange(b._id, e.target.value)} style={{ background: '#1f2937', border: '1px solid #374151', color: '#d1d5db', borderRadius: 6, padding: '5px 8px', fontSize: 12 }}>
+                              {b.bookingStatus === 'Pending' && (
+                                <button onClick={() => handleBookingStatusChange(b._id || b.bookingRef, 'Confirmed')} style={{ background: '#16a34a', border: 'none', color: '#fff', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                  ✅ Approve
+                                </button>
+                              )}
+                              <select value={b.bookingStatus || 'Pending'} onChange={(e) => handleBookingStatusChange(b._id || b.bookingRef, e.target.value)} style={{ background: '#1f2937', border: '1px solid #374151', color: '#d1d5db', borderRadius: 6, padding: '5px 8px', fontSize: 12 }}>
                                 {['Pending','Confirmed','Active','Completed','Cancelled'].map(option => <option key={option} value={option}>{option}</option>)}
                               </select>
                               {b.bookingStatus !== 'Cancelled' && (
@@ -1096,10 +1101,15 @@ export default function AdminDashboard() {
               </div>
 
               <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14 }}>
-                <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Total Amount Paid</div>
-                <div style={{ color: '#10b981', fontWeight: 900, fontSize: 16, marginTop: 4 }}>
-                  {fmt(viewBookingModal.totalPrice)} ({viewBookingModal.paymentMethod || 'Bank Transfer'})
+                <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Total Amount / Payment Method</div>
+                <div style={{ color: '#10b981', fontWeight: 900, fontSize: 15, marginTop: 4 }}>
+                  {fmt(viewBookingModal.totalPrice)} ({viewBookingModal.paymentMethod || 'PhonePe QR'})
                 </div>
+                {viewBookingModal.merchantTransactionId && (
+                  <div style={{ color: '#5f259f', fontSize: 11, fontWeight: 700, marginTop: 4 }}>
+                    PhonePe Ref: {viewBookingModal.merchantTransactionId}
+                  </div>
+                )}
               </div>
 
               <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14 }}>
@@ -1150,8 +1160,19 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-              <button onClick={() => setViewBookingModal(null)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: 8, cursor: 'pointer', fontWeight: 700 }}>Close</button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 10 }}>
+              {viewBookingModal.bookingStatus === 'Pending' && (
+                <button
+                  onClick={async () => {
+                    await handleBookingStatusChange(viewBookingModal._id || viewBookingModal.bookingRef, 'Confirmed')
+                    setViewBookingModal(prev => prev ? { ...prev, bookingStatus: 'Confirmed' } : null)
+                  }}
+                  style={{ background: '#16a34a', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: 8, cursor: 'pointer', fontWeight: 700 }}
+                >
+                  ✅ Approve Booking
+                </button>
+              )}
+              <button onClick={() => setViewBookingModal(null)} style={{ background: '#374151', color: '#fff', border: 'none', padding: '10px 24px', borderRadius: 8, cursor: 'pointer', fontWeight: 700 }}>Close</button>
             </div>
           </div>
         )}

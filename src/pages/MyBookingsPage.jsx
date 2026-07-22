@@ -147,6 +147,9 @@ export default function MyBookingsPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
                     <span style={{ color: '#fff', fontWeight: 700, fontSize: isMobile ? 15 : 18 }}>{cleanCarName(booking.car?.name || (typeof booking.car === 'string' ? booking.car : 'Rental Car'))}</span>
                     <StatusBadge status={booking.bookingStatus} />
+                    <span style={{ background: booking.paymentStatus === 'Paid' ? 'rgba(22,163,74,0.15)' : 'rgba(234,179,8,0.15)', border: `1px solid ${booking.paymentStatus === 'Paid' ? '#16a34a' : '#eab308'}`, color: booking.paymentStatus === 'Paid' ? '#4ade80' : '#fde047', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+                      ⚡ {booking.paymentMethod || 'PhonePe QR'} ({booking.paymentStatus || 'Paid'})
+                    </span>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 12 : 20, color: '#9ca3af', fontSize: isMobile ? 12 : 13 }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>

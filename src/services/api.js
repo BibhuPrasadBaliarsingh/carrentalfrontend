@@ -91,4 +91,11 @@ export const siteAPI = {
   filters: () => api.get('/filters'),
 }
 
+// ── PhonePe Payment ─────────────────────────────────────────────────────────
+export const phonepeAPI = {
+  initiate: (data) => api.post('/payment/phonepe/initiate', data),
+  checkStatus: (merchantTransactionId) => api.get(`/payment/phonepe/status/${merchantTransactionId}`),
+  verify: (data) => api.post('/payment/phonepe/verify', data),
+}
+
 export default api

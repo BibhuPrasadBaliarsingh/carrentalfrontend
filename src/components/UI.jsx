@@ -47,16 +47,18 @@ export function Badge({ children, color = '#ef4444', textColor = '#fff' }) {
 // ── Status Badge ──────────────────────────────────────────────────────────────
 export function StatusBadge({ status }) {
   const map = {
-    Confirmed:  { bg: 'rgba(22,163,74,0.12)',   color: '#16a34a' },
-    Pending:    { bg: 'rgba(217,119,6,0.12)',    color: '#d97706' },
-    Completed:  { bg: 'rgba(107,114,128,0.12)',  color: '#9ca3af' },
-    Cancelled:  { bg: 'rgba(239,68,68,0.12)',    color: '#ef4444' },
-    Active:     { bg: 'rgba(22,163,74,0.12)',    color: '#16a34a' },
-    Banned:     { bg: 'rgba(239,68,68,0.12)',    color: '#ef4444' },
+    Confirmed:  { bg: 'rgba(22,163,74,0.15)',   color: '#4ade80', text: '✅ Confirmed' },
+    Pending:    { bg: 'rgba(234,179,8,0.15)',    color: '#fde047', text: '⏳ Pending Approval' },
+    Completed:  { bg: 'rgba(107,114,128,0.15)',  color: '#d1d5db', text: '🏁 Completed' },
+    Cancelled:  { bg: 'rgba(239,68,68,0.15)',    color: '#f87171', text: '❌ Cancelled' },
+    Active:     { bg: 'rgba(22,163,74,0.15)',    color: '#4ade80', text: '🏎️ Active' },
+    Banned:     { bg: 'rgba(239,68,68,0.15)',    color: '#f87171', text: '🚫 Banned' },
   }
-  const s = map[status] || map.Pending
+  const s = map[status] || { bg: 'rgba(234,179,8,0.15)', color: '#fde047', text: status || 'Pending' }
   return (
-    <span style={{ background: s.bg, color: s.color, fontSize: 11, padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>{status}</span>
+    <span style={{ background: s.bg, color: s.color, fontSize: 11, padding: '3px 10px', borderRadius: 6, fontWeight: 700, letterSpacing: 0.5, border: `1px solid ${s.color}33` }}>
+      {s.text}
+    </span>
   )
 }
 

@@ -65,12 +65,13 @@ export default function BrowsePage() {
         ])
         const fetchedCars = carsRes.data.cars || carsRes.data
         
-        // Deduplicate cars by base name (stripping out license plates)
+        // Deduplicate cars by base name and transmission variant (preserves Manual & Automatic options)
         const uniqueCarsMap = new Map()
         fetchedCars.forEach(car => {
           const baseName = cleanCarName(car.name)
-          if (!uniqueCarsMap.has(baseName)) {
-            uniqueCarsMap.set(baseName, car)
+          const key = `${baseName}_${car.transmission || 'Automatic'}`
+          if (!uniqueCarsMap.has(key)) {
+            uniqueCarsMap.set(key, car)
           }
         })
         const uniqueCars = Array.from(uniqueCarsMap.values())
@@ -93,12 +94,13 @@ export default function BrowsePage() {
       } catch {
         setDemoMode(true)
         
-        // Deduplicate mock cars as well
+        // Deduplicate mock cars by base name & transmission variant as well
         const uniqueMockMap = new Map()
         MOCK_CARS.forEach(car => {
           const baseName = cleanCarName(car.name)
-          if (!uniqueMockMap.has(baseName)) {
-            uniqueMockMap.set(baseName, car)
+          const key = `${baseName}_${car.transmission || 'Automatic'}`
+          if (!uniqueMockMap.has(key)) {
+            uniqueMockMap.set(key, car)
           }
         })
         const uniqueMockCars = Array.from(uniqueMockMap.values())

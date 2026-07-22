@@ -62,6 +62,20 @@ export const MOCK_CARS = [
     images: ['https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800&q=80'],
     description: 'The McLaren 720S is a mid-engined supercar with a 4.0-litre twin-turbo V8 producing 720hp. Its carbon fibre monocoque chassis delivers extraordinary agility.',
   },
+  {
+    _id: '10', name: 'Maruti Alto K10 (Manual)', brand: 'Maruti', category: 'Hatchback',
+    pricePerDay: 199, fuelType: 'Petrol', seats: 5, transmission: 'Manual',
+    rating: 4.6, available: true,
+    images: ['https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800&q=80'],
+    description: 'Maruti Alto K10 Manual Transmission — Fuel-efficient 1.0L K-Series engine with 5-speed smooth manual gear shift.',
+  },
+  {
+    _id: '11', name: 'Maruti Alto K10 (Automatic)', brand: 'Maruti', category: 'Hatchback',
+    pricePerDay: 249, fuelType: 'Petrol', seats: 5, transmission: 'Automatic',
+    rating: 4.7, available: true,
+    images: ['https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800&q=80'],
+    description: 'Maruti Alto K10 Auto Gear Shift (AGS) — Effortless automatic driving experience ideal for city traffic & long drives.',
+  },
 ]
 
 export const MOCK_STATS = {
