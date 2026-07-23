@@ -264,18 +264,25 @@ export default function CarDetailPage() {
 
                 {/* Pricing card */}
                 <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 14, padding: 24, marginBottom: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                     <div>
                       <div style={{ color: '#6b7280', fontSize: 13, marginBottom: 4 }}>Daily Rate</div>
                       <div>
-                        <span style={{ color: '#ef4444', fontSize: 42, fontWeight: 900, letterSpacing: -1 }}>{formatPrice(car.pricePerDay)}</span>
-                        <span style={{ color: '#6b7280', fontSize: 16 }}>/day</span>
+                        <span style={{ color: '#ef4444', fontSize: 38, fontWeight: 900, letterSpacing: -1 }}>{formatPrice(car.pricePerDay)}</span>
+                        <span style={{ color: '#6b7280', fontSize: 15 }}>/day</span>
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ color: '#6b7280', fontSize: 12 }}>Weekly rate</div>
-                      <div style={{ color: '#fff', fontSize: 22, fontWeight: 800 }}>{formatPrice(Math.round(car.pricePerDay * 7 * 0.9))}</div>
-                      <div style={{ color: '#16a34a', fontSize: 11, marginTop: 2 }}>Save 10% weekly</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, textAlign: 'right' }}>
+                      <div>
+                        <span style={{ color: '#6b7280', fontSize: 11 }}>Weekly (7+ days): </span>
+                        <strong style={{ color: '#fff', fontSize: 13 }}>{formatPrice(Math.round(car.pricePerDay * 7 * 0.9))}</strong>
+                        <span style={{ color: '#4ade80', fontSize: 11, marginLeft: 4, fontWeight: 700 }}> (10% OFF)</span>
+                      </div>
+                      <div>
+                        <span style={{ color: '#6b7280', fontSize: 11 }}>Monthly (30+ days): </span>
+                        <strong style={{ color: '#fff', fontSize: 13 }}>{formatPrice(Math.round(car.pricePerDay * 30 * 0.85))}</strong>
+                        <span style={{ color: '#4ade80', fontSize: 11, marginLeft: 4, fontWeight: 700 }}> (15% OFF)</span>
+                      </div>
                     </div>
                   </div>
 

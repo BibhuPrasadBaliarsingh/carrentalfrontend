@@ -153,6 +153,7 @@ export default function BookingPage() {
       cardExpiryMonth: '',
       cardExpiryYear: '',
       cardCVV: '',
+      agreeTerms: false,
     };
   })
   const [errors, setErrors] = useState({})
@@ -198,10 +199,18 @@ export default function BookingPage() {
   const bookingImageSrc = getCarImageSrc(car, 600)
 
   const days = form.pickupDate && form.returnDate ? calcDays(form.pickupDate, form.returnDate) : 1
-  const subtotal = days * car.pricePerDay
+  const originalSubtotal = days * car.pricePerDay
+  let discountRate = 0
+  if (days >= 30) {
+    discountRate = 0.15
+  } else if (days >= 7) {
+    discountRate = 0.10
+  }
+  const discountAmount = Math.round(originalSubtotal * discountRate)
+  const rentalSubtotal = originalSubtotal - discountAmount
   const deliveryFee = form.deliveryMode === 'Doorstep' ? 250 : form.deliveryMode === 'Airport' ? 250 : 0
-  const tax = taxAmount || Math.round((subtotal + deliveryFee) * taxRate * 100) / 100
-  const total = subtotal + deliveryFee + tax
+  const tax = taxAmount || Math.round((rentalSubtotal + deliveryFee) * taxRate * 100) / 100
+  const total = rentalSubtotal + deliveryFee + tax
   const bookingAdvance = 500
   const payNowAmount = bookingAdvance + deliveryFee
   const remainingAmount = Math.max(0, total - payNowAmount)
@@ -218,7 +227,8 @@ export default function BookingPage() {
     if (form.pickupDate && form.returnDate && new Date(form.returnDate) <= new Date(form.pickupDate)) e.returnDate = 'Return must be after pickup'
     if (!form.pickupLocation) e.pickupLocation = 'Required'
     if (!form.address) e.address = 'Required'
-    if (form.paymentMethod === 'bank' && !form.paymentScreenshot) e.paymentScreenshot = 'Required'
+    if (!form.paymentScreenshot) e.paymentScreenshot = 'Required: Please upload your payment screenshot'
+    if (!form.agreeTerms) e.agreeTerms = 'Required: Please check this box to confirm'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -239,6 +249,7 @@ export default function BookingPage() {
         `📍 *Pickup Location:* ${form.pickupDetails ? `${form.pickupLocation} (${form.pickupDetails})` : form.pickupLocation}\n` +
         `🚚 *Delivery Mode:* ${form.deliveryMode}\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        (discountAmount > 0 ? `🎁 *Discount Applied:* ${discountRate * 100}% (-${formatPrice(discountAmount)})\n` : '') +
         `💰 *Total Rental Cost:* ${formatPrice(total)}\n` +
         `✅ *Booking Advance Paid Now:* ${formatPrice(payNowAmount)}\n` +
         `💵 *Remaining Due at Pickup/Delivery:* ${formatPrice(remainingAmount)}\n` +
@@ -531,7 +542,7 @@ export default function BookingPage() {
                         )}
                       </div>
 
-                      {(form.googleMapsUrl || form.pickupDetails) && (
+                      {/* {(form.googleMapsUrl || form.pickupDetails) && (
                         <div style={{ marginTop: 10, background: '#111827', border: '1px solid #374151', borderRadius: 8, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
                           <span style={{ color: '#4ade80', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
                             📍 Google Maps Pin Link Ready
@@ -545,7 +556,7 @@ export default function BookingPage() {
                             Open Location on Google Maps 🗺️ ↗
                           </a>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   )}
 
@@ -687,11 +698,11 @@ export default function BookingPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
-                    Upload Payment Screenshot (Optional for PhonePe)
+                  <label style={{ display: 'block', color: '#f87171', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+                    Upload Payment Screenshot * (Required)
                   </label>
-                  <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, paymentScreenshot: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.paymentScreenshot ? '1px solid #ef4444' : '1px solid #374151' }} />
-                  {errors.paymentScreenshot && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.paymentScreenshot}</p>}
+                  <input type="file" accept="image/*" onChange={e => { setForm(f => ({ ...f, paymentScreenshot: e.target.files[0] })); setErrors(e2 => ({ ...e2, paymentScreenshot: '' })) }} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.paymentScreenshot ? '1px solid #ef4444' : '1px solid #374151' }} />
+                  {errors.paymentScreenshot && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4, fontWeight: 600 }}>⚠️ {errors.paymentScreenshot}</p>}
                 </div>
               </div>
             ))}
@@ -714,7 +725,11 @@ export default function BookingPage() {
                 {[
                   ['Duration', `${days} day${days > 1 ? 's' : ''}`],
                   ['Daily Rate', `${formatPrice(car.pricePerDay)}/day`],
-                  ['Subtotal', formatPrice(subtotal)],
+                  ['Subtotal', formatPrice(originalSubtotal)],
+                  discountAmount > 0 && [
+                    discountRate === 0.15 ? 'Monthly Discount (15%)' : 'Weekly Discount (10%)',
+                    `-${formatPrice(discountAmount)}`
+                  ],
                   deliveryFee > 0 && [
                     form.deliveryMode === 'Doorstep' ? 'Doorstep Delivery (BBSR)' : 'Airport Pickup Fee',
                     formatPrice(deliveryFee)
@@ -722,10 +737,16 @@ export default function BookingPage() {
                   taxRate > 0 && [`Tax (${Math.round(taxRate * 100)}%)`, formatPrice(tax)],
                 ].filter(Boolean).map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
-                    <span style={{ color: '#6b7280' }}>{k}</span>
-                    <span style={{ color: '#d1d5db' }}>{v}</span>
+                    <span style={{ color: k.includes('Discount') ? '#4ade80' : '#6b7280', fontWeight: k.includes('Discount') ? 700 : 400 }}>{k}</span>
+                    <span style={{ color: k.includes('Discount') ? '#4ade80' : '#d1d5db', fontWeight: k.includes('Discount') ? 700 : 400 }}>{v}</span>
                   </div>
                 ))}
+
+                {discountAmount > 0 && (
+                  <div style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, padding: '8px 12px', color: '#4ade80', fontSize: 12, fontWeight: 700, textAlign: 'center' }}>
+                    🎉 {discountRate === 0.15 ? '15% Monthly Discount Applied!' : '10% Weekly Discount Applied!'}
+                  </div>
+                )}
 
                 <div style={{ borderTop: '1px solid #1f2937', paddingTop: 12, display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
                   <span style={{ color: '#9ca3af', fontWeight: 600, fontSize: 14 }}>Total Rental Price</span>
@@ -746,9 +767,32 @@ export default function BookingPage() {
                 </div>
               </div>
 
+              {/* Confirmation Checkbox */}
+              <div style={{ marginTop: 18, background: '#1f2937', border: errors.agreeTerms ? '1px solid #ef4444' : '1px solid #374151', borderRadius: 10, padding: 14 }}>
+                <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', color: '#d1d5db', fontSize: 13, lineHeight: 1.5 }}>
+                  <input
+                    type="checkbox"
+                    checked={form.agreeTerms || false}
+                    onChange={e => {
+                      setForm(f => ({ ...f, agreeTerms: e.target.checked }))
+                      setErrors(e2 => ({ ...e2, agreeTerms: '' }))
+                    }}
+                    style={{ width: 18, height: 18, marginTop: 2, accentColor: '#ef4444', cursor: 'pointer', flexShrink: 0 }}
+                  />
+                  <span>
+                    I have completed the form, successfully made the payment, and uploaded the original payment screenshot.
+                  </span>
+                </label>
+                {errors.agreeTerms && (
+                  <p style={{ color: '#ef4444', fontSize: 12, marginTop: 8, margin: '8px 0 0 28px', fontWeight: 600 }}>
+                    ⚠️ {errors.agreeTerms}
+                  </p>
+                )}
+              </div>
+
               <button onClick={handleSubmit} disabled={submitting}
-                style={{ width: '100%', marginTop: 22, background: '#ef4444', border: 'none', color: '#fff', padding: '15px 0', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
-                {submitting ? '⏳ Processing...' : `Confirm & Pay Advance (${formatPrice(payNowAmount)}) →`}
+                style={{ width: '100%', marginTop: 16, background: '#ef4444', border: 'none', color: '#fff', padding: '15px 0', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
+                {submitting ? '⏳ Processing...' : `Submit on WhatsApp →`}
               </button>
 
               <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, color: '#6b7280', fontSize: 12 }}>
