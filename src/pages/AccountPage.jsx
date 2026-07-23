@@ -147,8 +147,10 @@ export default function AccountPage() {
                     </div>
                   </div>
 
-                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-                    <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 18 }}>{formatPrice(booking.totalPrice)}</div>
+                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                    <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 17 }}>{formatPrice(booking.totalPrice)}</div>
+                    <div style={{ color: '#4ade80', fontSize: 11, fontWeight: 700 }}>Advance Paid: {formatPrice(booking.advancePaid || 500)}</div>
+                    <div style={{ color: '#fde047', fontSize: 11, fontWeight: 600 }}>Due: {formatPrice(booking.remainingAmount ?? Math.max(0, (booking.totalPrice || 0) - (booking.advancePaid || 500)))}</div>
                     <StatusBadge status={booking.bookingStatus || 'Confirmed'} />
                   </div>
                 </div>

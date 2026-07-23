@@ -168,9 +168,17 @@ export default function MyBookingsPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
+                {/* Actions & Price */}
                 <div style={{ textAlign: isMobile ? 'left' : 'right', gridColumn: isMobile ? '1 / -1' : 'auto' }}>
-                  <div style={{ color: '#ef4444', fontWeight: 900, fontSize: isMobile ? 18 : 24, marginBottom: isMobile ? 8 : 12 }}>{formatPrice(booking.totalPrice)}</div>
+                  <div style={{ color: '#ef4444', fontWeight: 900, fontSize: isMobile ? 18 : 22, marginBottom: 2 }}>
+                    {formatPrice(booking.totalPrice)}
+                  </div>
+                  <div style={{ color: '#4ade80', fontSize: 12, fontWeight: 700, marginBottom: 2 }}>
+                    Advance: {formatPrice(booking.advancePaid || 500)}
+                  </div>
+                  <div style={{ color: '#fde047', fontSize: 12, fontWeight: 600, marginBottom: isMobile ? 8 : 12 }}>
+                    Due at Pickup: {formatPrice(booking.remainingAmount ?? Math.max(0, (booking.totalPrice || 0) - (booking.advancePaid || 500)))}
+                  </div>
                   <div style={{ display: 'flex', gap: 8, justifyContent: isMobile ? 'flex-start' : 'flex-end', flexWrap: 'wrap' }}>
                     <button onClick={() => navigate(`/cars/${booking.car?._id}`)}
                       style={{ background: 'none', border: '1px solid #374151', color: '#9ca3af', padding: '7px 14px', borderRadius: 7, fontSize: 12, cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>

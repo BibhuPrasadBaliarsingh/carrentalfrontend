@@ -202,6 +202,9 @@ export default function BookingPage() {
   const deliveryFee = form.deliveryMode === 'Doorstep' ? 250 : form.deliveryMode === 'Airport' ? 250 : 0
   const tax = taxAmount || Math.round((subtotal + deliveryFee) * taxRate * 100) / 100
   const total = subtotal + deliveryFee + tax
+  const bookingAdvance = 500
+  const payNowAmount = bookingAdvance + deliveryFee
+  const remainingAmount = Math.max(0, total - payNowAmount)
 
   const validate = () => {
     const e = {}
@@ -235,7 +238,10 @@ export default function BookingPage() {
         `📅 *Return Date:* ${form.returnDate} (${days} day${days > 1 ? 's' : ''})\n` +
         `📍 *Pickup Location:* ${form.pickupDetails ? `${form.pickupLocation} (${form.pickupDetails})` : form.pickupLocation}\n` +
         `🚚 *Delivery Mode:* ${form.deliveryMode}\n` +
-        `💰 *Total Amount:* ${formatPrice(total)}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `💰 *Total Rental Cost:* ${formatPrice(total)}\n` +
+        `✅ *Booking Advance Paid Now:* ${formatPrice(payNowAmount)}\n` +
+        `💵 *Remaining Due at Pickup/Delivery:* ${formatPrice(remainingAmount)}\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `👤 *Customer Name:* ${form.firstName} ${form.lastName}\n` +
         `📞 *Phone:* ${formatPhone(form.phone)}\n` +
@@ -328,12 +334,13 @@ export default function BookingPage() {
               {[
                 ['Pickup', form.pickupDate],
                 ['Return', form.returnDate],
-                ['Duration', `${days} day${days > 1 ? 's' : ''}`],
-                ['Total', formatPrice(total)],
+                ['Total Rental', formatPrice(total)],
+                ['Advance Paid Now', formatPrice(payNowAmount)],
+                ['Remaining at Pickup', formatPrice(remainingAmount)],
               ].map(([k, v]) => (
-                <div key={k} style={{ textAlign: 'left' }}>
+                <div key={k} style={{ textAlign: 'left', gridColumn: (k === 'Advance Paid Now' || k === 'Remaining at Pickup') ? '1 / -1' : 'auto' }}>
                   <div style={{ color: '#6b7280', fontSize: 11, marginBottom: 4 }}>{k}</div>
-                  <div style={{ color: k === 'Total' ? '#ef4444' : '#fff', fontWeight: k === 'Total' ? 800 : 600 }}>{v}</div>
+                  <div style={{ color: k === 'Advance Paid Now' ? '#4ade80' : k === 'Remaining at Pickup' ? '#fde047' : k === 'Total Rental' ? '#ef4444' : '#fff', fontWeight: (k.includes('Paid') || k.includes('Remaining') || k.includes('Total')) ? 800 : 600, fontSize: (k.includes('Paid') || k.includes('Remaining')) ? 15 : 14 }}>{v}</div>
                 </div>
               ))}
             </div>
@@ -341,7 +348,7 @@ export default function BookingPage() {
 
           <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
             <button onClick={() => {
-              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${cleanCarName(car.name)}\nMode: ${form.deliveryMode}${deliveryFee > 0 ? ` (+${formatPrice(deliveryFee)})` : ''}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\nTotal: ${formatPrice(total)}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
+              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${cleanCarName(car.name)}\nMode: ${form.deliveryMode}${deliveryFee > 0 ? ` (+${formatPrice(deliveryFee)})` : ''}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\nTotal Rental: ${formatPrice(total)}\nAdvance Paid Now: ${formatPrice(payNowAmount)}\nRemaining at Pickup: ${formatPrice(remainingAmount)}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
               window.open(`https://wa.me/919861332857?text=${encodeURIComponent(waMessage)}`, '_blank');
             }} style={{ flex: 1, background: '#25D366', border: 'none', color: '#fff', padding: '12px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
               Message on WhatsApp
@@ -557,8 +564,43 @@ export default function BookingPage() {
               </div>
             ))}
 
-            {section('PhonePe QR Payment Scanner', <FiCreditCard />, (
+            {section('Booking Payment & QR Scanner', <FiCreditCard />, (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {/* Booking Payment Banner */}
+                <div style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(95,37,159,0.18) 100%)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 14, padding: 20 }}>
+                  <div style={{ color: '#fff', fontSize: 16, fontWeight: 800, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    💳 Booking Payment
+                  </div>
+                  <p style={{ color: '#d1d5db', fontSize: 14, margin: '0 0 14px', lineHeight: 1.5 }}>
+                    Pay only the booking amount to reserve your car.
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                    <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: '12px 14px', fontSize: 13, color: '#fff' }}>
+                      ✅ <strong style={{ color: '#4ade80' }}>Booking Advance:</strong> ₹500
+                    </div>
+                    <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: '12px 14px', fontSize: 13, color: '#fff' }}>
+                      🚚 <strong style={{ color: form.deliveryMode === 'Doorstep' || form.deliveryMode === 'Airport' ? '#3b82f6' : '#9ca3af' }}>Doorstep Delivery:</strong> ₹250 <span style={{ fontSize: 11, color: '#9ca3af' }}>(Only if selected)</span>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#1f2937', border: '1px solid #ef4444', borderRadius: 10, padding: 14, marginBottom: 12 }}>
+                    <div style={{ color: '#f87171', fontWeight: 800, fontSize: 13, marginBottom: 6 }}>💰 Pay Now:</div>
+                    <ul style={{ margin: 0, paddingLeft: 20, color: '#fff', fontSize: 13, lineHeight: 1.7 }}>
+                      <li style={{ fontWeight: deliveryFee === 0 ? 800 : 400, color: deliveryFee === 0 ? '#4ade80' : '#d1d5db' }}>
+                        <strong>₹500</strong> (Without Delivery) {deliveryFee === 0 && '← Current Selection'}
+                      </li>
+                      <li style={{ fontWeight: deliveryFee > 0 ? 800 : 400, color: deliveryFee > 0 ? '#4ade80' : '#d1d5db' }}>
+                        <strong>₹750</strong> (With Doorstep Delivery) {deliveryFee > 0 && '← Current Selection'}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div style={{ color: '#9ca3af', fontSize: 12, lineHeight: 1.5, background: 'rgba(0,0,0,0.3)', padding: '10px 12px', borderRadius: 8, border: '1px solid #374151' }}>
+                    ℹ️ The remaining rental amount (<strong style={{ color: '#fde047' }}>{formatPrice(remainingAmount)}</strong>) will be collected at the time of vehicle pickup or delivery.
+                  </div>
+                </div>
+
                 {/* PhonePe QR Scanner */}
                 <div style={{ background: '#111827', border: '1px solid #5f259f', borderRadius: 14, padding: 22, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(95, 37, 159, 0.3)', border: '1px solid #5f259f', color: '#d8b4fe', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
@@ -566,7 +608,7 @@ export default function BookingPage() {
                   </div>
 
                   <h4 style={{ color: '#fff', fontWeight: 800, fontSize: 18, margin: '0 0 4px' }}>Speed toy</h4>
-                  <p style={{ color: '#9ca3af', fontSize: 12, marginBottom: 16 }}>Terminal 1-Q552469227 • Scan with PhonePe, GPay, Paytm, BHIM</p>
+                  <p style={{ color: '#9ca3af', fontSize: 12, marginBottom: 16 }}>Terminal 1-Q552469227 • Pay Advance Amount: <strong style={{ color: '#4ade80' }}>{formatPrice(payNowAmount)}</strong></p>
 
                   {/* Scanner Poster Container */}
                   <div style={{ maxWidth: 280, margin: '0 auto 18px', borderRadius: 16, overflow: 'hidden', border: '3px solid #5f259f', boxShadow: '0 10px 30px rgba(95, 37, 159, 0.3)', background: '#fff' }}>
@@ -575,14 +617,14 @@ export default function BookingPage() {
                       alt="PhonePe QR Scanner Speed toy Terminal 1-Q552469227"
                       style={{ width: '100%', height: 'auto', display: 'block' }}
                       onError={(e) => {
-                        e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi://pay?pa=Q552469227@ybl&pn=Speed%20toy&tr=Terminal1-Q552469227&am=${total}&cu=INR`
+                        e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi://pay?pa=Q552469227@ybl&pn=Speed%20toy&tr=Terminal1-Q552469227&am=${payNowAmount}&cu=INR`
                       }}
                     />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 360, margin: '0 auto' }}>
                     <a
-                      href={`upi://pay?pa=Q552469227@ybl&pn=${encodeURIComponent('Speed toy')}&tr=Terminal1-Q552469227&am=${total}&cu=INR&tn=${encodeURIComponent('Car Rental Payment')}`}
+                      href={`upi://pay?pa=Q552469227@ybl&pn=${encodeURIComponent('Speed toy')}&tr=Terminal1-Q552469227&am=${payNowAmount}&cu=INR&tn=${encodeURIComponent('Car Rental Advance')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => {
@@ -607,7 +649,7 @@ export default function BookingPage() {
                         boxShadow: '0 4px 15px rgba(95, 37, 159, 0.3)',
                       }}
                     >
-                      ⚡ Open PhonePe / UPI App to Pay ({formatPrice(total)})
+                      ⚡ Open PhonePe / UPI App to Pay Advance ({formatPrice(payNowAmount)})
                     </a>
 
                     <button
@@ -637,41 +679,6 @@ export default function BookingPage() {
                     >
                       📋 Copy PhonePe UPI ID (Q552469227@ybl)
                     </button>
-
-                    {/* <button
-                      type="button"
-                      onClick={async () => {
-                        setPhonepeLoading(true)
-                        try {
-                          const res = await phonepeAPI.verify({
-                            merchantTransactionId: merchantTxnId || `MT_${Date.now()}`,
-                            status: 'Paid',
-                          })
-                          if (res.data?.success) {
-                            setPhonepeVerified(true)
-                            addToast('PhonePe Payment Verified & Confirmed! 🎉', 'success')
-                          }
-                        } catch (err) {
-                          addToast('Payment status verified successfully', 'success')
-                          setPhonepeVerified(true)
-                        } finally {
-                          setPhonepeLoading(false)
-                        }
-                      }}
-                      disabled={phonepeLoading}
-                      style={{
-                        background: phonepeVerified ? 'rgba(22,163,74,0.2)' : '#111827',
-                        border: `1px solid ${phonepeVerified ? '#16a34a' : '#374151'}`,
-                        color: phonepeVerified ? '#4ade80' : '#d1d5db',
-                        padding: '10px 16px',
-                        borderRadius: 10,
-                        fontWeight: 600,
-                        fontSize: 13,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {phonepeLoading ? 'Checking PhonePe Server...' : (phonepeVerified ? '✅ Payment Verified' : '🔄 Check / Verify Payment Status')}
-                    </button> */}
                   </div>
 
                   <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 14, lineHeight: 1.6 }}>
@@ -720,15 +727,28 @@ export default function BookingPage() {
                   </div>
                 ))}
 
-                <div style={{ borderTop: '1px solid #1f2937', paddingTop: 14, display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                  <span style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>Total</span>
-                  <span style={{ color: '#ef4444', fontWeight: 900, fontSize: 22 }}>{formatPrice(total)}</span>
+                <div style={{ borderTop: '1px solid #1f2937', paddingTop: 12, display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                  <span style={{ color: '#9ca3af', fontWeight: 600, fontSize: 14 }}>Total Rental Price</span>
+                  <span style={{ color: '#fff', fontWeight: 800, fontSize: 16 }}>{formatPrice(total)}</span>
+                </div>
+
+                <div style={{ borderTop: '1px dashed #374151', paddingTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ color: '#fff', fontWeight: 800, fontSize: 15 }}>💰 Pay Now (Advance)</div>
+                    <div style={{ color: '#9ca3af', fontSize: 11 }}>To reserve car</div>
+                  </div>
+                  <div style={{ color: '#ef4444', fontWeight: 900, fontSize: 22 }}>{formatPrice(payNowAmount)}</div>
+                </div>
+
+                <div style={{ background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.3)', borderRadius: 10, padding: '12px 14px', marginTop: 6 }}>
+                  <div style={{ color: '#fde047', fontWeight: 700, fontSize: 12 }}>💵 Remaining Balance at Pickup/Delivery:</div>
+                  <div style={{ color: '#fff', fontWeight: 900, fontSize: 17, marginTop: 4 }}>{formatPrice(remainingAmount)}</div>
                 </div>
               </div>
 
               <button onClick={handleSubmit} disabled={submitting}
                 style={{ width: '100%', marginTop: 22, background: '#ef4444', border: 'none', color: '#fff', padding: '15px 0', borderRadius: 10, fontSize: 16, fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.8 : 1, transition: 'opacity 0.2s' }}>
-                {submitting ? '⏳ Processing...' : 'Confirm Booking →'}
+                {submitting ? '⏳ Processing...' : `Confirm & Pay Advance (${formatPrice(payNowAmount)}) →`}
               </button>
 
               <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, color: '#6b7280', fontSize: 12 }}>

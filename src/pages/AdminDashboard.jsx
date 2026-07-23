@@ -1101,9 +1101,15 @@ export default function AdminDashboard() {
               </div>
 
               <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14 }}>
-                <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Total Amount / Payment Method</div>
+                <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Payment Breakdown</div>
                 <div style={{ color: '#10b981', fontWeight: 900, fontSize: 15, marginTop: 4 }}>
-                  {fmt(viewBookingModal.totalPrice)} ({viewBookingModal.paymentMethod || 'PhonePe QR'})
+                  Total: {fmt(viewBookingModal.totalPrice)} ({viewBookingModal.paymentMethod || 'PhonePe QR'})
+                </div>
+                <div style={{ color: '#4ade80', fontSize: 12, fontWeight: 700, marginTop: 2 }}>
+                  Advance Paid: {fmt(viewBookingModal.advancePaid || 500)}
+                </div>
+                <div style={{ color: '#fde047', fontSize: 12, fontWeight: 600, marginTop: 2 }}>
+                  Due at Pickup: {fmt(viewBookingModal.remainingAmount ?? Math.max(0, (viewBookingModal.totalPrice || 0) - (viewBookingModal.advancePaid || 500)))}
                 </div>
                 {viewBookingModal.merchantTransactionId && (
                   <div style={{ color: '#5f259f', fontSize: 11, fontWeight: 700, marginTop: 4 }}>
