@@ -132,7 +132,7 @@ export function TermsPage() {
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 8 }}>For any questions or concerns regarding these terms, please contact us:</p>
           <p style={{ color: '#d1d5db', margin: 0 }}>
             <strong>Email:</strong> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none' }}>speedtoyzcarsodisha@gmail.com</a><br/>
-            <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 98613 32857</a><br/>
+            <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 9861332857</a><br/>
             <strong>24/7 Support:</strong> Available for emergencies
           </p>
         </section>
@@ -213,7 +213,7 @@ export function PrivacyPage() {
           <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>For privacy-related inquiries or to exercise your rights, please contact us at:</p>
           <p style={{ color: '#d1d5db', marginTop: 8 }}>
             <strong>Email:</strong> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none' }}>speedtoyzcarsodisha@gmail.com</a><br/>
-            <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 98613 32857</a>
+            <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 9861332857</a>
           </p>
         </section>
       </div>

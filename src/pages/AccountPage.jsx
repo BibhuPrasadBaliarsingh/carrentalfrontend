@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
 import { authAPI, bookingsAPI } from '../services/api'
-import { formatPrice, cleanCarName } from '../utils/format'
+import { formatPrice, cleanCarName, formatPhone } from '../utils/format'
 import { StatusBadge } from '../components/UI'
 
 export default function AccountPage() {
@@ -88,10 +88,14 @@ export default function AccountPage() {
               <div style={{ marginTop: 4, fontWeight: 600, color: '#fff' }}>{user.email}</div>
             </div>
             <div style={{ background: '#1f2937', borderRadius: 12, padding: '12px 16px', minWidth: 160 }}>
+              <div style={{ color: '#6b7280', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 600 }}>Phone Number</div>
+              <div style={{ marginTop: 4, fontWeight: 600, color: '#fff' }}>{formatPhone(user.phone) || '—'}</div>
+            </div>
+            <div style={{ background: '#1f2937', borderRadius: 12, padding: '12px 16px', minWidth: 140 }}>
               <div style={{ color: '#6b7280', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 600 }}>Account Role</div>
               <div style={{ marginTop: 4, fontWeight: 600, color: '#ef4444', textTransform: 'capitalize' }}>{user.role || 'Customer'}</div>
             </div>
-            <div style={{ background: '#1f2937', borderRadius: 12, padding: '12px 16px', minWidth: 160 }}>
+            <div style={{ background: '#1f2937', borderRadius: 12, padding: '12px 16px', minWidth: 140 }}>
               <div style={{ color: '#6b7280', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 600 }}>Total Bookings</div>
               <div style={{ marginTop: 4, fontWeight: 800, fontSize: 18, color: '#fff' }}>{bookings.length}</div>
             </div>

@@ -8,7 +8,7 @@ import { useToast } from '../context/ToastContext'
 import { dashboardAPI, carsAPI, bookingsAPI, usersAPI, settingsAPI } from '../services/api'
 import { MOCK_CARS, MOCK_STATS, MOCK_BOOKINGS } from '../data/mockData'
 import Logo from '../components/common/Logo'
-import { formatPrice, cleanCarName } from '../utils/format'
+import { formatPrice, cleanCarName, formatPhone } from '../utils/format'
 import { API_URL } from '../config'
 
 const fmt = formatPrice
@@ -846,7 +846,7 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td style={{ ...tdStyle, color: '#9ca3af', fontSize: 13 }}>{u.email || '—'}</td>
-                    <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13, fontFamily: 'monospace' }}>{u.phone || '—'}</td>
+                    <td style={{ ...tdStyle, color: '#d1d5db', fontSize: 13, fontFamily: 'monospace' }}>{formatPhone(u.phone) || '—'}</td>
                     <td style={tdStyle}>
                       <span style={{ background: u.role === 'admin' ? 'rgba(124,58,237,0.15)' : 'rgba(59,130,246,0.15)', color: u.role === 'admin' ? '#a78bfa' : '#60a5fa', padding: '3px 8px', borderRadius: 4, fontSize: 12, fontWeight: 700, textTransform: 'capitalize' }}>
                         {u.role || 'user'}
@@ -1089,7 +1089,7 @@ export default function AdminDashboard() {
                 <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Contact Info</div>
                 <div style={{ color: '#fff', fontWeight: 600, fontSize: 13, marginTop: 4 }}>
                   {viewBookingModal.user?.email || viewBookingModal.email || 'N/A'}
-                  {(viewBookingModal.user?.phone || viewBookingModal.phone) ? ` • ${viewBookingModal.user?.phone || viewBookingModal.phone}` : ''}
+                  {(viewBookingModal.user?.phone || viewBookingModal.phone) ? ` • ${formatPhone(viewBookingModal.user?.phone || viewBookingModal.phone)}` : ''}
                 </div>
               </div>
 

@@ -9,7 +9,7 @@ import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
 import { carsAPI, bookingsAPI, settingsAPI, phonepeAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
-import { formatPrice, cleanCarName, getCarImageSrc, CAR_IMAGE_FALLBACK } from '../utils/format'
+import { formatPrice, cleanCarName, getCarImageSrc, CAR_IMAGE_FALLBACK, formatPhone, cleanPhoneDigits, isValidIndianPhone } from '../utils/format'
 import { API_URL, API_BASE } from '../config'
 
 const PAYMENT_METHOD_MAP = { card: 'Credit Card', paypal: 'PayPal', bank: 'Bank Transfer', phonepe_qr: 'PhonePe QR', phonepe_gateway: 'PhonePe Gateway' }
@@ -18,26 +18,33 @@ const calcDays = (a, b) => {
   return diff > 0 ? Math.ceil(diff) : 1
 }
 
-function BookingField({ label, name, value, error, onChange, ...props }) {
+function BookingField({ label, name, value, error, onChange, prefix, ...props }) {
   const [focused, setFocused] = useState(false)
   const shouldReduceMotion = useReducedMotion()
 
   return (
     <div>
       <label htmlFor={name} style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8, cursor: 'text' }}>{label}</label>
-      <motion.input
-        id={name}
-        name={name}
-        value={value ?? ''}
-        onChange={onChange}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        initial={false}
-        animate={shouldReduceMotion ? { borderColor: error ? '#ef4444' : '#374151', boxShadow: 'none' } : { borderColor: error ? '#ef4444' : focused ? '#f87171' : '#374151', boxShadow: focused ? '0 0 0 3px rgba(239,68,68,0.16)' : 'none' }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
-        style={{ width: '100%', background: '#1f2937', border: `1px solid ${error ? '#ef4444' : '#374151'}`, borderRadius: 8, color: '#fff', padding: '10px 14px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
-        {...props}
-      />
+      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+        {prefix && (
+          <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#ef4444', fontWeight: 700, fontSize: 14, pointerEvents: 'none', zIndex: 1 }}>
+            {prefix}
+          </span>
+        )}
+        <motion.input
+          id={name}
+          name={name}
+          value={value ?? ''}
+          onChange={onChange}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          initial={false}
+          animate={shouldReduceMotion ? { borderColor: error ? '#ef4444' : '#374151', boxShadow: 'none' } : { borderColor: error ? '#ef4444' : focused ? '#f87171' : '#374151', boxShadow: focused ? '0 0 0 3px rgba(239,68,68,0.16)' : 'none' }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          style={{ width: '100%', background: '#1f2937', border: `1px solid ${error ? '#ef4444' : '#374151'}`, borderRadius: 8, color: '#fff', padding: `10px 14px 10px ${prefix ? '48px' : '14px'}`, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+          {...props}
+        />
+      </div>
       {error && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{error}</p>}
     </div>
   )
@@ -128,7 +135,7 @@ export default function BookingPage() {
       firstName: user?.name?.split(' ')[0] || '',
       lastName: user?.name?.split(' ').slice(1).join(' ') || '',
       email: user?.email || '',
-      phone: '',
+      phone: user?.phone ? cleanPhoneDigits(user.phone) : '',
       pickupDate: intent.pickupDate || '',
       returnDate: intent.returnDate || '',
       pickupLocation: intent.location || 'Pick up car from Speed Toyz Cars Parking',
@@ -202,6 +209,7 @@ export default function BookingPage() {
     if (!form.lastName) e.lastName = 'Required'
     if (!form.email) e.email = 'Required'
     if (!form.phone) e.phone = 'Required'
+    else if (!isValidIndianPhone(form.phone)) e.phone = 'Must be 10 digits'
     if (!form.pickupDate) e.pickupDate = 'Required'
     if (!form.returnDate) e.returnDate = 'Required'
     if (form.pickupDate && form.returnDate && new Date(form.returnDate) <= new Date(form.pickupDate)) e.returnDate = 'Return must be after pickup'
@@ -230,7 +238,7 @@ export default function BookingPage() {
         `💰 *Total Amount:* ${formatPrice(total)}\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `👤 *Customer Name:* ${form.firstName} ${form.lastName}\n` +
-        `📞 *Phone:* ${form.phone}\n` +
+        `📞 *Phone:* ${formatPhone(form.phone)}\n` +
         `📧 *Email:* ${form.email}\n` +
         `🏠 *Address:* ${form.address}\n` +
         (form.drivingLicenseNumber ? `🪪 *DL No:* ${form.drivingLicenseNumber}\n` : '') +
@@ -373,7 +381,7 @@ export default function BookingPage() {
                   <BookingField label="First Name" name="firstName" value={form.firstName} error={errors.firstName} onChange={e => { setForm(f => ({ ...f, firstName: e.target.value })); setErrors(e2 => ({ ...e2, firstName: '' })) }} placeholder="John" />
                   <BookingField label="Last Name" name="lastName" value={form.lastName} error={errors.lastName} onChange={e => { setForm(f => ({ ...f, lastName: e.target.value })); setErrors(e2 => ({ ...e2, lastName: '' })) }} placeholder="Doe" />
                   <BookingField label="Email Address" name="email" type="email" value={form.email} error={errors.email} onChange={e => { setForm(f => ({ ...f, email: e.target.value })); setErrors(e2 => ({ ...e2, email: '' })) }} placeholder="john@example.com" />
-                  <BookingField label="Phone Number" name="phone" value={form.phone} error={errors.phone} onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setErrors(e2 => ({ ...e2, phone: '' })) }} placeholder="+1 (555) 000-0000" />
+                  <BookingField label="Phone Number" name="phone" prefix="+91" value={form.phone} error={errors.phone} onChange={e => { const val = e.target.value.replace(/\D/g, '').slice(0, 10); setForm(f => ({ ...f, phone: val })); setErrors(e2 => ({ ...e2, phone: '' })) }} placeholder="9861332857" maxLength={10} inputMode="numeric" />
                   <BookingField label="Driving License No. (Optional)" name="drivingLicenseNumber" value={form.drivingLicenseNumber} error={errors.drivingLicenseNumber} onChange={e => { setForm(f => ({ ...f, drivingLicenseNumber: e.target.value })); setErrors(e2 => ({ ...e2, drivingLicenseNumber: '' })) }} placeholder="DL-123456789" />
                   <BookingField label="Aadhaar / ID No. (Optional)" name="aadhaarNumber" value={form.aadhaarNumber} error={errors.aadhaarNumber} onChange={e => { setForm(f => ({ ...f, aadhaarNumber: e.target.value })); setErrors(e2 => ({ ...e2, aadhaarNumber: '' })) }} placeholder="1234 5678 9012" />
                   <div style={{ gridColumn: '1 / -1' }}>

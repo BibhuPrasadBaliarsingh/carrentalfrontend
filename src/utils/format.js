@@ -65,3 +65,34 @@ export const getCarImageSrc = (car, size = 800) => {
 
   return fallback
 }
+
+/**
+ * Strips non-digit characters and ensures phone numbers are max 10 digits (excluding optional 91 prefix).
+ */
+export const cleanPhoneDigits = (phone) => {
+  if (!phone || typeof phone !== 'string') return ''
+  let digits = phone.replace(/\D/g, '')
+  if (digits.length > 10 && digits.startsWith('91')) {
+    digits = digits.slice(2)
+  }
+  return digits.slice(0, 10)
+}
+
+/**
+ * Formats a phone number in standard Indian format: +91 XXXXXXXXXX
+ */
+export const formatPhone = (phone) => {
+  if (!phone) return ''
+  const digits = cleanPhoneDigits(String(phone))
+  if (!digits) return String(phone)
+  return `+91 ${digits}`
+}
+
+/**
+ * Validates whether a given phone string represents a valid 10-digit Indian phone number.
+ */
+export const isValidIndianPhone = (phone) => {
+  const digits = cleanPhoneDigits(String(phone))
+  return digits.length === 10
+}
+

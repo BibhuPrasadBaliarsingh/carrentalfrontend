@@ -131,7 +131,7 @@ export default function Footer() {
             </p>
             <div style={{ display: 'grid', gap: 8, color: '#d1d5db', fontSize: 13, marginBottom: 18 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMapPin size={34} color="#ef4444" /> {locationAddress}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> <a href="tel:+919861332857" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>98613 32857</a>, <a href="tel:+917608068450" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>76080 68450</a></span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiPhone size={14} color="#ef4444" /> <a href="tel:+919861332857" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>+91 9861332857</a>, <a href="tel:+917608068450" style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>+91 7608068450</a></span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> <a href={`mailto:${settings.supportEmail}`} style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>{settings.supportEmail}</a></span>
             </div>
             <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 12 }}>

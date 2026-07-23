@@ -7,14 +7,20 @@ import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
 import { authAPI } from '../services/api'
 import Logo from '../components/common/Logo'
+import { cleanPhoneDigits, isValidIndianPhone } from '../utils/format'
 
-export function AuthInput({ icon, type = 'text', placeholder, value, onChange, error, rightIcon, onRightClick }) {
+export function AuthInput({ icon, type = 'text', placeholder, value, onChange, error, rightIcon, onRightClick, prefix, maxLength, inputMode }) {
   return (
     <div style={{ marginBottom: 16 }}>
-      <div style={{ position: 'relative' }}>
-        <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }}>{icon}</span>
-        <input type={type} placeholder={placeholder} value={value} onChange={onChange}
-          style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: `1px solid ${error ? '#ef4444' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, color: '#fff', padding: '14px 44px 14px 42px', fontSize: 15, outline: 'none', boxSizing: 'border-box', transition: 'all 0.2s' }}
+      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+        <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', zIndex: 1 }}>{icon}</span>
+        {prefix && (
+          <span style={{ position: 'absolute', left: 38, top: '50%', transform: 'translateY(-50%)', color: '#ef4444', fontWeight: 700, fontSize: 14, zIndex: 1, pointerEvents: 'none' }}>
+            {prefix}
+          </span>
+        )}
+        <input type={type} placeholder={placeholder} value={value} onChange={onChange} maxLength={maxLength} inputMode={inputMode}
+          style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: `1px solid ${error ? '#ef4444' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, color: '#fff', padding: `14px 44px 14px ${prefix ? '76px' : '42px'}`, fontSize: 15, outline: 'none', boxSizing: 'border-box', transition: 'all 0.2s' }}
           onFocus={e => { e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.borderColor = error ? '#ef4444' : 'rgba(255,255,255,0.3)' }}
           onBlur={e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = error ? '#ef4444' : 'rgba(255,255,255,0.12)' }}
         />
@@ -268,7 +274,8 @@ export function RegisterPage() {
     if (!form.name) e.name = 'Name is required'
     if (!form.email) e.email = 'Email is required'
     else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Invalid email'
-    if (!form.phone) e.phone = 'Phone is required'
+    if (!form.phone) e.phone = 'Phone number is required'
+    else if (!isValidIndianPhone(form.phone)) e.phone = 'Phone number must be exactly 10 digits'
     if (!form.password) e.password = 'Password is required'
     else if (form.password.length < 6) e.password = 'Min 6 characters'
     if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match'
@@ -281,7 +288,8 @@ export function RegisterPage() {
     if (!validate()) return
     setLoading(true)
     try {
-      const res = await authAPI.register(form)
+      const cleanedForm = { ...form, phone: cleanPhoneDigits(form.phone) }
+      const res = await authAPI.register(cleanedForm)
       login(res.data.user, res.data.token)
       addToast('Account created! Welcome to SPEED TOYZ CARS 🎉', 'success')
       navigate('/')
@@ -317,7 +325,7 @@ export function RegisterPage() {
         <form onSubmit={handleSubmit}>
           <AuthInput icon={<FiUser size={16} />} placeholder="Full Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} error={errors.name} />
           <AuthInput icon={<FiMail size={16} />} type="email" placeholder="Email address" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} error={errors.email} />
-          <AuthInput icon={<FiPhone size={16} />} placeholder="Phone number" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} error={errors.phone} />
+          <AuthInput icon={<FiPhone size={16} />} prefix="+91" placeholder="10-digit mobile number" value={form.phone} onChange={e => { const val = e.target.value.replace(/\D/g, '').slice(0, 10); setForm(f => ({ ...f, phone: val })); setErrors(e2 => ({ ...e2, phone: '' })) }} error={errors.phone} maxLength={10} inputMode="numeric" />
           <AuthInput icon={<FiLock size={16} />} type={showPw ? 'text' : 'password'} placeholder="Password (min 6 chars)" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} error={errors.password}
             rightIcon={showPw ? <FiEyeOff size={16} /> : <FiEye size={16} />} onRightClick={() => setShowPw(!showPw)} />
           <AuthInput icon={<FiLock size={16} />} type="password" placeholder="Confirm Password" value={form.confirmPassword} onChange={e => setForm(f => ({ ...f, confirmPassword: e.target.value }))} error={errors.confirmPassword} />
