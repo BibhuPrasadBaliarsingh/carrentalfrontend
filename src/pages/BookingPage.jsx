@@ -74,15 +74,24 @@ export default function BookingPage() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords
+        const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`
         try {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
           const data = await res.json()
           const displayAddress = data.display_name || `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`
-          setForm(f => ({ ...f, pickupDetails: displayAddress }))
-          addToast('Exact GPS location detected! 📍', 'success')
+          setForm(f => ({
+            ...f,
+            pickupDetails: displayAddress,
+            googleMapsUrl: mapsUrl,
+          }))
+          addToast('Exact GPS location & Google Maps link fetched! 📍', 'success')
         } catch (err) {
-          setForm(f => ({ ...f, pickupDetails: `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}` }))
-          addToast('GPS Coordinates fetched! 📍', 'info')
+          setForm(f => ({
+            ...f,
+            pickupDetails: `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`,
+            googleMapsUrl: mapsUrl,
+          }))
+          addToast('GPS Coordinates & Google Maps link fetched! 📍', 'info')
         } finally {
           setFetchingLocation(false)
         }
@@ -104,9 +113,9 @@ export default function BookingPage() {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
-  const [taxRate, setTaxRate] = useState(0.08)
+  const [taxRate, setTaxRate] = useState(0)
   const [taxAmount, setTaxAmount] = useState(0)
-  const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 8 })
+  const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 0 })
 
   const [form, setForm] = useState(() => {
     let intent = {};
@@ -183,8 +192,9 @@ export default function BookingPage() {
 
   const days = form.pickupDate && form.returnDate ? calcDays(form.pickupDate, form.returnDate) : 1
   const subtotal = days * car.pricePerDay
-  const tax = taxAmount || Math.round(subtotal * taxRate * 100) / 100
-  const total = subtotal + tax
+  const deliveryFee = form.deliveryMode === 'Doorstep' ? 250 : form.deliveryMode === 'Airport' ? 250 : 0
+  const tax = taxAmount || Math.round((subtotal + deliveryFee) * taxRate * 100) / 100
+  const total = subtotal + deliveryFee + tax
 
   const validate = () => {
     const e = {}
@@ -246,6 +256,8 @@ export default function BookingPage() {
       payload.append('pickupDate', form.pickupDate)
       payload.append('returnDate', form.returnDate)
       payload.append('pickupLocation', form.pickupLocation)
+      payload.append('pickupDetails', form.pickupDetails || '')
+      payload.append('googleMapsUrl', form.googleMapsUrl || '')
       payload.append('deliveryMode', form.deliveryMode)
       payload.append('includesInsurance', form.insurance)
       payload.append('paymentMethod', PAYMENT_METHOD_MAP[form.paymentMethod] || 'Bank Transfer')
@@ -265,7 +277,7 @@ export default function BookingPage() {
       const bRef = createdBooking?.bookingRef || createdBooking?._id || ('BK' + Math.floor(100000 + Math.random() * 900000));
 
       setBookingRef(bRef)
-      setTaxRate(Number(res.data?.taxRate || 0.08))
+      setTaxRate(Number(res.data?.taxRate || 0))
       setTaxAmount(Number(res.data?.taxAmount || 0))
       setSuccess(true)
       addToast('Booking confirmed & saved to database! 🎉', 'success')
@@ -321,7 +333,7 @@ export default function BookingPage() {
 
           <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
             <button onClick={() => {
-              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${cleanCarName(car.name)}\nMode: ${form.deliveryMode}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
+              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${cleanCarName(car.name)}\nMode: ${form.deliveryMode}${deliveryFee > 0 ? ` (+${formatPrice(deliveryFee)})` : ''}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\nTotal: ${formatPrice(total)}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
               window.open(`https://wa.me/919861332857?text=${encodeURIComponent(waMessage)}`, '_blank');
             }} style={{ flex: 1, background: '#25D366', border: 'none', color: '#fff', padding: '12px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
               Message on WhatsApp
@@ -401,19 +413,19 @@ export default function BookingPage() {
                       {
                         mode: 'Parking',
                         title: '1. Pick up car from speed toyz cars Parking',
-                        desc: 'Self-service pickup from SpeedToyz main parking garage',
+                        desc: 'Self-service pickup from SpeedToyz main parking garage (Free)',
                         icon: FaParking
                       },
                       {
                         mode: 'Doorstep',
-                        title: '2. Door step deliver',
-                        desc: 'Car delivered directly to your home, office, or hotel address',
+                        title: '2. Door step delivery (BBSR area)',
+                        desc: 'Car delivered directly to your home/office in Bhubaneswar (+₹250 delivery fee)',
                         icon: FaHome
                       },
                       {
                         mode: 'Airport',
                         title: '3. Airport pick up',
-                        desc: 'Handover at Biju Patnaik International Airport arrivals terminal',
+                        desc: 'Handover at Biju Patnaik International Airport arrivals terminal (+₹250 pickup fee)',
                         icon: FaPlane
                       }
                     ].map(opt => {
@@ -503,6 +515,22 @@ export default function BookingPage() {
                           </button>
                         )}
                       </div>
+
+                      {(form.googleMapsUrl || form.pickupDetails) && (
+                        <div style={{ marginTop: 10, background: '#111827', border: '1px solid #374151', borderRadius: 8, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                          <span style={{ color: '#4ade80', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                            📍 Google Maps Pin Link Ready
+                          </span>
+                          <a
+                            href={form.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(form.pickupDetails)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                          >
+                            Open Location on Google Maps 🗺️ ↗
+                          </a>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -602,7 +630,7 @@ export default function BookingPage() {
                       📋 Copy PhonePe UPI ID (Q552469227@ybl)
                     </button>
 
-                    <button
+                    {/* <button
                       type="button"
                       onClick={async () => {
                         setPhonepeLoading(true)
@@ -635,7 +663,7 @@ export default function BookingPage() {
                       }}
                     >
                       {phonepeLoading ? 'Checking PhonePe Server...' : (phonepeVerified ? '✅ Payment Verified' : '🔄 Check / Verify Payment Status')}
-                    </button>
+                    </button> */}
                   </div>
 
                   <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 14, lineHeight: 1.6 }}>
@@ -672,7 +700,11 @@ export default function BookingPage() {
                   ['Duration', `${days} day${days > 1 ? 's' : ''}`],
                   ['Daily Rate', `${formatPrice(car.pricePerDay)}/day`],
                   ['Subtotal', formatPrice(subtotal)],
-                  [`Tax (${Math.round(taxRate * 100)}%)`, formatPrice(tax)],
+                  deliveryFee > 0 && [
+                    form.deliveryMode === 'Doorstep' ? 'Doorstep Delivery (BBSR)' : 'Airport Pickup Fee',
+                    formatPrice(deliveryFee)
+                  ],
+                  taxRate > 0 && [`Tax (${Math.round(taxRate * 100)}%)`, formatPrice(tax)],
                 ].filter(Boolean).map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
                     <span style={{ color: '#6b7280' }}>{k}</span>

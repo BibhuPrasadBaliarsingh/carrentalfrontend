@@ -45,7 +45,7 @@ export default function AdminDashboard() {
     platformName: 'SpeedToyz',
     supportEmail: 'support@speedtoyz.com',
     currency: 'INR (₹)',
-    taxRate: 8,
+    taxRate: 0,
     brands: ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren'],
     categories: ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar', 'Convertible', 'Sedan'],
   })
@@ -1126,7 +1126,50 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {viewBookingModal.address && (
+              {(viewBookingModal.pickupDetails || viewBookingModal.googleMapsUrl || viewBookingModal.address || viewBookingModal.pickupLocation) && (
+                <div style={{ gridColumn: '1 / -1', background: '#1e1b4b', border: '1px solid #4338ca', borderRadius: 10, padding: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                    <div>
+                      <div style={{ color: '#818cf8', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                        📍 Doorstep GPS / Delivery Location & Map Link
+                      </div>
+                      <div style={{ color: '#fff', fontSize: 13, marginTop: 4, whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                        {viewBookingModal.pickupDetails || viewBookingModal.pickupLocation || viewBookingModal.address}
+                      </div>
+                    </div>
+
+                    {(() => {
+                      const mapUrl = viewBookingModal.googleMapsUrl ||
+                        (viewBookingModal.pickupDetails?.includes('http') ? viewBookingModal.pickupDetails.match(/(https?:\/\/[^\s]+)/)?.[0] : null) ||
+                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(viewBookingModal.pickupDetails || viewBookingModal.address || viewBookingModal.pickupLocation || 'Bhubaneswar')}`;
+                      return (
+                        <a
+                          href={mapUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            background: '#ef4444',
+                            color: '#fff',
+                            padding: '9px 16px',
+                            borderRadius: 8,
+                            fontSize: 13,
+                            fontWeight: 700,
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            boxShadow: '0 4px 12px rgba(239,68,68,0.3)',
+                          }}
+                        >
+                          🗺️ Open Location in Google Maps ↗
+                        </a>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {viewBookingModal.address && !viewBookingModal.pickupDetails && (
                 <div style={{ gridColumn: '1 / -1', background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 14 }}>
                   <div style={{ color: '#6b7280', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Customer Address</div>
                   <div style={{ color: '#d1d5db', fontSize: 13, marginTop: 4 }}>{viewBookingModal.address}</div>
