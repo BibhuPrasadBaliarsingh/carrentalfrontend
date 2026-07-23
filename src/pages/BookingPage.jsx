@@ -539,20 +539,20 @@ export default function BookingPage() {
                       alt="PhonePe QR Scanner Speed toy Terminal 1-Q552469227"
                       style={{ width: '100%', height: 'auto', display: 'block' }}
                       onError={(e) => {
-                        e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi://pay?pa=9861332857@ybl&pn=Speed%20toy&tr=Terminal1-Q552469227&am=${total}&cu=INR`
+                        e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=upi://pay?pa=Q552469227@ybl&pn=Speed%20toy&tr=Terminal1-Q552469227&am=${total}&cu=INR`
                       }}
                     />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 360, margin: '0 auto' }}>
                     <a
-                      href={`upi://pay?pa=9861332857@ybl&pn=${encodeURIComponent('Speed toy')}&tr=Terminal1-Q552469227&am=${total}&cu=INR&tn=${encodeURIComponent('Car Rental Payment')}`}
+                      href={`upi://pay?pa=Q552469227@ybl&pn=${encodeURIComponent('Speed toy')}&tr=Terminal1-Q552469227&am=${total}&cu=INR&tn=${encodeURIComponent('Car Rental Payment')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => {
                         try {
-                          navigator.clipboard.writeText('9861332857@ybl')
-                          addToast('PhonePe UPI ID (9861332857@ybl) copied to clipboard! 📋', 'info')
+                          navigator.clipboard.writeText('Q552469227@ybl')
+                          addToast('PhonePe UPI ID (Q552469227@ybl) copied to clipboard! 📋', 'info')
                         } catch (e) {}
                       }}
                       style={{
@@ -578,10 +578,10 @@ export default function BookingPage() {
                       type="button"
                       onClick={() => {
                         try {
-                          navigator.clipboard.writeText('9861332857@ybl')
-                          addToast('UPI ID (9861332857@ybl) copied! Open PhonePe & paste to pay. 📋', 'success')
+                          navigator.clipboard.writeText('Q552469227@ybl')
+                          addToast('UPI ID (Q552469227@ybl) copied! Open PhonePe & paste to pay. 📋', 'success')
                         } catch (e) {
-                          addToast('UPI ID: 9861332857@ybl', 'info')
+                          addToast('UPI ID: Q552469227@ybl', 'info')
                         }
                       }}
                       style={{
@@ -599,7 +599,7 @@ export default function BookingPage() {
                         gap: 6,
                       }}
                     >
-                      📋 Copy PhonePe UPI ID (9861332857@ybl)
+                      📋 Copy PhonePe UPI ID (Q552469227@ybl)
                     </button>
 
                     <button
@@ -639,7 +639,7 @@ export default function BookingPage() {
                   </div>
 
                   <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 14, lineHeight: 1.6 }}>
-                    PhonePe UPI ID: <strong style={{ color: '#fff' }}>9861332857@ybl</strong> • Terminal ID: <strong style={{ color: '#fff' }}>Terminal 1-Q552469227</strong>
+                    PhonePe UPI ID: <strong style={{ color: '#fff' }}>Q552469227@ybl</strong> • Terminal ID: <strong style={{ color: '#fff' }}>Terminal 1-Q552469227</strong>
                   </div>
                 </div>
 
