@@ -195,7 +195,7 @@ export default function Footer() {
             {[
               ['Privacy Policy', '/privacy'],
               ['Terms of Service', '/terms'],
-              ['Cookie Policy', '/privacy'],
+              ['Cookie Policy', '/cookies'],
             ].map(([t, to]) => (
               <Link key={t} to={to} style={{ color: '#6b7280', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}
                 onMouseEnter={e => e.target.style.color = '#9ca3af'}

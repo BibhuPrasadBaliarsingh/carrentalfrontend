@@ -14,7 +14,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import { LoginPage, RegisterPage, ForgotPasswordPage } from './pages/AuthPages'
 import AccountPage from './pages/AccountPage'
 import ContactPage from './pages/ContactPage'
-import { TermsPage, PrivacyPage } from './pages/InfoPages'
+import { TermsPage, PrivacyPage, CookiePage } from './pages/InfoPages'
 import NotFoundPage from './pages/NotFoundPage'
 
 function PageTransition({ children }) {
@@ -48,6 +48,8 @@ export default function App() {
               <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
               <Route path="/terms" element={<PageTransition><TermsPage /></PageTransition>} />
               <Route path="/privacy" element={<PageTransition><PrivacyPage /></PageTransition>} />
+              <Route path="/cookies" element={<PageTransition><CookiePage /></PageTransition>} />
+              <Route path="/cookie-policy" element={<PageTransition><CookiePage /></PageTransition>} />
 
               <Route path="/account" element={
                 <PageTransition><ProtectedRoute><AccountPage /></ProtectedRoute></PageTransition>

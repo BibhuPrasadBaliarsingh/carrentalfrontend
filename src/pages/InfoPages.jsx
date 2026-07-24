@@ -31,7 +31,32 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>3. Vehicle Condition & Inspection</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>3. Kilometer Limits & Driving Range</h2>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>Each rental package includes a specified driving kilometer limit based on duration:</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginTop: 12, marginBottom: 12 }}>
+            <div style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 12, padding: '14px 18px' }}>
+              <div style={{ color: '#ef4444', fontWeight: 800, fontSize: 15 }}>⏱️ 6 Hours Rental</div>
+              <div style={{ color: '#fff', fontSize: 22, fontWeight: 900, marginTop: 4 }}>150 km</div>
+              <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 2 }}>Included Distance Range</div>
+            </div>
+            <div style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 12, padding: '14px 18px' }}>
+              <div style={{ color: '#ef4444', fontWeight: 800, fontSize: 15 }}>⏱️ 12 Hours Rental</div>
+              <div style={{ color: '#fff', fontSize: 22, fontWeight: 900, marginTop: 4 }}>200 km</div>
+              <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 2 }}>Included Distance Range</div>
+            </div>
+            <div style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 12, padding: '14px 18px' }}>
+              <div style={{ color: '#ef4444', fontWeight: 800, fontSize: 15 }}>⏱️ 24 Hours (1 Day)</div>
+              <div style={{ color: '#fff', fontSize: 22, fontWeight: 900, marginTop: 4 }}>300 km</div>
+              <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 2 }}>Included Distance Range</div>
+            </div>
+          </div>
+          <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.6, margin: 0 }}>
+            ℹ️ Any extra kilometers driven beyond the assigned range limit will incur standard per-kilometer excess charges upon vehicle return.
+          </p>
+        </section>
+
+        <section style={{ marginBottom: 28 }}>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>4. Vehicle Condition & Inspection</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>Before rental:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>All vehicles are inspected and cleaned</li>
@@ -42,7 +67,7 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>4. Customer Responsibilities</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>5. Customer Responsibilities</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>During the rental period, you are responsible for:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>Safe and lawful operation of the vehicle</li>
@@ -55,12 +80,12 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>5. Late Return & Extra Charges</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>6. Late Return & Extra Charges</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>Late returns will be charged at ₹500 per hour or part thereof. Excessive delays may result in additional charges or legal action. Fuel charges, toll fees, parking charges, and traffic violations are the customer's responsibility.</p>
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>6. Damage & Liability</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>7. Damage & Liability</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>Customers are liable for:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>All damages caused by negligence or misuse</li>
@@ -72,12 +97,12 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>7. Insurance & Security Deposit</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>8. Insurance & Security Deposit</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>A security deposit is required at the time of booking. Comprehensive insurance is included; however, the customer is liable for the deductible amount (typically ₹5,000-₹10,000) in case of accidents or damage. Deposit refunds are processed within 7-10 business days after vehicle return and inspection.</p>
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>8. Cancellation & Refund Policy</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>9. Cancellation & Refund Policy</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>Cancellation terms:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>Cancelled 48+ hours before rental: Full refund</li>
@@ -88,7 +113,7 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>9. Prohibited Activities</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>10. Prohibited Activities</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>Customers must not:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>Drive under the influence of alcohol or drugs</li>
@@ -101,12 +126,12 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>10. Traffic Violations & Legal Issues</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>11. Traffic Violations & Legal Issues</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>Customers are responsible for all traffic violations, fines, and legal issues incurred during the rental period. Speed Toyz Cars will assist in forwarding violation notices; however, the customer must settle all penalties. Failure to comply may result in legal action.</p>
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>11. Accident & Emergency Procedures</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>12. Accident & Emergency Procedures</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>In case of an accident or emergency:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>Contact our emergency hotline immediately</li>
@@ -118,17 +143,17 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>12. Limitation of Liability</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>13. Limitation of Liability</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>Speed Toyz Cars shall not be liable for personal injuries, loss of belongings, or indirect damages. The company's liability is limited to the rental amount paid. Customers use the vehicles at their own risk and assume all associated liabilities.</p>
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>13. Dispute Resolution</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>14. Dispute Resolution</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>Any disputes arising from this agreement shall be resolved through mutual discussion. If unresolved, the matter will be subject to the jurisdiction of courts in Bhubaneswar, Odisha.</p>
         </section>
 
         <section>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>14. Contact & Support</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>15. Contact & Support</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 8 }}>For any questions or concerns regarding these terms, please contact us:</p>
           <p style={{ color: '#d1d5db', margin: 0 }}>
             <strong>Email:</strong> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none' }}>speedtoyzcarsodisha@gmail.com</a><br/>
@@ -211,6 +236,55 @@ export function PrivacyPage() {
         <section>
           <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>8. Contact Us</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>For privacy-related inquiries or to exercise your rights, please contact us at:</p>
+          <p style={{ color: '#d1d5db', marginTop: 8 }}>
+            <strong>Email:</strong> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none' }}>speedtoyzcarsodisha@gmail.com</a><br/>
+            <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 9861332857</a>
+          </p>
+        </section>
+      </div>
+    </div>
+  )
+}
+
+export function CookiePage() {
+  const { setIsPageLoading } = useLoader()
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
+
+  return (
+    <div style={{ minHeight: '70vh', padding: '40px 24px', background: '#0a0a0a', color: '#fff' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 28 }}>
+        <h1 style={{ marginTop: 0 }}>Cookie Policy</h1>
+
+        <section style={{ marginBottom: 28 }}>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>1. What Are Cookies</h2>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7, margin: 0 }}>
+            Cookies are small text files stored on your computer or mobile device when you visit Speed Toyz Cars website. They help us make your browsing experience smoother, remember your preferences, and enable core platform functionality.
+          </p>
+        </section>
+
+        <section style={{ marginBottom: 28 }}>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>2. How We Use Cookies</h2>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>We use cookies for the following purposes:</p>
+          <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8 }}>
+            <li><strong>Essential Cookies:</strong> Required to authenticate users, prevent fraud, and handle car rental bookings securely.</li>
+            <li><strong>Preference Cookies:</strong> Remember your vehicle search preferences, location filters, and currency settings.</li>
+            <li><strong>Analytics Cookies:</strong> Help us measure website performance and visitor traffic to improve our services.</li>
+          </ul>
+        </section>
+
+        <section style={{ marginBottom: 28 }}>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>3. Managing Cookies</h2>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>
+            You can choose to accept or decline cookies through your web browser settings. Most browsers automatically accept cookies, but you can modify your settings to decline cookies if you prefer. Note that disabling essential cookies may prevent certain features of our booking platform from functioning properly.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>4. Contact Us</h2>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>If you have any questions regarding our Cookie Policy, please contact us:</p>
           <p style={{ color: '#d1d5db', marginTop: 8 }}>
             <strong>Email:</strong> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none' }}>speedtoyzcarsodisha@gmail.com</a><br/>
             <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 9861332857</a>

@@ -94,7 +94,6 @@ export default function CarDetailPage() {
     'Full insurance coverage',
     'GPS navigation system',
     '24/7 roadside assistance',
-    'Unlimited mileage',
     'Airport pickup & drop',
     'Complimentary car wash',
   ]

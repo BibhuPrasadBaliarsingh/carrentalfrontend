@@ -37,9 +37,10 @@ export function CarCardSkeleton() {
 
 // ── Badge ─────────────────────────────────────────────────────────────────────
 export function Badge({ children, color = '#ef4444', textColor = '#fff' }) {
+  const text = typeof children === 'string' && children.toUpperCase() === 'STANDARD' ? 'SEDAN' : children
   return (
     <span style={{ background: color, color: textColor, fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 4, letterSpacing: 1, textTransform: 'uppercase', display: 'inline-block' }}>
-      {children}
+      {text}
     </span>
   )
 }
