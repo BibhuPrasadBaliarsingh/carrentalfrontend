@@ -19,7 +19,19 @@ export function TermsPage() {
         </section>
 
         <section style={{ marginBottom: 28 }}>
-          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>2. Rental Agreement & Payment</h2>
+          <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>2. Advance Booking Payment & Charges</h2>
+          <div style={{ background: '#1f2937', border: '1px solid #ef4444', borderRadius: 12, padding: 18, marginBottom: 16 }}>
+            <ul style={{ color: '#d1d5db', lineHeight: 1.8, margin: 0, paddingLeft: 20 }}>
+              <li><strong>Advance Booking Amount:</strong> ₹200 (mandatory to confirm your booking).</li>
+              <li>The ₹200 advance payment will be adjusted towards your total rental amount at the time of final payment.</li>
+              <li>Doorstep Delivery or Airport Pickup is available at an additional charge of ₹250.</li>
+              <li>The ₹250 delivery/pickup charge is not included in the online advance payment and will not be charged during booking.</li>
+              <li>If you choose either of these services, the ₹250 charge will be collected at the time of vehicle handover.</li>
+            </ul>
+            <div style={{ marginTop: 12, color: '#fde047', fontSize: 13, background: 'rgba(234, 179, 8, 0.1)', padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(234, 179, 8, 0.25)', lineHeight: 1.5 }}>
+              💡 <strong>Note:</strong> The ₹200 advance payment secures your booking and is deducted from your final rental bill. Delivery or airport pickup charges, if applicable, are payable separately during vehicle handover.
+            </div>
+          </div>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>By booking with Speed Toyz Cars, you agree to:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>Pay the full rental amount as per the agreed rate</li>

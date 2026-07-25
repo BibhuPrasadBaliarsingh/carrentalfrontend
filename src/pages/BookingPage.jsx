@@ -211,8 +211,8 @@ export default function BookingPage() {
   const deliveryFee = form.deliveryMode === 'Doorstep' ? 250 : form.deliveryMode === 'Airport' ? 250 : 0
   const tax = taxAmount || Math.round((rentalSubtotal + deliveryFee) * taxRate * 100) / 100
   const total = rentalSubtotal + deliveryFee + tax
-  const bookingAdvance = 500
-  const payNowAmount = bookingAdvance + deliveryFee
+  const bookingAdvance = 200
+  const payNowAmount = bookingAdvance
   const remainingAmount = Math.max(0, total - payNowAmount)
 
   const validate = () => {
@@ -251,8 +251,9 @@ export default function BookingPage() {
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         (discountAmount > 0 ? `🎁 *Discount Applied:* ${discountRate * 100}% (-${formatPrice(discountAmount)})\n` : '') +
         `💰 *Total Rental Cost:* ${formatPrice(total)}\n` +
-        `✅ *Booking Advance Paid Now:* ${formatPrice(payNowAmount)}\n` +
-        `💵 *Remaining Due at Pickup/Delivery:* ${formatPrice(remainingAmount)}\n` +
+        `✅ *Advance Booking Paid Online:* ${formatPrice(payNowAmount)} (Deducted from final bill)\n` +
+        (deliveryFee > 0 ? `🚚 *${form.deliveryMode} Delivery Charge:* ${formatPrice(deliveryFee)} (Payable at vehicle handover)\n` : '') +
+        `💵 *Remaining Due at Vehicle Handover:* ${formatPrice(remainingAmount)}\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `👤 *Customer Name:* ${form.firstName} ${form.lastName}\n` +
         `📞 *Phone:* ${formatPhone(form.phone)}\n` +
@@ -580,35 +581,37 @@ export default function BookingPage() {
                 {/* Booking Payment Banner */}
                 <div style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(95,37,159,0.18) 100%)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 14, padding: 20 }}>
                   <div style={{ color: '#fff', fontSize: 16, fontWeight: 800, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    💳 Booking Payment
+                    💳 Advance Booking Payment
                   </div>
                   <p style={{ color: '#d1d5db', fontSize: 14, margin: '0 0 14px', lineHeight: 1.5 }}>
-                    Pay only the booking amount to reserve your car.
+                    Advance booking amount is <strong>₹200</strong> (mandatory to confirm your booking).
                   </p>
 
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 10, marginBottom: 14 }}>
                     <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: '12px 14px', fontSize: 13, color: '#fff' }}>
-                      ✅ <strong style={{ color: '#4ade80' }}>Booking Advance:</strong> ₹500
+                      ✅ <strong style={{ color: '#4ade80' }}>Advance Payment:</strong> ₹200 <span style={{ fontSize: 11, color: '#9ca3af' }}>(Mandatory)</span>
                     </div>
                     <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: '12px 14px', fontSize: 13, color: '#fff' }}>
-                      🚚 <strong style={{ color: form.deliveryMode === 'Doorstep' || form.deliveryMode === 'Airport' ? '#3b82f6' : '#9ca3af' }}>Doorstep Delivery:</strong> ₹250 <span style={{ fontSize: 11, color: '#9ca3af' }}>(Only if selected)</span>
+                      🚚 <strong style={{ color: form.deliveryMode === 'Doorstep' || form.deliveryMode === 'Airport' ? '#3b82f6' : '#9ca3af' }}>Delivery/Pickup:</strong> ₹250 <span style={{ fontSize: 11, color: '#9ca3af' }}>(Payable at Handover)</span>
                     </div>
                   </div>
 
                   <div style={{ background: '#1f2937', border: '1px solid #ef4444', borderRadius: 10, padding: 14, marginBottom: 12 }}>
-                    <div style={{ color: '#f87171', fontWeight: 800, fontSize: 13, marginBottom: 6 }}>💰 Pay Now:</div>
-                    <ul style={{ margin: 0, paddingLeft: 20, color: '#fff', fontSize: 13, lineHeight: 1.7 }}>
-                      <li style={{ fontWeight: deliveryFee === 0 ? 800 : 400, color: deliveryFee === 0 ? '#4ade80' : '#d1d5db' }}>
-                        <strong>₹500</strong> (Without Delivery) {deliveryFee === 0 && '← Current Selection'}
-                      </li>
-                      <li style={{ fontWeight: deliveryFee > 0 ? 800 : 400, color: deliveryFee > 0 ? '#4ade80' : '#d1d5db' }}>
-                        <strong>₹750</strong> (With Doorstep Delivery) {deliveryFee > 0 && '← Current Selection'}
-                      </li>
-                    </ul>
+                    <div style={{ color: '#f87171', fontWeight: 800, fontSize: 13, marginBottom: 4 }}>💰 Online Advance Pay Now:</div>
+                    <div style={{ color: '#4ade80', fontSize: 24, fontWeight: 900 }}>₹200</div>
+                    <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 4 }}>
+                      The ₹200 advance payment secures your booking and will be adjusted towards your total rental amount at the time of final payment.
+                    </div>
                   </div>
 
+                  {deliveryFee > 0 && (
+                    <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 10, padding: '10px 14px', marginBottom: 12, color: '#93c5fd', fontSize: 12, lineHeight: 1.5 }}>
+                      ℹ️ <strong>Doorstep Delivery / Airport Pickup (₹250):</strong> This charge is <strong>not included</strong> in the online advance payment and will not be charged during booking. The ₹250 charge will be collected at the time of vehicle handover.
+                    </div>
+                  )}
+
                   <div style={{ color: '#9ca3af', fontSize: 12, lineHeight: 1.5, background: 'rgba(0,0,0,0.3)', padding: '10px 12px', borderRadius: 8, border: '1px solid #374151' }}>
-                    ℹ️ The remaining rental amount (<strong style={{ color: '#fde047' }}>{formatPrice(remainingAmount)}</strong>) will be collected at the time of vehicle pickup or delivery.
+                    📌 <strong>Remaining Balance:</strong> <strong style={{ color: '#fde047' }}>{formatPrice(remainingAmount)}</strong> will be collected at the time of vehicle handover.
                   </div>
                 </div>
 
