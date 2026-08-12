@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Disallow private user, booking, and admin paths
+Disallow: /dashboard/
+Disallow: /account/
+Disallow: /my-bookings/
+Disallow: /booking/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /api/
+
+Sitemap: https://speedtoyzcars.com/sitemap.xml

@@ -12,9 +12,16 @@ import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { useLoader } from '../context/LoaderContext.jsx'
 import { useHeroAnimation } from '../hooks/useHeroAnimation.js'
+import { useSeoHead } from '../hooks/useSeoHead.js'
 import { cleanCarName } from '../utils/format'
 
 export default function HomePage() {
+  useSeoHead({
+    title: 'SpeedToyz — Premium & Luxury Self Drive Car Rental',
+    description: 'Rent premium and luxury self-drive cars with SpeedToyz in Bhubaneswar. Book SUVs, sedans, & hatchbacks with instant delivery and 24/7 support across Odisha.',
+    path: '/'
+  })
+
   const navigate = useNavigate()
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
@@ -527,7 +534,7 @@ export default function HomePage() {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 18 }}>
           {seoHighlights.map(item => (
             <article key={item.heading} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: isMobile ? 18 : 22 }}>
-              <h4 style={{ color: '#fff', fontSize: isMobile ? 15 : 18, fontWeight: 700, marginBottom: 8 }}>{item.heading}</h4>
+              <h3 style={{ color: '#fff', fontSize: isMobile ? 15 : 18, fontWeight: 700, marginBottom: 8 }}>{item.heading}</h3>
               <p style={{ color: '#cbd5e1', fontSize: isMobile ? 13 : 14, lineHeight: 1.7, margin: 0 }}>{item.detail}</p>
             </article>
           ))}

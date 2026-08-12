@@ -2,9 +2,16 @@ import { useState, useEffect } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useToast } from '../context/ToastContext'
 import { useLoader } from '../context/LoaderContext'
+import { useSeoHead } from '../hooks/useSeoHead'
 import { contactAPI, settingsAPI } from '../services/api'
 
 export default function ContactPage() {
+  useSeoHead({
+    title: 'Contact SpeedToyz — Car Rental Support',
+    description: 'Get in touch with SpeedToyz in Bhubaneswar. Contact us for booking assistance, doorstep delivery, and 24/7 customer support.',
+    path: '/contact'
+  })
+
   const { addToast } = useToast()
   const { setIsPageLoading } = useLoader()
   const shouldReduceMotion = useReducedMotion()

@@ -5,6 +5,7 @@ import CarCard from '../components/CarCard'
 import { CarCardSkeleton, EmptyState } from '../components/UI'
 import { carsAPI, siteAPI } from '../services/api'
 import { useLoader } from '../context/LoaderContext'
+import { useSeoHead } from '../hooks/useSeoHead'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice, cleanCarName } from '../utils/format'
 
@@ -13,6 +14,12 @@ const DEFAULT_CATEGORIES = ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar']
 const FUELS = ['Petrol', 'Hybrid', 'Electric', 'Diesel']
 
 export default function BrowsePage() {
+  useSeoHead({
+    title: 'Browse Self Drive & Luxury Cars',
+    description: 'Explore and book our full fleet of self-drive SUVs, luxury sedans, hatchbacks, and sports cars in Bhubaneswar.',
+    path: '/cars'
+  })
+
   const { setIsPageLoading } = useLoader()
   const [searchParams, setSearchParams] = useSearchParams()
   const [cars, setCars] = useState([])
