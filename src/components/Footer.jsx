@@ -4,7 +4,7 @@ import { FiInstagram, FiFacebook, FiMapPin, FiPhone, FiMail, FiSend } from 'reac
 import { FaWhatsapp } from 'react-icons/fa'
 import Logo from './common/Logo'
 import { useToast } from '../context/ToastContext'
-import { newsletterAPI, settingsAPI } from '../services/api'
+import { newsletterAPI, settingsAPI, siteAPI, carsAPI } from '../services/api'
 import { formatPrice } from '../utils/format'
 import { API_BASE } from '../config'
 
@@ -14,6 +14,7 @@ export default function Footer() {
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [subscribing, setSubscribing] = useState(false)
   const [settings, setSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)' })
+  const [categories, setCategories] = useState([])
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -22,17 +23,62 @@ export default function Footer() {
   }, [])
 
   useEffect(() => {
-    const fetchSettings = async () => {
+    const fetchFooterData = async () => {
       try {
-        const res = await settingsAPI.getPublic()
-        const data = res.data
-        if (data?.success) setSettings(data.settings || settings)
-      } catch {
+        const [settingsRes, filtersRes, carsRes] = await Promise.allSettled([
+          settingsAPI.getPublic(),
+          siteAPI.filters(),
+          carsAPI.getAll(),
+        ])
+
+        if (settingsRes.status === 'fulfilled' && settingsRes.value.data?.success) {
+          setSettings(settingsRes.value.data.settings || settings)
+        }
+
+        let catList = []
+        if (filtersRes.status === 'fulfilled' && filtersRes.value.data?.categories) {
+          catList = [...filtersRes.value.data.categories]
+        }
+        if (carsRes.status === 'fulfilled' && carsRes.value.data?.cars) {
+          const carsArr = carsRes.value.data.cars || []
+          const carCats = carsArr.map(c => c.category).filter(Boolean)
+          catList = [...new Set([...catList, ...carCats])]
+        }
+
+        if (catList.length > 0) {
+          setCategories(catList)
+        }
+      } catch (err) {
         // keep defaults
       }
     }
-    fetchSettings()
+    fetchFooterData()
   }, [])
+
+  const formatCategoryLabel = (cat) => {
+    if (!cat) return ''
+    const upper = String(cat).trim().toUpperCase()
+    if (upper === 'SUV' || upper === 'MUV') return upper
+    if (upper === 'SEDAN') return 'Sedan'
+    if (upper === 'HATCHBACK') return 'Hatchback'
+    if (upper === 'SPORTS') return 'Sports Cars'
+    if (upper === 'SUPERCAR' || upper === 'SUPERCARS') return 'Supercars'
+    return cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()
+  }
+
+  const rawCategories = categories.length > 0 
+    ? categories 
+    : ['Sports', 'Luxury', 'SUV', 'Electric', 'Supercar', 'Sedan', 'Hatchback']
+
+  const categoryMap = new Map()
+  rawCategories.forEach(cat => {
+    if (!cat) return
+    const label = formatCategoryLabel(cat)
+    if (!categoryMap.has(label)) {
+      categoryMap.set(label, { label, to: `/cars?category=${encodeURIComponent(cat)}` })
+    }
+  })
+  const categoryLinks = Array.from(categoryMap.values())
 
   const links = {
     'Quick Links': [
@@ -41,13 +87,7 @@ export default function Footer() {
       { label: 'About Us', to: '/about' },
       { label: 'Contact', to: '/contact' },
     ],
-    'Categories': [
-      { label: 'Sports Cars', to: '/cars?category=Sports' },
-      { label: 'Luxury', to: '/cars?category=Luxury' },
-      { label: 'SUV', to: '/cars?category=SUV' },
-      { label: 'Electric', to: '/cars?category=Electric' },
-      { label: 'Supercars', to: '/cars?category=Supercar' },
-    ],
+    'Categories': categoryLinks,
     'Support': [
       { label: 'FAQ', to: '/faq' },
       { label: 'Help Center', to: '/help' },

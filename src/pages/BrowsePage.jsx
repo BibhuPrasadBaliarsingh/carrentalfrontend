@@ -116,15 +116,22 @@ export default function BrowsePage() {
     fetchCars()
   }, [])
 
+  useEffect(() => {
+    const catFromUrl = searchParams.get('category')
+    if (catFromUrl !== null && catFromUrl !== filters.category) {
+      setFilters(prev => ({ ...prev, category: catFromUrl }))
+    }
+  }, [searchParams])
+
   const resetFilters = () => setFilters({ brand: '', category: '', fuel: '', minPrice: 0, maxPrice: maxPriceLimit, transmission: '', available: true })
 
   const filtered = cars.filter(c => {
     if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !c.brand.toLowerCase().includes(search.toLowerCase())) return false
-    if (filters.brand && c.brand !== filters.brand) return false
-    if (filters.category && c.category !== filters.category) return false
-    if (filters.fuel && (c.fuelType || c.fuel) !== filters.fuel) return false
+    if (filters.brand && c.brand?.toLowerCase() !== filters.brand?.toLowerCase()) return false
+    if (filters.category && c.category?.toLowerCase() !== filters.category?.toLowerCase()) return false
+    if (filters.fuel && (c.fuelType || c.fuel)?.toLowerCase() !== filters.fuel?.toLowerCase()) return false
     if (c.pricePerDay < filters.minPrice || c.pricePerDay > filters.maxPrice) return false
-    if (filters.transmission && c.transmission !== filters.transmission) return false
+    if (filters.transmission && c.transmission?.toLowerCase() !== filters.transmission?.toLowerCase()) return false
     return true
   }).sort((a, b) => {
     if (sort === 'price-asc') return a.pricePerDay - b.pricePerDay
