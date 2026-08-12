@@ -17,8 +17,8 @@ import { cleanCarName } from '../utils/format'
 
 export default function HomePage() {
   useSeoHead({
-    title: 'SpeedToyz — Premium & Luxury Self Drive Car Rental',
-    description: 'Rent premium and luxury self-drive cars with SpeedToyz in Bhubaneswar. Book SUVs, sedans, & hatchbacks with instant delivery and 24/7 support across Odisha.',
+    title: 'Car Rental Near Me in Bhubaneswar — SpeedToyz Self Drive & Luxury Cars',
+    description: 'Looking for a top-rated car rental near me in Bhubaneswar? SpeedToyz provides premium self-drive SUVs, sedans & hatchbacks with 24/7 doorstep delivery & airport pickup across Odisha.',
     path: '/'
   })
 
