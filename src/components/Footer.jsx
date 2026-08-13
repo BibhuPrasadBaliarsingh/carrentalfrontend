@@ -87,12 +87,17 @@ export default function Footer() {
       { label: 'About Us', to: '/about' },
       { label: 'Contact', to: '/contact' },
     ],
-    'Categories': categoryLinks,
+    'Services': [
+      { label: 'Self Drive Car Rental', to: '/self-drive-car-rental-bhubaneswar' },
+      { label: 'Car Rental With Driver', to: '/car-rental-with-driver-bhubaneswar' },
+      { label: 'Bhubaneswar Airport Rental', to: '/car-rental-bhubaneswar-airport' },
+      { label: 'Automatic Car Rental', to: '/automatic-car-rental-bhubaneswar' },
+      { label: 'Wedding Car Rental', to: '/wedding-car-rental-bhubaneswar' },
+    ],
     'Support': [
-      { label: 'FAQ', to: '/faq' },
-      { label: 'Help Center', to: '/help' },
       { label: 'Privacy Policy', to: '/privacy' },
       { label: 'Terms of Service', to: '/terms' },
+      { label: 'Cookie Policy', to: '/cookie-policy' },
     ],
   }
 

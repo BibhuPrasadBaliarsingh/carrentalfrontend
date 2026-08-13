@@ -5,6 +5,7 @@ import { FiZap, FiUsers, FiSettings, FiCalendar, FiShield, FiMapPin, FiArrowLeft
 import { Badge, StarRating, PageLoader } from '../components/UI'
 import { useAuth } from '../context/AuthContext'
 import { useLoader } from '../context/LoaderContext'
+import { useSeoHead } from '../hooks/useSeoHead'
 import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice, cleanCarName } from '../utils/format'
@@ -58,6 +59,44 @@ export default function CarDetailPage() {
     fetchCar()
     window.scrollTo(0, 0)
   }, [id])
+
+  const carCleanName = car ? cleanCarName(car.name) : ''
+  const seoTitle = car ? `${carCleanName} Self Drive Rental in Bhubaneswar | SpeedToyzCars` : 'Car Rental in Bhubaneswar'
+  const seoDesc = car ? `Rent ${carCleanName} (${car.transmission || 'Automatic'}, ${car.fuelType || car.fuel || 'Petrol'}) in Bhubaneswar at ${formatPrice(car.pricePerDay)}/day. Insured, clean vehicles & doorstep delivery.` : 'Book self drive car rental in Bhubaneswar.'
+  const carImages = car ? resolveCarImages(car.images) : []
+  const primaryImg = carImages.length > 0 ? (carImages[0].startsWith('http') || carImages[0].startsWith('/images') ? carImages[0] : `${API_URL}/uploads/${carImages[0]}`) : DEFAULT_CAR_IMAGE
+
+  const vehicleSchema = car ? {
+    '@context': 'https://schema.org',
+    '@type': 'Vehicle',
+    'name': carCleanName,
+    'brand': { '@type': 'Brand', 'name': car.brand || 'SpeedToyzCars' },
+    'description': car.description || `${carCleanName} self drive car rental in Bhubaneswar`,
+    'image': primaryImg.startsWith('http') ? primaryImg : `https://speedtoyzcars.com${primaryImg}`,
+    'vehicleConfiguration': car.transmission || 'Automatic',
+    'fuelType': car.fuelType || car.fuel || 'Petrol',
+    'vehicleSeatingCapacity': car.seats || 5,
+    'offers': {
+      '@type': 'Offer',
+      'price': car.pricePerDay,
+      'priceCurrency': 'INR',
+      'availability': car.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      'url': `https://speedtoyzcars.com/cars/${car._id || id}`
+    }
+  } : null
+
+  useSeoHead({
+    title: seoTitle,
+    description: seoDesc,
+    keywords: car ? `${carCleanName} self drive bhubaneswar, rent ${carCleanName} bhubaneswar, ${car.brand || ''} car rental bhubaneswar` : undefined,
+    path: `/cars/${id}`,
+    breadcrumbs: car ? [
+      { name: 'Home', item: '/' },
+      { name: 'Browse Cars', item: '/cars' },
+      { name: carCleanName, item: `/cars/${id}` }
+    ] : undefined,
+    jsonLd: vehicleSchema
+  })
 
   const imgs = resolveCarImages(car?.images)
   const imgSrc = (src) => {

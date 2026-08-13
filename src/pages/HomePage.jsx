@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -270,10 +270,11 @@ export default function HomePage() {
   ]
 
   const seoHighlights = [
-    { heading: 'Self-drive car rental in Bhubaneswar', detail: 'Book a clean, insured SUV or sedan for city trips, airport transfers, and weekend outings with zero hassle.' },
-    { heading: 'Affordable car rental in Odisha', detail: 'Enjoy transparent pricing, daily packages, and premium vehicles tailored for couples, families, and corporate travellers.' },
-    { heading: 'Premium SUV and hatchback booking', detail: 'Select from compact cars, premium SUVs, and stylish sedans to match your comfort, budget, and travel plan.' },
-    { heading: '24/7 support & doorstep delivery', detail: 'Travel confidently with flexible pickup, local guidance, and quick support from our dedicated rental team.' },
+    { heading: 'Self Drive Car Rental in Bhubaneswar', detail: 'Book a clean, insured SUV, hatchback or sedan for city trips and outstation drives with full privacy.', link: '/self-drive-car-rental-bhubaneswar', linkText: 'Self Drive Car Rental in Bhubaneswar →' },
+    { heading: 'Car Rental in Bhubaneswar With Driver', detail: 'Professional, background-checked chauffeurs for stress-free city travel, airport drops, and outstation trips.', link: '/car-rental-with-driver-bhubaneswar', linkText: 'Car Rental With Driver →' },
+    { heading: 'Car Rental Near Bhubaneswar Airport', detail: '24/7 terminal key handovers at Biju Patnaik International Airport (BPIA Terminal 1 & 2).', link: '/car-rental-bhubaneswar-airport', linkText: 'Bhubaneswar Airport Car Rental →' },
+    { heading: 'Automatic Car Rental in Bhubaneswar', detail: 'Drive gearless automatic SUVs, sedans, and hatchbacks with hill-assist and cruise control.', link: '/automatic-car-rental-bhubaneswar', linkText: 'Automatic Car Rental →' },
+    { heading: 'Wedding Car Rental in Bhubaneswar', detail: 'Luxury Thar 4x4 convertibles, Fortuner, BMW, and Audi models for marriage events and bridal entry.', link: '/wedding-car-rental-bhubaneswar', linkText: 'Wedding Car Rental →' },
   ]
 
   const odishaHighlights = [
@@ -370,7 +371,7 @@ export default function HomePage() {
             src="/images/hero-car-1.jpg"
             alt="SpeedToyzCars premium self-drive luxury car fleet in Bhubaneswar"
             loading="eager"
-            fetchPriority="high"
+            fetchpriority="high"
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center', opacity: 0.8 }}
           />
           <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.72) 100%), linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.75) 100%)', pointerEvents: 'none', zIndex: 0 }} />
@@ -534,9 +535,16 @@ export default function HomePage() {
         <section className="home-reveal" style={{ padding: isMobile ? '40px 16px' : '72px 80px', maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 18 }}>
             {seoHighlights.map(item => (
-              <article key={item.heading} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: isMobile ? 18 : 22 }}>
-                <h3 style={{ color: '#fff', fontSize: isMobile ? 15 : 18, fontWeight: 700, marginBottom: 8 }}>{item.heading}</h3>
-                <p style={{ color: '#cbd5e1', fontSize: isMobile ? 13 : 14, lineHeight: 1.7, margin: 0 }}>{item.detail}</p>
+              <article key={item.heading} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 18, padding: isMobile ? 18 : 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ color: '#fff', fontSize: isMobile ? 15 : 18, fontWeight: 700, marginBottom: 8 }}>{item.heading}</h3>
+                  <p style={{ color: '#cbd5e1', fontSize: isMobile ? 13 : 14, lineHeight: 1.7, margin: '0 0 12px' }}>{item.detail}</p>
+                </div>
+                {item.link && (
+                  <Link to={item.link} style={{ color: '#ef4444', textDecoration: 'none', fontSize: 14, fontWeight: 700, marginTop: 8 }}>
+                    {item.linkText}
+                  </Link>
+                )}
               </article>
             ))}
           </div>

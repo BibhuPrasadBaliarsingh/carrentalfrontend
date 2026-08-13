@@ -15,6 +15,13 @@ import { LoginPage, RegisterPage, ForgotPasswordPage } from './pages/AuthPages'
 import AccountPage from './pages/AccountPage'
 import ContactPage from './pages/ContactPage'
 import { TermsPage, PrivacyPage, CookiePage, AboutPage } from './pages/InfoPages'
+import {
+  SelfDriveLandingPage,
+  DriverLandingPage,
+  AirportLandingPage,
+  AutomaticLandingPage,
+  WeddingLandingPage
+} from './pages/SeoLandingPages'
 import NotFoundPage from './pages/NotFoundPage'
 
 function PageTransition({ children }) {
@@ -42,6 +49,11 @@ export default function App() {
               <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
               <Route path="/cars" element={<PageTransition><BrowsePage /></PageTransition>} />
               <Route path="/cars/:id" element={<PageTransition><CarDetailPage /></PageTransition>} />
+              <Route path="/self-drive-car-rental-bhubaneswar" element={<PageTransition><SelfDriveLandingPage /></PageTransition>} />
+              <Route path="/car-rental-with-driver-bhubaneswar" element={<PageTransition><DriverLandingPage /></PageTransition>} />
+              <Route path="/car-rental-bhubaneswar-airport" element={<PageTransition><AirportLandingPage /></PageTransition>} />
+              <Route path="/automatic-car-rental-bhubaneswar" element={<PageTransition><AutomaticLandingPage /></PageTransition>} />
+              <Route path="/wedding-car-rental-bhubaneswar" element={<PageTransition><WeddingLandingPage /></PageTransition>} />
               <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
               <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
               <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
