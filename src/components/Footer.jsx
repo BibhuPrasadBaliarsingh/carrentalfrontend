@@ -87,12 +87,13 @@ export default function Footer() {
       { label: 'About Us', to: '/about' },
       { label: 'Contact', to: '/contact' },
     ],
+    'Categories': categoryLinks,
     'Services': [
-      { label: 'Self Drive Car Rental', to: '/self-drive-car-rental-bhubaneswar' },
-      { label: 'Car Rental With Driver', to: '/car-rental-with-driver-bhubaneswar' },
-      { label: 'Bhubaneswar Airport Rental', to: '/car-rental-bhubaneswar-airport' },
-      { label: 'Automatic Car Rental', to: '/automatic-car-rental-bhubaneswar' },
-      { label: 'Wedding Car Rental', to: '/wedding-car-rental-bhubaneswar' },
+      { label: 'Self Drive Rental', to: '/self-drive-car-rental-bhubaneswar' },
+      { label: 'Rental With Driver', to: '/car-rental-with-driver-bhubaneswar' },
+      { label: 'Airport Rental', to: '/car-rental-bhubaneswar-airport' },
+      { label: 'Automatic Rental', to: '/automatic-car-rental-bhubaneswar' },
+      { label: 'Wedding Rental', to: '/wedding-car-rental-bhubaneswar' },
     ],
     'Support': [
       { label: 'Privacy Policy', to: '/privacy' },
@@ -135,8 +136,9 @@ export default function Footer() {
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: isMobile ? '40px 20px 20px' : '56px 80px 28px' }}>
         <div style={{ marginTop: 8, marginBottom: 24, padding: '18px', borderRadius: 18, border: '1px solid #1f2937', background: 'linear-gradient(135deg, rgba(17,24,39,0.95), rgba(5,5,5,0.95))' }}>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1.1fr', gap: 18, alignItems: 'stretch' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 240, padding: 16, borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
+                <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 6 }}>SpeedToyzCars</div>
                 <h4 style={{ color: '#fff', marginBottom: 12, fontSize: 18, fontWeight: 700 }}>Visit us for premium self-drive cars</h4>
                 <p style={{ color: '#9ca3af', fontSize: 14, lineHeight: 1.8, margin: 0 }}>Explore premium cars in Bhubaneswar, airport transfers, and Odisha road trips with a team that helps you travel confidently.</p>
               </div>
@@ -147,7 +149,6 @@ export default function Footer() {
                   <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Phone: <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>+91 98613 32857</a>, <a href="tel:+917608068450" style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>+91 76080 68450</a></span>
                   <span style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.7, display: 'block' }}>Email: <a href={`mailto:${settings.supportEmail}`} style={{ color: '#ef4444', textDecoration: 'none', cursor: 'pointer' }}>{settings.supportEmail}</a></span>
                 </div>
-                
               </div>
             </div>
             <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid #1f2937', background: 'rgba(255,255,255,0.04)', minHeight: 240 }}>
@@ -165,7 +166,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: isMobile ? 32 : 48, marginBottom: 48 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.3fr repeat(4, 1fr)', gap: isMobile ? 32 : 36, marginBottom: 48 }}>
           {/* Brand */}
           <div>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginBottom: 16 }}>
