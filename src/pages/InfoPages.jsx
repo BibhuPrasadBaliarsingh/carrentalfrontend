@@ -33,7 +33,7 @@ export function TermsPage() {
               💡 <strong>Note:</strong> The ₹200 advance payment secures your booking and is deducted from your final rental bill. Delivery or airport pickup charges, if applicable, are payable separately during vehicle handover.
             </div>
           </div>
-          <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>By booking with Speed Toyz Cars, you agree to:</p>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7, marginBottom: 12 }}>By booking with SpeedToyzCars, you agree to:</p>
           <ul style={{ color: '#9ca3af', lineHeight: 1.7, marginTop: 8, margin: 0 }}>
             <li>Pay the full rental amount as per the agreed rate</li>
             <li>Provide accurate personal and payment information</li>
@@ -140,7 +140,7 @@ export function TermsPage() {
 
         <section style={{ marginBottom: 28 }}>
           <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>11. Traffic Violations & Legal Issues</h2>
-          <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>Customers are responsible for all traffic violations, fines, and legal issues incurred during the rental period. Speed Toyz Cars will assist in forwarding violation notices; however, the customer must settle all penalties. Failure to comply may result in legal action.</p>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>Customers are responsible for all traffic violations, fines, and legal issues incurred during the rental period. SpeedToyzCars will assist in forwarding violation notices; however, the customer must settle all penalties. Failure to comply may result in legal action.</p>
         </section>
 
         <section style={{ marginBottom: 28 }}>
@@ -157,7 +157,7 @@ export function TermsPage() {
 
         <section style={{ marginBottom: 28 }}>
           <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>13. Limitation of Liability</h2>
-          <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>Speed Toyz Cars shall not be liable for personal injuries, loss of belongings, or indirect damages. The company's liability is limited to the rental amount paid. Customers use the vehicles at their own risk and assume all associated liabilities.</p>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7 }}>SpeedToyzCars shall not be liable for personal injuries, loss of belongings, or indirect damages. The company's liability is limited to the rental amount paid. Customers use the vehicles at their own risk and assume all associated liabilities.</p>
         </section>
 
         <section style={{ marginBottom: 28 }}>
@@ -274,7 +274,7 @@ export function CookiePage() {
         <section style={{ marginBottom: 28 }}>
           <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>1. What Are Cookies</h2>
           <p style={{ color: '#9ca3af', lineHeight: 1.7, margin: 0 }}>
-            Cookies are small text files stored on your computer or mobile device when you visit Speed Toyz Cars website. They help us make your browsing experience smoother, remember your preferences, and enable core platform functionality.
+            Cookies are small text files stored on your computer or mobile device when you visit SpeedToyzCars website. They help us make your browsing experience smoother, remember your preferences, and enable core platform functionality.
           </p>
         </section>
 

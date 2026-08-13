@@ -335,7 +335,7 @@ export default function HomePage() {
           </div>
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
             <div ref={logoContainerRef} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, fontSize: isMobile ? 30 : isTablet ? 38 : 46, fontWeight: 900, letterSpacing: 2, color: '#fff', textTransform: 'uppercase' }}>
-              {'SPEED TOYZ CARS'.split(' ').map((word, wordIndex) => (
+              {'SPEEDTOYZCARS'.split(' ').map((word, wordIndex) => (
                 <span key={word} style={{ display: 'flex', gap: 10 }}>
                   {word.split('').map((char, charIndex) => (
                     <span key={`${wordIndex}-${charIndex}`} className="loader-logo-char" style={{ display: 'inline-block', opacity: 0 }}>{char}</span>
@@ -350,7 +350,7 @@ export default function HomePage() {
                 <div ref={barHighlightRef} style={{ position: 'absolute', top: 0, left: 0, width: isMobile ? '18%' : '16%', height: '100%', background: 'rgba(255,255,255,0.55)', filter: 'blur(10px)', opacity: 0.45, borderRadius: 999 }} />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, width: '100%', color: '#d1d5db', fontSize: isMobile ? 11 : 13, letterSpacing: 0.8 }}>
-                <span style={{ opacity: 0.88 }}>SPEED TOYZ CARS</span>
+                <span style={{ opacity: 0.88 }}>SPEEDTOYZCARS</span>
                 <span ref={progressTextRef} style={{ fontVariantNumeric: 'tabular-nums', opacity: 0.95 }}>0%</span>
               </div>
             </div>
@@ -576,7 +576,7 @@ export default function HomePage() {
             <div style={{ textAlign: 'center', marginBottom: 48 }}>
               <div style={{ color: '#ef4444', fontSize: isMobile ? 11 : 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>Why Us</div>
               <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 36, fontWeight: 800, margin: '0 0 12px', letterSpacing: -1 }}>
-                Why Choose <span style={{ color: '#ef4444' }}>Speed Toyz Cars</span>?
+                Why Choose <span style={{ color: '#ef4444' }}>SpeedToyzCars</span>?
               </h2>
               <p style={{ color: '#6b7280', fontSize: isMobile ? 13 : 16, maxWidth: 480, margin: '0 auto' }}>
                 We deliver the finest automotive experiences with unmatched service and care.
@@ -606,7 +606,7 @@ export default function HomePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 16, marginBottom: 24 }}>
               <div>
                 <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>Testimonials</div>
-                <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: 0, letterSpacing: -1 }}>What travellers say about Speed Toyz Cars</h2>
+                <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 32, fontWeight: 800, margin: 0, letterSpacing: -1 }}>What travellers say about SpeedToyzCars</h2>
               </div>
             </div>
             <div style={{ overflow: 'hidden' }}>
