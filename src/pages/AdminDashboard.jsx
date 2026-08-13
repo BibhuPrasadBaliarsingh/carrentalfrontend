@@ -43,7 +43,7 @@ export default function AdminDashboard() {
   const [newCar, setNewCar] = useState(EMPTY_CAR)
   const [settings, setSettings] = useState({
     platformName: 'SpeedToyzCars',
-    supportEmail: 'support@speedtoyzcars.com',
+    supportEmail: 'speedtoyzcarsodisha@gmail.com',
     currency: 'INR (₹)',
     taxRate: 0,
     brands: ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren'],
@@ -539,13 +539,13 @@ export default function AdminDashboard() {
                     }
 
                     return paginated.map(car => {
-                      const imgSrc = car.images?.[0]?.startsWith('http') ? car.images[0] : car.images?.[0] ? `${API_URL}/uploads/${car.images[0]}` : 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=100'
+                      const imgSrc = car.images?.[0]?.startsWith('http') ? car.images[0] : car.images?.[0] ? `${API_URL}/uploads/${car.images[0]}` : '/images/car-fallback.jpg'
                       return (
                         <tr key={car._id} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                           <td style={tdStyle}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                               <div style={{ width: 56, height: 38, borderRadius: 7, overflow: 'hidden', flexShrink: 0 }}>
-                                <img src={imgSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=100' }} />
+                                <img src={imgSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.onerror = null; e.target.src = '/images/car-fallback.jpg' }} />
                               </div>
                               <span style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>{car.name?.split(' - ')[0]}</span>
                             </div>

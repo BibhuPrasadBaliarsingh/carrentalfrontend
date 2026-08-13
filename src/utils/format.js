@@ -40,14 +40,14 @@ export const cleanCarName = (name) => {
 }
 
 // ─── Shared constant for car image fallback ────────────────────────────────────
-export const CAR_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'
+export const CAR_IMAGE_FALLBACK = '/images/car-fallback.jpg'
 
 /**
  * Resolves a car's primary image URL, with proper fallback.
  * Handles: array images, single string, relative paths, and missing images.
  */
 export const getCarImageSrc = (car, size = 800) => {
-  const fallback = `https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=${size}&q=80`
+  const fallback = '/images/car-fallback.jpg'
   if (!car) return fallback
 
   // car.images array

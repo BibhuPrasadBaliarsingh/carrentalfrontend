@@ -85,9 +85,9 @@ export default function HomePage() {
 
   useEffect(() => {
     const assets = [
-      'https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=1600&q=80',
-      'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=80',
-      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80',
+      '/images/hero-car-2.jpg',
+      '/images/hero-car-3.jpg',
+      '/images/hero-car-1.jpg',
     ]
 
     const loadImage = src => new Promise(resolve => {
@@ -367,7 +367,7 @@ export default function HomePage() {
         <section ref={heroRef} style={{ position: 'relative', minHeight: isTablet ? 'auto' : 600, height: isTablet ? 'auto' : 600, overflow: 'hidden' }}>
           <img
             className="hero-image"
-            src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80"
+            src="/images/hero-car-1.jpg"
             alt="SpeedToyzCars premium self-drive luxury car fleet in Bhubaneswar"
             loading="eager"
             fetchPriority="high"
@@ -487,7 +487,7 @@ export default function HomePage() {
         {/* ── Booking Highlight ─────────────────────────────────────────────── */}
         <section className="home-reveal" style={{ padding: isMobile ? '32px 16px 0' : '56px 80px 0', maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 24, minHeight: isMobile ? 320 : 420, border: '1px solid #1f2937', boxShadow: '0 18px 40px rgba(0,0,0,0.35)' }}>
-            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1400&q=80" alt="Luxury car background" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.35 }} />
+            <img src="/images/feature-bg.jpg" alt="Luxury car background" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.35 }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.75) 45%, rgba(5,5,5,0.4) 100%)' }} />
             <div style={{ position: 'relative', zIndex: 1, padding: isMobile ? '24px 18px' : '42px 48px', maxWidth: 740 }}>
               <div style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10 }}>Top Booking Page</div>
@@ -650,7 +650,7 @@ export default function HomePage() {
 
         {/* ── CTA Banner ─────────────────────────────────────────────────────── */}
         <section className="home-reveal" style={{ position: 'relative', overflow: 'hidden' }}>
-          <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=80" alt="cta" loading="lazy" style={{ width: '100%', height: isMobile ? 180 : 300, objectFit: 'cover', opacity: 0.25 }} />
+          <img src="/images/hero-car-3.jpg" alt="cta" loading="lazy" style={{ width: '100%', height: isMobile ? 180 : 300, objectFit: 'cover', opacity: 0.25 }} />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.95), rgba(0,0,0,0.7))', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '20px 16px' : '0 120px', gap: 20 }}>
             <div>
               <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 36, fontWeight: 900, margin: '0 0 8px', letterSpacing: -1 }}>Ready to Drive?</h2>

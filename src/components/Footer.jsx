@@ -13,7 +13,7 @@ export default function Footer() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [subscribing, setSubscribing] = useState(false)
-  const [settings, setSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'support@speedtoyzcars.com', currency: 'INR (₹)' })
+  const [settings, setSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'speedtoyzcarsodisha@gmail.com', currency: 'INR (₹)' })
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
@@ -125,7 +125,7 @@ export default function Footer() {
   return (
     <footer className="reveal-on-scroll" data-reveal="fade-up" style={{ background: '#050505', borderTop: '1px solid #1f2937', position: 'relative', overflow: 'hidden' }}>
       
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08, filter: 'grayscale(1)' }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/images/feature-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08, filter: 'grayscale(1)' }} />
       
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: isMobile ? '40px 20px 20px' : '56px 80px 28px' }}>
         <div style={{ marginTop: 8, marginBottom: 24, padding: '18px', borderRadius: 18, border: '1px solid #1f2937', background: 'linear-gradient(135deg, rgba(17,24,39,0.95), rgba(5,5,5,0.95))' }}>

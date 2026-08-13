@@ -9,7 +9,7 @@ import { carsAPI } from '../services/api'
 import { MOCK_CARS } from '../data/mockData'
 import { formatPrice, cleanCarName } from '../utils/format'
 import { API_URL } from '../config'
-const DEFAULT_CAR_IMAGE = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'
+const DEFAULT_CAR_IMAGE = '/images/car-fallback.jpg'
 
 const resolveCarImages = (images) => {
   if (Array.isArray(images)) return images.filter(src => typeof src === 'string' && src.trim().length)

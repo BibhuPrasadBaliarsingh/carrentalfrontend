@@ -122,7 +122,7 @@ export default function BookingPage() {
   }, [])
   const [taxRate, setTaxRate] = useState(0)
   const [taxAmount, setTaxAmount] = useState(0)
-  const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'support@speedtoyzcars.com', currency: 'INR (₹)', taxRate: 0 })
+  const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'speedtoyzcarsodisha@gmail.com', currency: 'INR (₹)', taxRate: 0 })
 
   const [form, setForm] = useState(() => {
     let intent = {};
@@ -717,7 +717,7 @@ export default function BookingPage() {
               <h3 style={{ color: '#fff', fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Booking Summary</h3>
 
               <div style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16, height: 160 }}>
-                <img src={bookingImageSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400' }} />
+                <img src={bookingImageSrc} alt={car.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.src = '/images/car-fallback.jpg' }} />
               </div>
 
               <div style={{ marginBottom: 6 }}><Badge>{car.category}</Badge></div>

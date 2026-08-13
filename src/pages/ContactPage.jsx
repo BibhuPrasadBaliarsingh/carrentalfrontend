@@ -22,7 +22,7 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [settings, setSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'support@speedtoyzcars.com' })
+  const [settings, setSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'speedtoyzcarsodisha@gmail.com' })
 
   useEffect(() => {
     const fetchSettings = async () => {
