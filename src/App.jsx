@@ -14,7 +14,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import { LoginPage, RegisterPage, ForgotPasswordPage } from './pages/AuthPages'
 import AccountPage from './pages/AccountPage'
 import ContactPage from './pages/ContactPage'
-import { TermsPage, PrivacyPage, CookiePage } from './pages/InfoPages'
+import { TermsPage, PrivacyPage, CookiePage, AboutPage } from './pages/InfoPages'
 import NotFoundPage from './pages/NotFoundPage'
 
 function PageTransition({ children }) {
@@ -42,6 +42,7 @@ export default function App() {
               <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
               <Route path="/cars" element={<PageTransition><BrowsePage /></PageTransition>} />
               <Route path="/cars/:id" element={<PageTransition><CarDetailPage /></PageTransition>} />
+              <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
               <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
               <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
               <Route path="/forgot-password" element={<PageTransition><ForgotPasswordPage /></PageTransition>} />

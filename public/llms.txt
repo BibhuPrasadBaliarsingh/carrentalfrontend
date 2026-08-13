@@ -25,6 +25,7 @@ SpeedToyzCars provides premium self-drive car rentals, luxury vehicle bookings, 
 
 - https://speedtoyzcars.com/
 - https://speedtoyzcars.com/cars
+- https://speedtoyzcars.com/about
 - https://speedtoyzcars.com/contact
 - https://speedtoyzcars.com/terms
 - https://speedtoyzcars.com/privacy

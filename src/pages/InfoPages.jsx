@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLoader } from '../context/LoaderContext'
+import { useSeoHead } from '../hooks/useSeoHead'
 
 export function TermsPage() {
   const { setIsPageLoading } = useLoader()
@@ -302,6 +303,78 @@ export function CookiePage() {
             <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 9861332857</a>
           </p>
         </section>
+      </div>
+    </div>
+  )
+}
+
+export function AboutPage() {
+  const { setIsPageLoading } = useLoader()
+
+  useSeoHead({
+    title: 'About SpeedToyzCars | Premier Self Drive Car Rental Bhubaneswar',
+    description: 'Learn about SpeedToyzCars, the premier self drive and luxury car rental provider in Bhubaneswar, Odisha. Insured fleet, 24/7 airport delivery, and transparent daily rates.',
+    path: '/about'
+  })
+
+  useEffect(() => {
+    setIsPageLoading(false)
+  }, [setIsPageLoading])
+
+  const features = [
+    { title: '80+ Premium Vehicles', desc: 'From fuel-efficient hatchbacks to luxury SUVs, automatic sedans, and 4x4 Thar convertibles.', icon: '🚗' },
+    { title: 'Airport & Doorstep Delivery', desc: 'Instant key handovers at Biju Patnaik International Airport (BPIA) and across Bhubaneswar.', icon: '✈️' },
+    { title: '100% Insured & Verified Fleet', desc: 'Regularly serviced, sanitized, and commercial-insured vehicles for complete driving confidence.', icon: '🛡️' },
+    { title: 'Transparent Low Rates', desc: 'Fixed rates, zero hidden fees, flexible duration plans (6h, 12h, 24h), and instant security deposit refunds.', icon: '💰' },
+  ]
+
+  return (
+    <div style={{ minHeight: '70vh', padding: '40px 24px 60px', background: '#0a0a0a', color: '#fff' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <div style={{ display: 'inline-block', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', padding: '4px 14px', borderRadius: 20, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 16 }}>
+            About SpeedToyzCars
+          </div>
+          <h1 style={{ color: '#fff', fontSize: 36, fontWeight: 900, letterSpacing: '-1px', margin: '0 0 16px' }}>
+            Bhubaneswar's Premier Self-Drive & Luxury Car Rental
+          </h1>
+          <p style={{ color: '#9ca3af', fontSize: 16, maxWidth: 720, margin: '0 auto', lineHeight: 1.7 }}>
+            Empowering travelers, business delegates, and local residents with freedom of movement across Odisha with premium, well-maintained vehicles.
+          </p>
+        </div>
+
+        {/* Story Section */}
+        <div style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 20, padding: 32, marginBottom: 40 }}>
+          <h2 style={{ color: '#ef4444', fontSize: 22, fontWeight: 800, marginBottom: 16 }}>Who We Are</h2>
+          <p style={{ color: '#d1d5db', lineHeight: 1.8, fontSize: 15, marginBottom: 16 }}>
+            Founded in Bhubaneswar, <strong>SpeedToyzCars</strong> has quickly grown into Odisha's most trusted name in self-drive vehicle rentals, luxury chauffeur services, and airport travel. We believe that renting a car should be simple, transparent, and exhilarating — whether you're embarking on a road trip to Puri, attending a business meeting in Cuttack, or taking a weekend trip to Konark.
+          </p>
+          <p style={{ color: '#9ca3af', lineHeight: 1.8, fontSize: 15, margin: 0 }}>
+            Our mission is to provide clean, high-performance vehicles backed by 24/7 customer care, zero hidden costs, and flexible rental packages tailored to every budget.
+          </p>
+        </div>
+
+        {/* Feature Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 40 }}>
+          {features.map((f, i) => (
+            <div key={i} style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 16, padding: 24, transition: 'transform 0.2s' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>{f.icon}</div>
+              <h3 style={{ color: '#fff', fontSize: 17, fontWeight: 700, marginBottom: 8 }}>{f.title}</h3>
+              <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Contact Banner */}
+        <div style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(17,24,39,0.95) 100%)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 20, padding: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 800, margin: 0 }}>Visit Us or Reach Out 24/7</h2>
+          <p style={{ color: '#d1d5db', lineHeight: 1.7, margin: 0 }}>
+            <strong>Location:</strong> Lane-4, Satya Sai Enclave Road, Near Manipal Hospital, Kolathia, Khandagiri, Bhubaneswar, Odisha 751030<br/>
+            <strong>Email:</strong> <a href="mailto:speedtoyzcarsodisha@gmail.com" style={{ color: '#ef4444', textDecoration: 'none' }}>speedtoyzcarsodisha@gmail.com</a><br/>
+            <strong>Phone:</strong> <a href="tel:+919861332857" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 98613 32857</a> / <a href="tel:+917608068450" style={{ color: '#ef4444', textDecoration: 'none' }}>+91 76080 68450</a>
+          </p>
+        </div>
       </div>
     </div>
   )
