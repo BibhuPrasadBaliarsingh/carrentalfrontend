@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const DEFAULT_TITLE = 'SpeedToyzCars Self Drive'
+const DEFAULT_TITLE = 'SpeedToyzCars | Car Rental in Bhubaneswar'
 const DEFAULT_DESC = 'Book self drive car rental in Bhubaneswar with SpeedToyzCars. Hatchbacks, SUVs, automatic cars & airport pickup at low daily rates.'
 const BASE_URL = 'https://speedtoyzcars.com'
 
@@ -9,7 +9,7 @@ export function useSeoHead({ title, description, path = '' } = {}) {
     // 1. Update Title
     let finalTitle = DEFAULT_TITLE
     if (title) {
-      finalTitle = title.includes('SpeedToyzCars') ? title : `${title} | SpeedToyzCars Car Rental Bhubaneswar`
+      finalTitle = title.includes('SpeedToyzCars') ? title : `${title} | SpeedToyzCars`
     }
     document.title = finalTitle
 

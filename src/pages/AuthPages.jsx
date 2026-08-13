@@ -19,7 +19,16 @@ export function AuthInput({ icon, type = 'text', placeholder, value, onChange, e
             {prefix}
           </span>
         )}
-        <input type={type} placeholder={placeholder} value={value} onChange={onChange} maxLength={maxLength} inputMode={inputMode}
+        <input
+          id={placeholder ? `auth-${placeholder.toLowerCase().replace(/[^a-z0-9]/g, '-')}` : undefined}
+          name={placeholder ? placeholder.toLowerCase().replace(/[^a-z0-9]/g, '-') : undefined}
+          aria-label={placeholder || "Authentication field"}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          maxLength={maxLength}
+          inputMode={inputMode}
           style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: `1px solid ${error ? '#ef4444' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, color: '#fff', padding: `14px 44px 14px ${prefix ? '76px' : '42px'}`, fontSize: 15, outline: 'none', boxSizing: 'border-box', transition: 'all 0.2s' }}
           onFocus={e => { e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.borderColor = error ? '#ef4444' : 'rgba(255,255,255,0.3)' }}
           onBlur={e => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.borderColor = error ? '#ef4444' : 'rgba(255,255,255,0.12)' }}

@@ -412,13 +412,13 @@ export default function BookingPage() {
             {section('Documents (Optional)', <FiFileText />, (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Driving License Image (Optional)</label>
-                  <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, dlDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.dlDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
+                  <label htmlFor="dl-document" style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Driving License Image (Optional)</label>
+                  <input id="dl-document" name="dlDocument" aria-label="Upload Driving License Image" type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, dlDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.dlDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
                   {errors.dlDocument && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.dlDocument}</p>}
                 </div>
                 <div>
-                  <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Aadhaar / ID Proof Image (Optional)</label>
-                  <input type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, aadhaarDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.aadhaarDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
+                  <label htmlFor="aadhaar-document" style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Aadhaar / ID Proof Image (Optional)</label>
+                  <input id="aadhaar-document" name="aadhaarDocument" aria-label="Upload Aadhaar or ID Proof Image" type="file" accept="image/*" onChange={e => setForm(f => ({ ...f, aadhaarDocument: e.target.files[0] }))} style={{ color: '#fff', background: '#1f2937', padding: '10px', borderRadius: 8, width: '100%', border: errors.aadhaarDocument ? '1px solid #ef4444' : '1px solid #374151' }} />
                   {errors.aadhaarDocument && <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>{errors.aadhaarDocument}</p>}
                 </div>
               </div>

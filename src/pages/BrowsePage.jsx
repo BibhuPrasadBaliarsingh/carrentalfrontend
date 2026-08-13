@@ -237,17 +237,17 @@ export default function BrowsePage() {
           <div style={{ minWidth: 0 }}>
             {/* Controls */}
             <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center', flexWrap: 'wrap' }}>
-              <button onClick={() => setFiltersOpen(!filtersOpen)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#111827', border: '1px solid #374151', color: '#9ca3af', padding: '9px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>
+              <button type="button" aria-label={filtersOpen ? "Hide car search filters" : "Show car search filters"} onClick={() => setFiltersOpen(!filtersOpen)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#111827', border: '1px solid #374151', color: '#9ca3af', padding: '9px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>
                 {filtersOpen ? <FiX size={14} /> : <FiFilter size={14} />} {filtersOpen ? 'Hide' : 'Show'} Filters
               </button>
 
               <div style={{ flex: 1, position: 'relative', minWidth: 200 }}>
                 <FiSearch size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
-                <input placeholder="Search by name or brand..." value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1) }}
+                <input id="browse-search-cars" name="searchCars" aria-label="Search cars by name or brand" placeholder="Search by name or brand..." value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1) }}
                   style={{ width: '100%', background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '9px 12px 9px 34px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }} />
               </div>
 
-              <select value={sort} onChange={e => setSort(e.target.value)} style={{ background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#d1d5db', padding: '9px 14px', fontSize: 14, outline: 'none', cursor: 'pointer' }}>
+              <select id="browse-sort-cars" name="sortCars" aria-label="Sort car catalogue by" value={sort} onChange={e => setSort(e.target.value)} style={{ background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#d1d5db', padding: '9px 14px', fontSize: 14, outline: 'none', cursor: 'pointer' }}>
                 <option value="price-asc">Price: Low → High</option>
                 <option value="price-desc">Price: High → Low</option>
                 <option value="rating">Top Rated</option>

@@ -71,7 +71,13 @@ export default function Navbar({ hidden }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12 }}>
           {user ? (
             <div style={{ position: 'relative' }}>
-              <button onClick={() => setDropdownOpen(!dropdownOpen)} style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 0 : 8, background: 'none', border: '1px solid #374151', borderRadius: 8, padding: isMobile ? '6px 10px' : '6px 14px', cursor: 'pointer' }}>
+              <button
+                type="button"
+                aria-label="User account menu"
+                aria-expanded={dropdownOpen}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 0 : 8, background: 'none', border: '1px solid #374151', borderRadius: 8, padding: isMobile ? '6px 10px' : '6px 14px', cursor: 'pointer' }}
+              >
                 <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
                   {user.name?.[0] || 'U'}
                 </div>
@@ -83,24 +89,24 @@ export default function Navbar({ hidden }) {
                   <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.15 }}
                     style={{ position: 'absolute', right: 0, top: 44, background: '#111827', border: '1px solid #1f2937', borderRadius: 10, padding: 8, minWidth: 180, boxShadow: '0 16px 40px rgba(0,0,0,0.6)', zIndex: 50 }}>
                     {user.role === 'admin' && (
-                      <button onClick={() => { navigate('/dashboard'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
+                      <button type="button" aria-label="Go to Admin Dashboard" onClick={() => { navigate('/dashboard'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
                         onMouseEnter={e => e.currentTarget.style.background = '#1f2937'}
                         onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                         <FiSettings size={15} /> Dashboard
                       </button>
                     )}
-                    <button onClick={() => { navigate('/account'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
+                    <button type="button" aria-label="Go to My Account" onClick={() => { navigate('/account'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
                       onMouseEnter={e => e.currentTarget.style.background = '#1f2937'}
                       onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                       <FiUser size={15} /> My Account
                     </button>
-                    <button onClick={() => { navigate('/my-bookings'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
+                    <button type="button" aria-label="Go to My Bookings" onClick={() => { navigate('/my-bookings'); setDropdownOpen(false) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#d1d5db', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
                       onMouseEnter={e => e.currentTarget.style.background = '#1f2937'}
                       onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                       <FiCalendar size={15} /> My Bookings
                     </button>
                     <div style={{ height: 1, background: '#1f2937', margin: '4px 0' }} />
-                    <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
+                    <button type="button" aria-label="Log out of account" onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 6, border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14, textAlign: 'left' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                       <FiLogOut size={15} /> Logout
@@ -118,7 +124,14 @@ export default function Navbar({ hidden }) {
             </>
           )}
 
-          <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', display: isMobile ? 'block' : 'none', padding: '4px' }}>
+          <button
+            type="button"
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', display: isMobile ? 'block' : 'none', padding: '4px' }}
+          >
             {menuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
           </button>
         </div>
@@ -126,8 +139,14 @@ export default function Navbar({ hidden }) {
 
       <AnimatePresence>
         {menuOpen && isMobile && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: shouldReduceMotion ? 0.1 : 0.24, ease: 'easeOut' }}
-            style={{ background: '#0a0a0a', borderTop: '1px solid #1f2937', padding: '16px 16px', overflow: 'hidden' }}>
+          <motion.div
+            id="mobile-navigation"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: shouldReduceMotion ? 0.1 : 0.24, ease: 'easeOut' }}
+            style={{ background: '#0a0a0a', borderTop: '1px solid #1f2937', padding: '16px 16px', overflow: 'hidden' }}
+          >
             {navLinks.map(l => (
               <Link key={`${l.to}-${l.label}`} to={l.to} onClick={() => setMenuOpen(false)} style={{ display: 'block', color: isActive(l.to) ? '#ef4444' : '#d1d5db', textDecoration: 'none', padding: '12px 0', fontSize: 15, fontWeight: 500, borderBottom: '1px solid #1f2937' }}>
                 {l.label}

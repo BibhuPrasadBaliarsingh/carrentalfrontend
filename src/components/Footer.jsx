@@ -175,16 +175,37 @@ export default function Footer() {
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FiMail size={14} color="#ef4444" /> <a href={`mailto:${settings.supportEmail}`} style={{ color: '#d1d5db', textDecoration: 'none', cursor: 'pointer' }}>{settings.supportEmail}</a></span>
             </div>
             <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 12 }}>
-              <input value={newsletterEmail} onChange={e => setNewsletterEmail(e.target.value)} type="email" placeholder="Email for updates" style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }} />
-              <button type="submit" disabled={subscribing} style={{ background: '#ef4444', border: 'none', color: '#fff', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <input
+                id="footer-newsletter-email"
+                name="newsletterEmail"
+                aria-label="Email address for newsletter updates"
+                value={newsletterEmail}
+                onChange={e => setNewsletterEmail(e.target.value)}
+                type="email"
+                placeholder="Email for updates"
+                style={{ flex: 1, background: '#111827', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: '10px 12px', fontSize: 13, outline: 'none' }}
+              />
+              <button
+                type="submit"
+                aria-label="Subscribe to newsletter"
+                disabled={subscribing}
+                style={{ background: '#ef4444', border: 'none', color: '#fff', borderRadius: 8, padding: '10px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
                 <FiSend size={14} />
               </button>
             </form>
             <div style={{ display: 'flex', gap: 12 }}>
               {socials.map(({ Icon, href }, i) => (
-                <a key={i} target='_blank' href={href} style={{ width: 36, height: 36, borderRadius: 8, background: '#111827', border: '1px solid #1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', textDecoration: 'none', transition: 'all 0.2s' }}
+                <a
+                  key={i}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={href}
+                  aria-label={href.includes('instagram') ? 'Follow SpeedToyzCars on Instagram' : 'Follow SpeedToyzCars on Facebook'}
+                  style={{ width: 36, height: 36, borderRadius: 8, background: '#111827', border: '1px solid #1f2937', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', textDecoration: 'none', transition: 'all 0.2s' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.borderColor = '#ef4444'; e.currentTarget.style.color = '#fff' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#111827'; e.currentTarget.style.borderColor = '#1f2937'; e.currentTarget.style.color = '#9ca3af' }}>
+                  onMouseLeave={e => { e.currentTarget.style.background = '#111827'; e.currentTarget.style.borderColor = '#1f2937'; e.currentTarget.style.color = '#9ca3af' }}
+                >
                   <Icon size={15} />
                 </a>
               ))}

@@ -17,7 +17,7 @@ import { cleanCarName } from '../utils/format'
 
 export default function HomePage() {
   useSeoHead({
-    title: ' SpeedToyzCars Self Drive & Luxury Cars',
+    title: 'SpeedToyzCars | Car Rental in Bhubaneswar',
     description: 'Looking for a top-rated car rental near me in Bhubaneswar? SpeedToyzCars provides premium self-drive SUVs, sedans & hatchbacks with 24/7 doorstep delivery & airport pickup across Odisha.',
     path: '/'
   })
@@ -368,8 +368,9 @@ export default function HomePage() {
           <img
             className="hero-image"
             src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80"
-            alt="hero"
-            loading="lazy"
+            alt="SpeedToyzCars premium self-drive luxury car fleet in Bhubaneswar"
+            loading="eager"
+            fetchPriority="high"
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center', opacity: 0.8 }}
           />
           <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.72) 100%), linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.75) 100%)', pointerEvents: 'none', zIndex: 0 }} />
@@ -386,10 +387,10 @@ export default function HomePage() {
                 Book premium SUVs, hatchbacks, and self-drive cars instantly with clean vehicles, easy booking, and 24/7 support across Odisha.
               </p>
               <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 24 : 14, width: isMobile ? '100%' : 'auto' }}>
-                <button onClick={() => navigate('/cars')} className="btn-primary hero-button" style={{ border: 'none', color: '#fff', padding: isMobile ? '12px 28px' : '14px 34px', borderRadius: 10, fontSize: isMobile ? 15 : 16, fontWeight: 700, cursor: 'pointer', flex: isMobile ? 1 : 'none' }}>
+                <button type="button" aria-label="Explore available cars now" onClick={() => navigate('/cars')} className="btn-primary hero-button" style={{ border: 'none', color: '#fff', padding: isMobile ? '12px 28px' : '14px 34px', borderRadius: 10, fontSize: isMobile ? 15 : 16, fontWeight: 700, cursor: 'pointer', flex: isMobile ? 1 : 'none' }}>
                   Explore Now
                 </button>
-                <button onClick={() => navigate('/cars')} className="btn-outline hero-button" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: isMobile ? '12px 24px' : '14px 32px', borderRadius: 10, fontSize: isMobile ? 15 : 16, fontWeight: 600, cursor: 'pointer', flex: isMobile ? 1 : 'none' }}>
+                <button type="button" aria-label="Browse full self-drive car catalogue" onClick={() => navigate('/cars')} className="btn-outline hero-button" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: isMobile ? '12px 24px' : '14px 32px', borderRadius: 10, fontSize: isMobile ? 15 : 16, fontWeight: 600, cursor: 'pointer', flex: isMobile ? 1 : 'none' }}>
                   Browse Cars
                 </button>
               </div>
@@ -448,36 +449,36 @@ export default function HomePage() {
 
             {deliveryMode !== 'Parking' && (
               <div>
-                <label style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>
+                <label htmlFor="home-pickup-location" style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>
                   {deliveryMode === 'Doorstep' ? 'Delivery Address' : 'Airport Name / Terminal'}
                 </label>
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiMapPin /></span>
-                  <input type="text" value={search.location} onChange={e => setSearch(s => ({ ...s, location: e.target.value }))} placeholder={deliveryMode === 'Doorstep' ? 'Enter full address map link' : 'BPIA Bhubaneswar'}
+                  <input id="home-pickup-location" name="location" type="text" value={search.location} onChange={e => setSearch(s => ({ ...s, location: e.target.value }))} placeholder={deliveryMode === 'Doorstep' ? 'Enter full address map link' : 'BPIA Bhubaneswar'}
                     style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box' }} />
                 </div>
               </div>
             )}
 
             <div>
-              <label style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Pickup Date</label>
+              <label htmlFor="home-pickup-date" style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Pickup Date</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiCalendar /></span>
-                <input type="date" value={search.pickupDate} onChange={e => setSearch(s => ({ ...s, pickupDate: e.target.value }))}
+                <input id="home-pickup-date" name="pickupDate" type="date" aria-label="Pickup Date" value={search.pickupDate} onChange={e => setSearch(s => ({ ...s, pickupDate: e.target.value }))}
                   style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
               </div>
             </div>
 
             <div>
-              <label style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Return Date</label>
+              <label htmlFor="home-return-date" style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Return Date</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiCalendar /></span>
-                <input type="date" value={search.returnDate} onChange={e => setSearch(s => ({ ...s, returnDate: e.target.value }))}
+                <input id="home-return-date" name="returnDate" type="date" aria-label="Return Date" value={search.returnDate} onChange={e => setSearch(s => ({ ...s, returnDate: e.target.value }))}
                   style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
               </div>
             </div>
 
-            <button onClick={handleSearch} className="btn-primary" style={{ border: 'none', color: '#fff', padding: isMobile ? '8px 16px' : '11px 28px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', width: isTablet ? '100%' : 'auto', gridColumn: isTablet ? '1 / -1' : 'auto' }}>
+            <button type="button" aria-label="Search available cars" onClick={handleSearch} className="btn-primary" style={{ border: 'none', color: '#fff', padding: isMobile ? '8px 16px' : '11px 28px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', width: isTablet ? '100%' : 'auto', gridColumn: isTablet ? '1 / -1' : 'auto' }}>
               {isMobile ? 'Search' : 'Search Cars'}
             </button>
           </div>

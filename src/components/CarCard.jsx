@@ -24,10 +24,10 @@ export default function CarCard({ car, index = 0 }) {
       onClick={() => navigate(`/cars/${car._id}`)}
       style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, overflow: 'hidden', cursor: 'pointer' }}
     >
-      <div style={{ position: 'relative', height: 190, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', height: 190, aspectRatio: '16 / 9', overflow: 'hidden' }}>
         <img
           src={imgSrc}
-          alt={car.name}
+          alt={`${car.brand || ''} ${cleanCarName(car.name || '')} self drive car rental`}
           loading="lazy"
           className="car-card-image"
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
@@ -79,6 +79,8 @@ export default function CarCard({ car, index = 0 }) {
         </div>
 
         <button
+          type="button"
+          aria-label={`View details for ${cleanCarName(car.name || '')}`}
           onClick={e => { e.stopPropagation(); navigate(`/cars/${car._id}`) }}
           className="btn-outline"
           style={{ width: '100%', background: 'transparent', border: '1px solid #374151', color: '#d1d5db', padding: '9px 0', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}

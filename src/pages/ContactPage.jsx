@@ -64,10 +64,19 @@ export default function ContactPage() {
           </motion.div>
         )}
         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 14, marginTop: 20 }}>
-          <motion.input whileFocus={shouldReduceMotion ? undefined : { scale: 1.01, boxShadow: '0 0 0 3px rgba(239,68,68,0.16)' }} transition={{ duration: 0.2, ease: 'easeOut' }} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" required style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8, padding: '12px 14px', color: '#fff' }} />
-          <motion.input type="email" whileFocus={shouldReduceMotion ? undefined : { scale: 1.01, boxShadow: '0 0 0 3px rgba(239,68,68,0.16)' }} transition={{ duration: 0.2, ease: 'easeOut' }} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email address" required style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8, padding: '12px 14px', color: '#fff' }} />
-          <motion.textarea whileFocus={shouldReduceMotion ? undefined : { scale: 1.01, boxShadow: '0 0 0 3px rgba(239,68,68,0.16)' }} transition={{ duration: 0.2, ease: 'easeOut' }} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="How can we help?" rows={6} required style={{ background: '#1f2937', border: '1px solid #374151', borderRadius: 8, padding: '12px 14px', color: '#fff', resize: 'vertical' }} />
-          <button disabled={submitting} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 16px', cursor: submitting ? 'not-allowed' : 'pointer', fontWeight: 700 }}>{submitting ? 'Sending...' : 'Send message'}</button>
+          <div>
+            <label htmlFor="contact-name" style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Full Name</label>
+            <motion.input id="contact-name" name="name" aria-label="Your full name" whileFocus={shouldReduceMotion ? undefined : { scale: 1.01, boxShadow: '0 0 0 3px rgba(239,68,68,0.16)' }} transition={{ duration: 0.2, ease: 'easeOut' }} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" required style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, padding: '12px 14px', color: '#fff', boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label htmlFor="contact-email" style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Email Address</label>
+            <motion.input id="contact-email" name="email" aria-label="Your email address" type="email" whileFocus={shouldReduceMotion ? undefined : { scale: 1.01, boxShadow: '0 0 0 3px rgba(239,68,68,0.16)' }} transition={{ duration: 0.2, ease: 'easeOut' }} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email address" required style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, padding: '12px 14px', color: '#fff', boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label htmlFor="contact-message" style={{ display: 'block', color: '#9ca3af', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Message</label>
+            <motion.textarea id="contact-message" name="message" aria-label="Message content" whileFocus={shouldReduceMotion ? undefined : { scale: 1.01, boxShadow: '0 0 0 3px rgba(239,68,68,0.16)' }} transition={{ duration: 0.2, ease: 'easeOut' }} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="How can we help?" rows={6} required style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 8, padding: '12px 14px', color: '#fff', resize: 'vertical', boxSizing: 'border-box' }} />
+          </div>
+          <button type="submit" aria-label="Send contact message" disabled={submitting} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 16px', cursor: submitting ? 'not-allowed' : 'pointer', fontWeight: 700 }}>{submitting ? 'Sending...' : 'Send message'}</button>
         </form>
       </div>
     </div>
