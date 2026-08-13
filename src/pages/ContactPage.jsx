@@ -7,8 +7,8 @@ import { contactAPI, settingsAPI } from '../services/api'
 
 export default function ContactPage() {
   useSeoHead({
-    title: 'Contact SpeedToyz — Car Rental Support',
-    description: 'Get in touch with SpeedToyz in Bhubaneswar. Contact us for booking assistance, doorstep delivery, and 24/7 customer support.',
+    title: 'Contact SpeedToyzCars — Car Rental Support',
+    description: 'Get in touch with SpeedToyzCars in Bhubaneswar. Contact us for booking assistance, doorstep delivery, and 24/7 customer support.',
     path: '/contact'
   })
 
@@ -22,7 +22,7 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [settings, setSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com' })
+  const [settings, setSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'support@speedtoyzcars.com' })
 
   useEffect(() => {
     const fetchSettings = async () => {

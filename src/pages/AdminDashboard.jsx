@@ -42,8 +42,8 @@ export default function AdminDashboard() {
   const [carImageFiles, setCarImageFiles] = useState([])
   const [newCar, setNewCar] = useState(EMPTY_CAR)
   const [settings, setSettings] = useState({
-    platformName: 'SpeedToyz',
-    supportEmail: 'support@speedtoyz.com',
+    platformName: 'SpeedToyzCars',
+    supportEmail: 'support@speedtoyzcars.com',
     currency: 'INR (₹)',
     taxRate: 0,
     brands: ['Ferrari', 'Mercedes', 'Land Rover', 'Porsche', 'BMW', 'Tesla', 'Lamborghini', 'Audi', 'McLaren'],

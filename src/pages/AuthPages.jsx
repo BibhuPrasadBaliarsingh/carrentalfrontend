@@ -124,7 +124,7 @@ export function LoginPage() {
 
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.5px' }}>Welcome Back</h2>
-          <p style={{ color: '#9ca3af', fontSize: 15, margin: 0 }}>Sign in to continue to SpeedToyz</p>
+          <p style={{ color: '#9ca3af', fontSize: 15, margin: 0 }}>Sign in to continue to SpeedToyzCars</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -319,7 +319,7 @@ export function RegisterPage() {
 
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <h2 style={{ color: '#fff', fontSize: 28, fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.5px' }}>Create Account</h2>
-          <p style={{ color: '#9ca3af', fontSize: 15, margin: 0 }}>Join SpeedToyz and start driving in style</p>
+          <p style={{ color: '#9ca3af', fontSize: 15, margin: 0 }}>Join SpeedToyzCars and start driving in style</p>
         </div>
 
         <form onSubmit={handleSubmit}>

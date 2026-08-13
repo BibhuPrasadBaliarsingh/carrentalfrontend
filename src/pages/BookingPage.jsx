@@ -122,7 +122,7 @@ export default function BookingPage() {
   }, [])
   const [taxRate, setTaxRate] = useState(0)
   const [taxAmount, setTaxAmount] = useState(0)
-  const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)', taxRate: 0 })
+  const [publicSettings, setPublicSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'support@speedtoyzcars.com', currency: 'INR (₹)', taxRate: 0 })
 
   const [form, setForm] = useState(() => {
     let intent = {};
@@ -239,11 +239,11 @@ export default function BookingPage() {
 
     const sendToWhatsApp = (refCode) => {
       const waNumber = '919861332857';
-      const waMessage = `🏎️ *SPEEDTOYZ BOOKING CONFIRMATION* 🏎️\n` +
+      const waMessage = `🏎️ *SPEEDTOYZCARS BOOKING CONFIRMATION* 🏎️\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `📌 *Booking Ref:* #${refCode}\n` +
         `🚗 *Car:* ${cleanCarName(car.name)}\n` +
-        `🏷️ *Brand:* ${car.brand || 'SpeedToyz'}\n` +
+        `🏷️ *Brand:* ${car.brand || 'SpeedToyzCars'}\n` +
         `📅 *Pickup Date:* ${form.pickupDate}\n` +
         `📅 *Return Date:* ${form.returnDate} (${days} day${days > 1 ? 's' : ''})\n` +
         `📍 *Pickup Location:* ${form.pickupDetails ? `${form.pickupLocation} (${form.pickupDetails})` : form.pickupLocation}\n` +
@@ -262,7 +262,7 @@ export default function BookingPage() {
         (form.drivingLicenseNumber ? `🪪 *DL No:* ${form.drivingLicenseNumber}\n` : '') +
         (form.aadhaarNumber ? `🆔 *Aadhaar No:* ${form.aadhaarNumber}\n` : '') +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
-        `✅ *Documents & Payment Screenshot uploaded to SpeedToyz portal.*`;
+        `✅ *Documents & Payment Screenshot uploaded to SpeedToyzCars portal.*`;
       
       const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank');
@@ -360,7 +360,7 @@ export default function BookingPage() {
 
           <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
             <button onClick={() => {
-              const waMessage = `Hello SpeedToyz,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${cleanCarName(car.name)}\nMode: ${form.deliveryMode}${deliveryFee > 0 ? ` (+${formatPrice(deliveryFee)})` : ''}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\nTotal Rental: ${formatPrice(total)}\nAdvance Paid Now: ${formatPrice(payNowAmount)}\nRemaining at Pickup: ${formatPrice(remainingAmount)}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
+              const waMessage = `Hello SpeedToyzCars,\nI have booked a car!\n\nBooking Ref: ${bookingRef}\nCar: ${cleanCarName(car.name)}\nMode: ${form.deliveryMode}${deliveryFee > 0 ? ` (+${formatPrice(deliveryFee)})` : ''}\nPickup: ${form.pickupDate}\nReturn: ${form.returnDate}\nTotal Rental: ${formatPrice(total)}\nAdvance Paid Now: ${formatPrice(payNowAmount)}\nRemaining at Pickup: ${formatPrice(remainingAmount)}\n\nCustomer: ${form.firstName} ${form.lastName}\nPhone: ${form.phone}\nAddress: ${form.address}\nDL: ${form.drivingLicenseNumber}\nAadhaar: ${form.aadhaarNumber}\n\nDocuments have been uploaded to the portal.`;
               window.open(`https://wa.me/919861332857?text=${encodeURIComponent(waMessage)}`, '_blank');
             }} style={{ flex: 1, background: '#25D366', border: 'none', color: '#fff', padding: '12px 0', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>
               Message on WhatsApp
@@ -439,8 +439,8 @@ export default function BookingPage() {
                     {[
                       {
                         mode: 'Parking',
-                        title: '1. Pick up car from speed toyz cars Parking',
-                        desc: 'Self-service pickup from SpeedToyz main parking garage (Free)',
+                        title: '1. Pick up car from SpeedToyzCars Parking',
+                        desc: 'Self-service pickup from SpeedToyzCars main parking garage (Free)',
                         icon: FaParking
                       },
                       {

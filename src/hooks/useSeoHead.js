@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
-const DEFAULT_TITLE = 'Car Rental Near Me in Bhubaneswar — SpeedToyz Self Drive & Luxury Cars'
-const DEFAULT_DESC = 'Looking for a car rental near me in Bhubaneswar? SpeedToyz offers self-drive SUVs, luxury sedans, & hatchbacks with 24/7 doorstep delivery & airport pickup across Bhubaneswar, Odisha.'
+const DEFAULT_TITLE = 'SpeedToyzCars Self Drive'
+const DEFAULT_DESC = 'Book self drive car rental in Bhubaneswar with SpeedToyzCars. Hatchbacks, SUVs, automatic cars & airport pickup at low daily rates.'
 const BASE_URL = 'https://speedtoyzcars.com'
 
 export function useSeoHead({ title, description, path = '' } = {}) {
@@ -9,7 +9,7 @@ export function useSeoHead({ title, description, path = '' } = {}) {
     // 1. Update Title
     let finalTitle = DEFAULT_TITLE
     if (title) {
-      finalTitle = title.includes('SpeedToyz') ? title : `${title} | SpeedToyz Car Rental Bhubaneswar`
+      finalTitle = title.includes('SpeedToyzCars') ? title : `${title} | SpeedToyzCars Car Rental Bhubaneswar`
     }
     document.title = finalTitle
 

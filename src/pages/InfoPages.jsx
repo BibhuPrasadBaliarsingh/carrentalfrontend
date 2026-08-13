@@ -15,7 +15,7 @@ export function TermsPage() {
         
         <section style={{ marginBottom: 28 }}>
           <h2 style={{ color: '#ef4444', fontSize: 18, marginBottom: 12 }}>1. Booking & Reservation</h2>
-          <p style={{ color: '#9ca3af', lineHeight: 1.7, margin: 0 }}>All bookings are subject to verification, vehicle availability, and the agreed rental terms. A valid government-issued ID and driving license are required for all customers. Customers must be at least 21 years old to rent a vehicle. Bookings can be cancelled up to 24 hours before the rental date for a full refund.</p>
+          <p style={{ color: '#9ca3af', lineHeight: 1.7, margin: 0 }}>All bookings are subject to verification, vehicle availability, and the agreed rental terms. A valid government-issued ID and driving license are required for all customers. Customers must be at least 21 years old to rent a vehicle.</p>
         </section>
 
         <section style={{ marginBottom: 28 }}>

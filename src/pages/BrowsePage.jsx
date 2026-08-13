@@ -15,7 +15,7 @@ const FUELS = ['Petrol', 'Hybrid', 'Electric', 'Diesel']
 
 export default function BrowsePage() {
   useSeoHead({
-    title: 'Browse Self Drive & Luxury Cars',
+    title: 'SpeedToyzCars Self Drive & Luxury Cars',
     description: 'Explore and book our full fleet of self-drive SUVs, luxury sedans, hatchbacks, and sports cars in Bhubaneswar.',
     path: '/cars'
   })

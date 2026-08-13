@@ -13,7 +13,7 @@ export default function Footer() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [subscribing, setSubscribing] = useState(false)
-  const [settings, setSettings] = useState({ platformName: 'SpeedToyz', supportEmail: 'support@speedtoyz.com', currency: 'INR (₹)' })
+  const [settings, setSettings] = useState({ platformName: 'SpeedToyzCars', supportEmail: 'support@speedtoyzcars.com', currency: 'INR (₹)' })
   const [categories, setCategories] = useState([])
 
   useEffect(() => {

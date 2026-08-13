@@ -17,8 +17,8 @@ import { cleanCarName } from '../utils/format'
 
 export default function HomePage() {
   useSeoHead({
-    title: 'Car Rental Near Me in Bhubaneswar — SpeedToyz Self Drive & Luxury Cars',
-    description: 'Looking for a top-rated car rental near me in Bhubaneswar? SpeedToyz provides premium self-drive SUVs, sedans & hatchbacks with 24/7 doorstep delivery & airport pickup across Odisha.',
+    title: ' SpeedToyzCars Self Drive & Luxury Cars',
+    description: 'Looking for a top-rated car rental near me in Bhubaneswar? SpeedToyzCars provides premium self-drive SUVs, sedans & hatchbacks with 24/7 doorstep delivery & airport pickup across Odisha.',
     path: '/'
   })
 
@@ -236,7 +236,7 @@ export default function HomePage() {
   const handleSearch = () => {
     sessionStorage.setItem('bookingIntent', JSON.stringify({
       deliveryMode,
-      location: deliveryMode === 'Parking' ? 'Speedtoyz Parking' : search.location,
+      location: deliveryMode === 'Parking' ? 'SpeedToyzCars Parking' : search.location,
       pickupDate: search.pickupDate,
       returnDate: search.returnDate
     }))
@@ -437,7 +437,7 @@ export default function HomePage() {
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {mode === 'Parking' ? <FaParking size={16} /> : mode === 'Doorstep' ? <FaHome size={16} /> : <FaPlane size={16} />}
-                  {mode === 'Parking' ? 'Speedtoyz Parking' : mode === 'Doorstep' ? 'Doorstep Delivery' : 'Airport Pickup'}
+                  {mode === 'Parking' ? 'SpeedToyzCars Parking' : mode === 'Doorstep' ? 'Doorstep Delivery' : 'Airport Pickup'}
                 </span>
               </button>
             ))}
