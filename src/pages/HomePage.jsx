@@ -26,7 +26,7 @@ export default function HomePage() {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
   const [deliveryMode, setDeliveryMode] = useState('Parking')
-  const [search, setSearch] = useState({ location: '', pickupDate: '', returnDate: '' })
+  const [search, setSearch] = useState({ location: '', pickupDate: '', pickupTime: '10:00 AM' })
   const [demoMode, setDemoMode] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isTablet, setIsTablet] = useState(window.innerWidth < 1024)
@@ -134,15 +134,12 @@ export default function HomePage() {
     tl.set(logoChars, { autoAlpha: 0, y: 20 })
     tl.set(barFillRef.current, { width: '0%' })
     tl.set(progressTextRef.current, { autoAlpha: 1 })
-    tl.set(barHighlightRef.current, { x: '-30%' })
 
     tl.to(carRef.current, { autoAlpha: 1, scale: 1, duration: 0.5 }, 0)
     tl.to(headlightsRef.current, { autoAlpha: 0.95, duration: 0.4 }, 0.1)
     tl.to(redGlowRef.current, { autoAlpha: 0.55, scale: 1, duration: 0.5 }, 0.05)
-    tl.to(streaksRef.current, { x: '100%', duration: 3, repeat: -1, ease: 'none' }, 0)
     tl.to(carRef.current, { y: -6, repeat: -1, yoyo: true, duration: 2, ease: 'sine.inOut' }, 0)
     tl.to(carRef.current, { rotationZ: 0.5, repeat: -1, yoyo: true, duration: 2.5, ease: 'sine.inOut' }, 0)
-    tl.to(barHighlightRef.current, { x: '120%', duration: 1.5, repeat: -1, ease: 'linear' }, 0.2)
 
     tl.addLabel('brand', 0.2)
     tl.to(logoChars, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.02, ease: 'power4.out' }, 'brand')
@@ -238,11 +235,11 @@ export default function HomePage() {
       deliveryMode,
       location: deliveryMode === 'Parking' ? 'SpeedToyzCars Parking' : search.location,
       pickupDate: search.pickupDate,
-      returnDate: search.returnDate
+      pickupTime: search.pickupTime,
     }))
     const params = new URLSearchParams()
     if (search.pickupDate) params.set('pickupDate', search.pickupDate)
-    if (search.returnDate) params.set('returnDate', search.returnDate)
+    if (search.pickupTime) params.set('pickupTime', search.pickupTime)
     navigate(`/cars?${params.toString()}`)
   }
 
@@ -316,22 +313,13 @@ export default function HomePage() {
   return (
     <>
       <div ref={loaderRef} className="speedtoyz-loader" style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#050505', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 35%, rgba(255,255,255,0.05), transparent 30%), radial-gradient(circle at 45% 20%, rgba(239,68,68,0.10), transparent 16%), radial-gradient(circle at 55% 22%, rgba(255,255,255,0.04), transparent 18%), linear-gradient(180deg, rgba(5,5,5,0.96), rgba(5,5,5,0.96) 20%, rgba(5,5,5,0.92) 80%, rgba(5,5,5,1))', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 24%), radial-gradient(circle at 20% 20%, rgba(255,255,255,0.02), transparent 14%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 180px rgba(0,0,0,0.55), inset 0 24px 90px rgba(0,0,0,0.24)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div ref={streaksRef} style={{ position: 'absolute', inset: 0, display: 'flex', gap: 48, opacity: 0.22, filter: 'blur(12px)', transform: 'translateX(-35%)' }}>
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} style={{ flex: '0 0 20%', height: '100%', background: 'linear-gradient(90deg, transparent 0%, rgba(239,68,68,0.18) 20%, rgba(239,68,68,0.08) 55%, transparent 100%)', transform: `translateX(${index * 35}%)`, opacity: 0.85 }} />
-            ))}
-          </div>
-        </div>
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 40%, rgba(239,68,68,0.12) 0%, transparent 50%), #050505', pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: isMobile ? '85%' : isTablet ? 640 : 720, minHeight: 380, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: isMobile ? 20 : 28 }}>
           <div style={{ position: 'relative', width: '100%', maxWidth: 660, height: isMobile ? 260 : 340, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img ref={carRef} src="./car.png" alt="Speed Toys Car" style={{ width: '100%', height: '100%', objectFit: 'contain', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 40px 120px rgba(0,0,0,0.35))', borderRadius: 22 }} />
-            <div ref={headlightsRef} style={{ position: 'absolute', top: '40%', left: '10%', width: '18%', height: '10%', background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.12) 50%, transparent 100%)', filter: 'blur(14px)', opacity: 0.2, pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', top: '40%', right: '10%', width: '18%', height: '10%', background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)', filter: 'blur(14px)', opacity: 0.16, pointerEvents: 'none' }} />
-            <div ref={redGlowRef} style={{ position: 'absolute', bottom: '8%', left: '8%', right: '8%', height: '10%', background: 'linear-gradient(180deg, rgba(255,255,255,0.24), transparent 100%)', filter: 'blur(16px)', opacity: 0.28, borderRadius: 999, pointerEvents: 'none' }} />
+            <img ref={carRef} src="./car.png" alt="Speed Toys Car" style={{ width: '100%', height: '100%', objectFit: 'contain', transformStyle: 'preserve-3d', filter: 'drop-shadow(0 25px 60px rgba(0,0,0,0.6))' }} />
+            <div ref={headlightsRef} style={{ position: 'absolute', top: '40%', left: '10%', width: '18%', height: '10%', background: 'radial-gradient(circle, rgba(255,255,255,0.7) 0%, transparent 100%)', filter: 'blur(14px)', opacity: 0.2, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '40%', right: '10%', width: '18%', height: '10%', background: 'radial-gradient(circle, rgba(255,255,255,0.7) 0%, transparent 100%)', filter: 'blur(14px)', opacity: 0.16, pointerEvents: 'none' }} />
+            <div ref={redGlowRef} style={{ position: 'absolute', bottom: '12%', left: '15%', right: '15%', height: '12%', background: 'radial-gradient(ellipse at center, rgba(239,68,68,0.3) 0%, transparent 75%)', filter: 'blur(16px)', opacity: 0.28, pointerEvents: 'none' }} />
           </div>
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
             <div ref={logoContainerRef} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, fontSize: isMobile ? 30 : isTablet ? 38 : 46, fontWeight: 900, letterSpacing: 2, color: '#fff', textTransform: 'uppercase' }}>
@@ -345,9 +333,8 @@ export default function HomePage() {
             </div>
             <div ref={taglineRef} style={{ color: '#9ca3af', letterSpacing: 8, fontSize: isMobile ? 11 : 13, textTransform: 'uppercase' }}>Drive Your Dreams</div>
             <div style={{ width: '100%', maxWidth: isMobile ? 360 : 520, marginTop: 6 }}>
-              <div style={{ width: '100%', height: 12, borderRadius: 999, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', overflow: 'hidden', boxShadow: 'inset 0 0 30px rgba(239,68,68,0.08)' }}>
-                <div ref={barFillRef} style={{ width: '0%', height: '100%', background: 'linear-gradient(90deg, rgba(239,68,68,1) 0%, rgba(255,255,255,0.26) 50%, rgba(239,68,68,0.75) 100%)', borderRadius: 999, transition: 'width 0.15s ease' }} />
-                <div ref={barHighlightRef} style={{ position: 'absolute', top: 0, left: 0, width: isMobile ? '18%' : '16%', height: '100%', background: 'rgba(255,255,255,0.55)', filter: 'blur(10px)', opacity: 0.45, borderRadius: 999 }} />
+              <div style={{ width: '100%', height: 10, borderRadius: 999, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', overflow: 'hidden' }}>
+                <div ref={barFillRef} style={{ width: '0%', height: '100%', background: 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)', borderRadius: 999, transition: 'width 0.15s ease' }} />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, width: '100%', color: '#d1d5db', fontSize: isMobile ? 11 : 13, letterSpacing: 0.8 }}>
                 <span style={{ opacity: 0.88 }}>SPEEDTOYZCARS</span>
@@ -364,126 +351,194 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* ── Hero ───────────────────────────────────────────────────────────── */}
-        <section ref={heroRef} style={{ position: 'relative', minHeight: isTablet ? 'auto' : 600, height: isTablet ? 'auto' : 600, overflow: 'hidden' }}>
+        {/* ── Hero & Search Section ───────────────────────────────────────────── */}
+        <section ref={heroRef} style={{ position: 'relative', minHeight: isTablet ? 'auto' : 640, overflow: 'hidden', padding: isMobile ? '36px 0 48px' : isTablet ? '56px 0' : '72px 0', display: 'flex', alignItems: 'center' }}>
           <img
             className="hero-image"
             src="/images/hero-car-1.jpg"
             alt="SpeedToyzCars premium self-drive luxury car fleet in Bhubaneswar"
             loading="eager"
             fetchpriority="high"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center', opacity: 0.8 }}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', transformOrigin: 'center', opacity: 0.75 }}
           />
-          <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.72) 100%), linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.75) 100%)', pointerEvents: 'none', zIndex: 0 }} />
+          <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.65) 50%, rgba(0,0,0,0.85) 100%), linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%)', pointerEvents: 'none', zIndex: 0 }} />
 
-          <div style={{ position: isTablet ? 'relative' : 'absolute', inset: isTablet ? 'auto' : 0, zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: isTablet ? 'flex-start' : 'center', padding: isMobile ? '36px 16px 48px' : isTablet ? '56px 48px 64px' : '0 80px', maxWidth: 1280, margin: '0 auto', left: 0, right: 0 }}>
-            <div>
-              <div className="hero-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '5px 14px', marginBottom: 20 }}>
-                <span style={{ color: '#ef4444', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>Premium Car Rental</span>
-              </div>
-              <h1 className="hero-headline" style={{ color: '#fff', fontSize: isMobile ? 32 : isTablet ? 44 : 60, fontWeight: 900, lineHeight: isMobile ? 1.2 : 1.08, margin: '0 0 16px', letterSpacing: -1 }}>
-                Best Self Drive & Luxury <span className='text-red-500'>Car Rental</span> in Bhubaneswar
-              </h1>
-              <p className="hero-subtitle" style={{ color: '#f3f4f6', fontSize: isMobile ? 13 : 18, maxWidth: isMobile ? 340 : 580, marginBottom: isMobile ? 24 : 28, lineHeight: 1.6 }}>
-                Book premium SUVs, hatchbacks, and self-drive cars instantly with clean vehicles, easy booking, and 24/7 support across Odisha.
-              </p>
-              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 24 : 14, width: isMobile ? '100%' : 'auto' }}>
-                <button type="button" aria-label="Explore available cars now" onClick={() => navigate('/cars')} className="btn-primary hero-button" style={{ border: 'none', color: '#fff', padding: isMobile ? '12px 28px' : '14px 34px', borderRadius: 10, fontSize: isMobile ? 15 : 16, fontWeight: 700, cursor: 'pointer', flex: isMobile ? 1 : 'none' }}>
-                  Explore Now
-                </button>
-                <button type="button" aria-label="Browse full self-drive car catalogue" onClick={() => navigate('/cars')} className="btn-outline hero-button" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: isMobile ? '12px 24px' : '14px 32px', borderRadius: 10, fontSize: isMobile ? 15 : 16, fontWeight: 600, cursor: 'pointer', flex: isMobile ? 1 : 'none' }}>
-                  Browse Cars
-                </button>
-              </div>
+          <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, width: '100%', margin: '0 auto', padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 80px' }}>
+            <div className="hero-grid-container">
+              
+              {/* Left Column: Hero Text, Actions & Stats */}
+              <div>
+                <div className="hero-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '5px 14px', marginBottom: 20 }}>
+                  <span style={{ color: '#ef4444', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>Premium Car Rental</span>
+                </div>
+                <h1 className="hero-headline" style={{ color: '#fff', fontSize: isMobile ? 24 : isTablet ? 38 : 52, fontWeight: 900, lineHeight: isMobile ? 1.15 : 1.1, margin: '0 0 16px', letterSpacing: -0.5, wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                  Best Self Drive & Luxury <span className='text-red-500'>Car Rental</span> in Bhubaneswar
+                </h1>
+                <p className="hero-subtitle" style={{ color: '#f3f4f6', fontSize: isMobile ? 13 : 16, maxWidth: 540, marginBottom: isMobile ? 24 : 28, lineHeight: 1.6, wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                  Book premium SUVs, hatchbacks, and self-drive cars instantly with clean vehicles, easy booking, and 24/7 support across Odisha.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: isMobile ? 10 : 14, width: 'auto', flexWrap: 'nowrap', marginBottom: isMobile ? 24 : 36 }}>
+                  <button type="button" aria-label="Explore available cars now" onClick={() => navigate('/cars')} className="hero-button hero-button-primary">
+                    Explore Now
+                  </button>
+                  <button type="button" aria-label="Browse full self-drive car catalogue" onClick={() => navigate('/cars')} className="hero-button hero-button-outline">
+                    Browse Cars
+                  </button>
+                </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 16 : isTablet ? 24 : 40, marginTop: isMobile ? 24 : isTablet ? 36 : 52 }}>
-                {stats.map(({ value, suffix, label, fixed = 0 }) => (
-                  <div key={label} className="hero-stat">
-                    <div
-                      className="hero-stat-value"
-                      data-value={value}
-                      data-suffix={suffix}
-                      data-fixed={fixed}
-                      style={{ color: '#ef4444', fontSize: isMobile ? 20 : 28, fontWeight: 900 }}>
-                      {fixed ? `0.${'0'.repeat(fixed)}${suffix}` : `0${suffix}`}
+                <div className="hero-stats-grid">
+                  {stats.map(({ value, suffix, label, fixed = 0 }) => (
+                    <div key={label} className="hero-stat">
+                      <div
+                        className="hero-stat-value"
+                        data-value={value}
+                        data-suffix={suffix}
+                        data-fixed={fixed}
+                        style={{ color: '#ef4444', fontSize: isMobile ? 20 : 26, fontWeight: 900 }}>
+                        {fixed ? `0.${'0'.repeat(fixed)}${suffix}` : `0${suffix}`}
+                      </div>
+                      <div style={{ color: '#9ca3af', fontSize: isMobile ? 12 : 13, marginTop: 4, fontWeight: 500 }}>{label}</div>
                     </div>
-                    <div style={{ color: '#9ca3af', fontSize: isMobile ? 12 : 13, marginTop: 4, fontWeight: 500 }}>{label}</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Search Widget */}
+              <div className="home-reveal" style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+                {/* Delivery Mode Tabs */}
+                <div style={{ display: 'flex', gap: 8, marginBottom: 14, overflowX: 'auto', paddingBottom: 6, width: '100%', maxWidth: '100%', boxSizing: 'border-box', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+                  {['Parking', 'Doorstep', 'Airport'].map(mode => (
+                    <button
+                      key={mode}
+                      onClick={() => { setDeliveryMode(mode); setSearch({ ...search, location: '' }) }}
+                      style={{
+                        padding: '9px 15px',
+                        borderRadius: 24,
+                        border: `1px solid ${deliveryMode === mode ? '#ef4444' : 'rgba(255,255,255,0.12)'}`,
+                        background: deliveryMode === mode ? 'rgba(239,68,68,0.18)' : 'rgba(17,24,39,0.85)',
+                        color: deliveryMode === mode ? '#ef4444' : '#9ca3af',
+                        fontSize: isMobile ? 12 : 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        transition: 'all 0.2s',
+                        backdropFilter: 'blur(12px)',
+                        flexShrink: 0
+                      }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {mode === 'Parking' ? <FaParking size={14} /> : mode === 'Doorstep' ? <FaHome size={14} /> : <FaPlane size={14} />}
+                        {mode === 'Parking' ? 'SpeedToyzCars Parking' : mode === 'Doorstep' ? 'Doorstep Delivery' : 'Airport Pickup'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(17, 24, 39, 0.88)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: 16,
+                    padding: isMobile ? '16px' : '26px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 16,
+                    boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
+                    width: '100%',
+                    maxWidth: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  {deliveryMode !== 'Parking' && (
+                    <div>
+                      <label htmlFor="home-pickup-location" style={{ display: 'block', color: '#9ca3af', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+                        {deliveryMode === 'Doorstep' ? 'Delivery Address' : 'Airport Name / Terminal'}
+                      </label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#ef4444', fontSize: 14 }}><FiMapPin /></span>
+                        <input id="home-pickup-location" name="location" type="text" value={search.location} onChange={e => setSearch(s => ({ ...s, location: e.target.value }))} placeholder={deliveryMode === 'Doorstep' ? 'Enter full address map link' : 'BPIA Bhubaneswar'}
+                          style={{ width: '100%', background: '#1f2937', border: '1px solid #374151', borderRadius: 10, color: '#fff', padding: isMobile ? '10px 10px 10px 32px' : '12px 14px 12px 38px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box' }} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="hero-search-inputs-grid">
+                    <div style={{ minWidth: 0 }}>
+                      <label htmlFor="home-pickup-date" style={{ display: 'block', color: '#9ca3af', fontSize: isMobile ? 10 : 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Pickup Date</label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#ef4444', fontSize: 14 }}><FiCalendar /></span>
+                        <input id="home-pickup-date" name="pickupDate" type="date" aria-label="Pickup Date" value={search.pickupDate} onChange={e => setSearch(s => ({ ...s, pickupDate: e.target.value }))}
+                          style={{ width: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 10, color: '#fff', padding: isMobile ? '10px 6px 10px 28px' : '12px 14px 12px 38px', fontSize: isMobile ? 12 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none' }} />
+                      </div>
+                    </div>
+
+                    <div style={{ minWidth: 0 }}>
+                      <label htmlFor="home-pickup-time" style={{ display: 'block', color: '#9ca3af', fontSize: isMobile ? 10 : 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Pickup Time</label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#ef4444', fontSize: 14, pointerEvents: 'none', zIndex: 1 }}><FiClock /></span>
+                        <select
+                          id="home-pickup-time"
+                          name="pickupTime"
+                          aria-label="Pickup Time"
+                          value={search.pickupTime}
+                          onChange={e => setSearch(s => ({ ...s, pickupTime: e.target.value }))}
+                          style={{
+                            width: '100%',
+                            minWidth: 0,
+                            background: '#1f2937',
+                            border: '1px solid #374151',
+                            borderRadius: 10,
+                            color: '#fff',
+                            padding: isMobile ? '10px 6px 10px 28px' : '12px 14px 12px 38px',
+                            fontSize: isMobile ? 12 : 14,
+                            outline: 'none',
+                            boxSizing: 'border-box',
+                            cursor: 'pointer',
+                            appearance: 'none',
+                            WebkitAppearance: 'none'
+                          }}
+                        >
+                          {[
+                            '06:00 AM', '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM',
+                            '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM',
+                            '06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM'
+                          ].map(time => (
+                            <option key={time} value={time} style={{ background: '#1f2937', color: '#fff' }}>
+                              {time}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                   </div>
-                ))}
+
+                  <button
+                    type="button"
+                    aria-label="Search available cars"
+                    onClick={handleSearch}
+                    className="btn-primary"
+                    style={{
+                      border: 'none',
+                      color: '#fff',
+                      padding: '14px 28px',
+                      borderRadius: 10,
+                      fontSize: 15,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      marginTop: 4,
+                      width: '100%',
+                      boxShadow: '0 8px 24px rgba(239,68,68,0.3)'
+                    }}
+                  >
+                    Search Available Cars →
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </section>
-
-        {/* ── Search Bar ─────────────────────────────────────────────────────── */}
-        <div className="home-reveal" style={{ maxWidth: 1100, margin: isTablet ? '0 auto' : '24px auto 0', padding: isMobile ? '0 12px' : isTablet ? '0 32px' : '0 40px', position: 'relative', zIndex: 10 }}>
-
-          {/* Delivery Mode Tabs */}
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
-            {['Parking', 'Doorstep', 'Airport'].map(mode => (
-              <button
-                key={mode}
-                onClick={() => { setDeliveryMode(mode); setSearch({ ...search, location: '' }) }}
-                style={{
-                  padding: '10px 20px',
-                  borderRadius: 24,
-                  border: `1px solid ${deliveryMode === mode ? '#ef4444' : '#374151'}`,
-                  background: deliveryMode === mode ? 'rgba(239,68,68,0.1)' : '#111827',
-                  color: deliveryMode === mode ? '#ef4444' : '#9ca3af',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {mode === 'Parking' ? <FaParking size={16} /> : mode === 'Doorstep' ? <FaHome size={16} /> : <FaPlane size={16} />}
-                  {mode === 'Parking' ? 'SpeedToyzCars Parking' : mode === 'Doorstep' ? 'Doorstep Delivery' : 'Airport Pickup'}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div
-            style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, padding: isMobile ? '14px 14px' : isTablet ? '20px' : '24px 28px', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : deliveryMode === 'Parking' ? '1fr 1fr auto' : '1fr 1fr 1fr auto', gap: isMobile ? 10 : 16, alignItems: 'end', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden' }}>
-
-            {deliveryMode !== 'Parking' && (
-              <div>
-                <label htmlFor="home-pickup-location" style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>
-                  {deliveryMode === 'Doorstep' ? 'Delivery Address' : 'Airport Name / Terminal'}
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiMapPin /></span>
-                  <input id="home-pickup-location" name="location" type="text" value={search.location} onChange={e => setSearch(s => ({ ...s, location: e.target.value }))} placeholder={deliveryMode === 'Doorstep' ? 'Enter full address map link' : 'BPIA Bhubaneswar'}
-                    style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box' }} />
-                </div>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="home-pickup-date" style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Pickup Date</label>
-              <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiCalendar /></span>
-                <input id="home-pickup-date" name="pickupDate" type="date" aria-label="Pickup Date" value={search.pickupDate} onChange={e => setSearch(s => ({ ...s, pickupDate: e.target.value }))}
-                  style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="home-return-date" style={{ display: 'block', color: '#6b7280', fontSize: isMobile ? 10 : 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: isMobile ? 4 : 8 }}>Return Date</label>
-              <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#6b7280', fontSize: 14 }}><FiCalendar /></span>
-                <input id="home-return-date" name="returnDate" type="date" aria-label="Return Date" value={search.returnDate} onChange={e => setSearch(s => ({ ...s, returnDate: e.target.value }))}
-                  style={{ width: '100%', maxWidth: '100%', minWidth: 0, background: '#1f2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', padding: isMobile ? '8px 10px 8px 32px' : '10px 12px 10px 36px', fontSize: isMobile ? 13 : 14, outline: 'none', boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none' }} />
-              </div>
-            </div>
-
-            <button type="button" aria-label="Search available cars" onClick={handleSearch} className="btn-primary" style={{ border: 'none', color: '#fff', padding: isMobile ? '8px 16px' : '11px 28px', borderRadius: 8, fontSize: isMobile ? 13 : 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', width: isTablet ? '100%' : 'auto', gridColumn: isTablet ? '1 / -1' : 'auto' }}>
-              {isMobile ? 'Search' : 'Search Cars'}
-            </button>
-          </div>
-        </div>
 
         {/* ── Booking Highlight ─────────────────────────────────────────────── */}
         <section className="home-reveal" style={{ padding: isMobile ? '32px 16px 0' : '56px 80px 0', maxWidth: 1280, margin: '0 auto' }}>
@@ -657,9 +712,9 @@ export default function HomePage() {
         </section>
 
         {/* ── CTA Banner ─────────────────────────────────────────────────────── */}
-        <section className="home-reveal" style={{ position: 'relative', overflow: 'hidden' }}>
-          <img src="/images/hero-car-3.jpg" alt="cta" loading="lazy" style={{ width: '100%', height: isMobile ? 180 : 300, objectFit: 'cover', opacity: 0.25 }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.95), rgba(0,0,0,0.7))', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '20px 16px' : '0 120px', gap: 20 }}>
+        <section className="home-reveal" style={{ position: 'relative', overflow: 'hidden', background: '#050505' }}>
+          <img src="/images/hero-car-3.jpg" alt="cta" loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.25 }} />
+          <div style={{ position: 'relative', zIndex: 1, background: 'linear-gradient(to right, rgba(0,0,0,0.92), rgba(0,0,0,0.75))', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '36px 20px' : '48px 120px', gap: 20 }}>
             <div>
               <h2 style={{ color: '#fff', fontSize: isMobile ? 22 : 36, fontWeight: 900, margin: '0 0 8px', letterSpacing: -1 }}>Ready to Drive?</h2>
               <p style={{ color: '#9ca3af', fontSize: isMobile ? 13 : 14, margin: 0 }}>Book your premium vehicle today and experience luxury on wheels.</p>

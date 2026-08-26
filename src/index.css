@@ -30,12 +30,16 @@
   box-sizing: border-box;
 }
 
+html, body, #root {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background-color: var(--bg-800);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
 /* Scrollbar */
@@ -97,7 +101,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Button hover */
 .btn-primary {
   background: var(--primary);
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-primary:active { transform: scale(0.98); }
@@ -109,6 +113,97 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--primary);
   border-color: var(--primary);
   color: #fff;
+}
+
+/* Hero Buttons */
+.hero-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 48px;
+  padding: 0 32px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-sizing: border-box;
+  margin: 0;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .hero-button {
+    height: 42px;
+    padding: 0 18px;
+    font-size: 13px;
+  }
+}
+
+.hero-button-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: transparent;
+}
+.hero-button-primary:hover {
+  background: var(--primary-dark);
+}
+
+.hero-button-outline {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+}
+.hero-button-outline:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* Hero Grid & Responsive Layout */
+.hero-grid-container {
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 28px;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .hero-grid-container {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 48px;
+  }
+}
+
+.hero-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .hero-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+
+.hero-search-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 480px) {
+  .hero-search-inputs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
 }
 
 /* Glassmorphism */

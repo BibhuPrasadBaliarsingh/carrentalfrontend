@@ -56,7 +56,7 @@ export function useHeroAnimation(heroRef, enabled = true) {
           y: 18,
           scale: 0.96,
           duration: 0.68,
-          stagger: 0.08,
+          clearProps: 'transform,opacity',
         }, '-=0.45')
       }
 

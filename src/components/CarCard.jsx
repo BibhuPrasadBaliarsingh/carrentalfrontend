@@ -24,7 +24,7 @@ export default function CarCard({ car, index = 0 }) {
       onClick={() => navigate(`/cars/${car._id}`)}
       style={{ background: '#111827', border: '1px solid #1f2937', borderRadius: 12, overflow: 'hidden', cursor: 'pointer' }}
     >
-      <div style={{ position: 'relative', height: 190, aspectRatio: '16 / 9', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', height: 190, overflow: 'hidden' }}>
         <img
           src={imgSrc}
           alt={`${car.brand || ''} ${cleanCarName(car.name || '')} self drive car rental`}

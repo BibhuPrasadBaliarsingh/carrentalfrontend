@@ -50,17 +50,34 @@ export const getCarImageSrc = (car, size = 800) => {
   const fallback = '/images/car-fallback.jpg'
   if (!car) return fallback
 
-  // car.images array
+  const brand = `${car.brand || ''} ${car.name || ''}`.toLowerCase()
+
+  const brandImageMap = {
+    ferrari: '/images/car-ferrari.jpg',
+    mercedes: '/images/car-mercedes.jpg',
+    rover: '/images/car-rover.jpg',
+    land: '/images/car-rover.jpg',
+    porsche: '/images/car-porsche.jpg',
+    bmw: '/images/car-bmw.jpg',
+    tesla: '/images/car-tesla.jpg',
+    lambo: '/images/car-lambo.jpg',
+    lamborghini: '/images/car-lambo.jpg',
+    audi: '/images/car-audi.jpg',
+    mclaren: '/images/car-mclaren.jpg',
+  }
+
+  // Check car.images array
   const imgArr = Array.isArray(car.images) ? car.images : (typeof car.images === 'string' && car.images.trim() ? [car.images.trim()] : [])
   const first = imgArr.find(src => typeof src === 'string' && src.trim().length)
 
   if (first) {
-    return first.startsWith('http') ? first : `${API_URL}/uploads/${first}`
+    if (first.startsWith('/images/')) return first
+    if (!first.startsWith('http')) return `${API_URL}/uploads/${first}`
   }
 
-  // car.fallbackImage (from external API)
-  if (car.fallbackImage && typeof car.fallbackImage === 'string' && car.fallbackImage.startsWith('http')) {
-    return car.fallbackImage
+  // Check brand map fallback
+  for (const [key, localSrc] of Object.entries(brandImageMap)) {
+    if (brand.includes(key)) return localSrc
   }
 
   return fallback
