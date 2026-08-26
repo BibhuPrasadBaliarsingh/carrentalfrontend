@@ -24,7 +24,7 @@ export function MainLayout() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#0a0a0a' }}>
       <SmoothScroll />
       <Navbar hidden={isPageLoading} />
-      <main ref={pageRef} style={{ flex: 1 }}>
+      <main ref={pageRef} style={{ flex: 1, paddingTop: isPageLoading ? 0 : 60 }}>
         <Outlet />
       </main>
       <Footer />
