@@ -66,14 +66,14 @@ export const MOCK_CARS = [
     _id: '10', name: 'Maruti Alto K10 (Manual)', brand: 'Maruti', category: 'Hatchback',
     pricePerDay: 199, fuelType: 'Petrol', seats: 5, transmission: 'Manual',
     rating: 4.6, available: true,
-    images: ['/images/car-fallback.jpg'],
+    images: ['/images/car-alto.jpg'],
     description: 'Maruti Alto K10 Manual Transmission — Fuel-efficient 1.0L K-Series engine with 5-speed smooth manual gear shift.',
   },
   {
     _id: '11', name: 'Maruti Alto K10 (Automatic)', brand: 'Maruti', category: 'Hatchback',
     pricePerDay: 249, fuelType: 'Petrol', seats: 5, transmission: 'Automatic',
     rating: 4.7, available: true,
-    images: ['/images/car-fallback.jpg'],
+    images: ['/images/car-alto.jpg'],
     description: 'Maruti Alto K10 Auto Gear Shift (AGS) — Effortless automatic driving experience ideal for city traffic & long drives.',
   },
 ]

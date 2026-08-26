@@ -64,6 +64,8 @@ export const getCarImageSrc = (car, size = 800) => {
     lamborghini: '/images/car-lambo.jpg',
     audi: '/images/car-audi.jpg',
     mclaren: '/images/car-mclaren.jpg',
+    alto: '/images/car-alto.jpg',
+    maruti: '/images/car-alto.jpg',
   }
 
   // Check car.images array
@@ -72,7 +74,8 @@ export const getCarImageSrc = (car, size = 800) => {
 
   if (first) {
     if (first.startsWith('/images/')) return first
-    if (!first.startsWith('http')) return `${API_URL}/uploads/${first}`
+    if (first.startsWith('http')) return first
+    return `${API_URL}/uploads/${first}`
   }
 
   // Check brand map fallback

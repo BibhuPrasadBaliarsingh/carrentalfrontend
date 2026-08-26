@@ -163,13 +163,7 @@ export default function CarDetailPage() {
                 <img src={imgSrc(displayImgs[activeImg])} alt={car.name}
                   loading="lazy"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={e => { 
-                    if (car?.fallbackImage && e.target.src !== car.fallbackImage) {
-                      e.target.src = car.fallbackImage;
-                    } else {
-                      e.target.src = DEFAULT_CAR_IMAGE;
-                    }
-                  }} />
+                  onError={e => { e.target.onerror = null; e.target.src = DEFAULT_CAR_IMAGE }} />
                 <div style={{ position: 'absolute', bottom: 10, right: 10, background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 12, padding: '4px 10px', borderRadius: 20, backdropFilter: 'blur(6px)' }}>
                   {activeImg + 1} / {displayImgs.length}
                 </div>
@@ -179,13 +173,7 @@ export default function CarDetailPage() {
                 <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 12 }}>
                   {displayImgs.map((img, i) => (
                     <div key={i} onClick={() => setActiveImg(i)} style={{ flex: '0 0 72px', height: 72, borderRadius: 10, overflow: 'hidden', cursor: 'pointer', border: `2px solid ${activeImg === i ? '#ef4444' : 'transparent'}`, opacity: activeImg === i ? 1 : 0.6, transition: 'all 0.2s' }}>
-                      <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { 
-                        if (car?.fallbackImage && e.target.src !== car.fallbackImage) {
-                          e.target.src = car.fallbackImage;
-                        } else {
-                          e.target.src = DEFAULT_CAR_IMAGE;
-                        }
-                      }} />
+                      <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.onerror = null; e.target.src = DEFAULT_CAR_IMAGE }} />
                     </div>
                   ))}
                 </div>
@@ -236,13 +224,7 @@ export default function CarDetailPage() {
                   <img src={imgSrc(displayImgs[activeImg])} alt={car.name}
                     loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    onError={e => { 
-                      if (car?.fallbackImage && e.target.src !== car.fallbackImage) {
-                        e.target.src = car.fallbackImage;
-                      } else {
-                        e.target.src = DEFAULT_CAR_IMAGE;
-                      }
-                    }} />
+                    onError={e => { e.target.onerror = null; e.target.src = DEFAULT_CAR_IMAGE }} />
                   <div style={{ position: 'absolute', bottom: 14, right: 14, background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 12, padding: '4px 12px', borderRadius: 20, backdropFilter: 'blur(6px)' }}>
                     {activeImg + 1} / {displayImgs.length}
                   </div>
@@ -252,13 +234,7 @@ export default function CarDetailPage() {
                   <div style={{ display: 'flex', gap: 10 }}>
                     {displayImgs.map((img, i) => (
                       <div key={i} onClick={() => setActiveImg(i)} style={{ flex: 1, height: 72, borderRadius: 10, overflow: 'hidden', cursor: 'pointer', border: `2px solid ${activeImg === i ? '#ef4444' : 'transparent'}`, opacity: activeImg === i ? 1 : 0.6, transition: 'all 0.2s' }}>
-                        <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { 
-                          if (car?.fallbackImage && e.target.src !== car.fallbackImage) {
-                            e.target.src = car.fallbackImage;
-                          } else {
-                            e.target.src = DEFAULT_CAR_IMAGE;
-                          }
-                        }} />
+                        <img src={imgSrc(img)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.onerror = null; e.target.src = DEFAULT_CAR_IMAGE }} />
                       </div>
                     ))}
                   </div>
